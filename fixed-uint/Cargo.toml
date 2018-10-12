@@ -1,0 +1,17 @@
+[package]
+name = "numext-fixed-uint"
+version = "0.1.0"
+authors = ["Boyu Yang <yangby@cryptape.com>"]
+build = "build.rs"
+
+[dependencies]
+numext-fixed-uint-macros = { path = "../fixed-uint-macros" }
+failure = "0.1"
+rand = "0.5"
+
+[build-dependencies]
+rustc_version = "0.2"
+
+[features]
+default = []
+use-derive = []

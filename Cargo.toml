@@ -1,4 +1,6 @@
 [workspace]
 members = [
-    "uint",
+    "fixed-uint",
+    "fixed-uint-macros",
+    "fixed-uint-tests",
 ]

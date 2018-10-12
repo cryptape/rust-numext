@@ -19,9 +19,9 @@ jobs:
     - stage: Check
       name: Dependencies
       script:
-        - cargo check --all --locked
+        - cargo check --all --tests --locked
     - stage: Check
       name: Clippy
       script:
         - rustup component add clippy-preview
-        - cargo clippy --all
+        - RUSTFLAGS='-F warnings' cargo clippy --all --tests
