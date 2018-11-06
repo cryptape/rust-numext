@@ -6,11 +6,10 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-//! Add support for other crates.
-//!
-//! The dependencies should be in the `Cargo.toml`.
+#[macro_use]
+extern crate criterion;
 
-#![allow(dead_code)]
-mod heapsize;
-mod rand;
-mod serde;
+extern crate numext_fixed_uint as nfuint;
+extern crate numext_fixed_uint_tests as nfuint_tests;
+
+use criterion::{black_box, Criterion, ParameterizedBenchmark};

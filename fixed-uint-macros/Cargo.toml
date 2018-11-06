@@ -15,3 +15,5 @@ proc-macro = true
 [features]
 default = []
 rand = []
+serde = []
+heapsize = []

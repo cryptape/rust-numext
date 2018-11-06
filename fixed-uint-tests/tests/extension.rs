@@ -7,6 +7,7 @@
 // except according to those terms.
 
 extern crate numext_fixed_uint;
+extern crate serde_json;
 
 macro_rules! check_rand {
     ($name:ident, $uint:ident) => {
@@ -43,3 +44,14 @@ check_rand!(rand_h520, H520);
 check_rand!(rand_h1024, H1024);
 check_rand!(rand_h2048, H2048);
 check_rand!(rand_h4096, H4096);
+
+#[test]
+fn with_serde_defun_public() {
+    let x = U256::thread_random();
+    let json = serde_json::to_string(&x);
+    assert!(json.is_ok());
+    let json = json.unwrap();
+    let y = serde_json::from_str(&json);
+    assert!(y.is_ok());
+    assert_eq!(x, y.unwrap());
+}

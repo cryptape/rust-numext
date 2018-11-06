@@ -8,8 +8,14 @@
 
 #[macro_use]
 extern crate failure;
+#[cfg(feature = "impl_serde")]
+extern crate faster_hex;
+#[cfg(feature = "impl_heapsize")]
+extern crate heapsize;
 #[cfg(feature = "impl_rand")]
 extern crate rand;
+#[cfg(feature = "impl_serde")]
+extern crate serde;
 
 extern crate numext_fixed_uint_macros;
 
