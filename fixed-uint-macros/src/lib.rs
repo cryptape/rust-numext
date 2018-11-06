@@ -22,9 +22,6 @@ mod funclike;
 
 mod parsed;
 
-static mut HAS_COMMON: bool = false;
-static ADD_COMMON: ::std::sync::Once = ::std::sync::Once::new();
-
 #[proc_macro]
 pub fn construct_fixed_uints(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let inputs = parse_macro_input!(input as funclike::UintDefinitions);
@@ -42,28 +39,6 @@ pub fn construct_fixed_uints(input: proc_macro::TokenStream) -> proc_macro::Toke
             quote!(#common #all_uints)
         } else {
             quote!()
-        }
-    };
-    expanded.into()
-}
-
-#[proc_macro_derive(FixedUint, attributes(fixed_uint))]
-pub fn derive_fixed_uint(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    let input = parse_macro_input!(input as syn::DeriveInput);
-    let expanded = {
-        let parsed: parsed::UintDefinition = input.into();
-        let constructor = core::UintConstructor::new(parsed);
-        if unsafe { HAS_COMMON } {
-            let (outputs, _) = constructor.construct_all();
-            quote!(#outputs)
-        } else {
-            unsafe {
-                ADD_COMMON.call_once(|| {
-                    HAS_COMMON = true;
-                });
-            }
-            let (outputs, common) = constructor.construct_all();
-            quote!(#common #outputs)
         }
     };
     expanded.into()

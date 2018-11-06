@@ -18,7 +18,6 @@ use super::utils;
 
 pub struct UintInformation {
     pub name: String,
-    pub derived: bool,
     pub bits_size: u64,
     pub bytes_size: u64,
     pub unit_bits_size: u64,
@@ -29,7 +28,6 @@ pub struct UintInformation {
 impl ::std::convert::From<parsed::UintDefinition> for UintInformation {
     fn from(data: parsed::UintDefinition) -> Self {
         let parsed::UintDefinition { name, attrs } = data;
-        let derived = attrs.derived;
         // bits size for the whole unsigned integer
         let bits_size = attrs.size;
         // bytes size for the whole unsigned integer
@@ -42,7 +40,6 @@ impl ::std::convert::From<parsed::UintDefinition> for UintInformation {
         let unit_amount = attrs.size / attrs.unit_size;
         Self {
             name,
-            derived,
             bits_size,
             bytes_size,
             unit_bits_size,
@@ -139,9 +136,6 @@ impl UintConstructor {
     }
 
     fn defstruct(&self) {
-        if self.info.derived {
-            return;
-        }
         let name = &self.ts.name;
         let inner_type = &self.ts.inner_type;
         let part = quote!(

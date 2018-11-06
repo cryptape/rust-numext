@@ -25,72 +25,7 @@ impl ::std::convert::From<funclike::UintDefinition> for UintDefinition {
     }
 }
 
-impl ::std::convert::From<syn::DeriveInput> for UintDefinition {
-    fn from(input: syn::DeriveInput) -> Self {
-        let syn::DeriveInput {
-            ident,
-            generics,
-            data,
-            ..
-        } = input;
-        let mut attrs = UintAttributes::default();
-        let mut data_is_unit = false;
-        attrs.derived = true;
-        if let syn::Data::Struct(syn::DataStruct {
-            fields: syn::Fields::Unnamed(fileds),
-            ..
-        }) = data
-        {
-            if fileds.unnamed.len() == 1 {
-                if let Some(pair) = fileds.unnamed.first() {
-                    if let syn::Type::Array(syn::TypeArray {
-                        ref elem,
-                        len:
-                            syn::Expr::Lit(syn::ExprLit {
-                                lit: syn::Lit::Int(ref len),
-                                ..
-                            }),
-                        ..
-                    }) = pair.value().ty
-                    {
-                        let unit_suffix = quote!(#elem).to_string();
-                        attrs.unit_size = match unit_suffix.as_ref() {
-                            "u8" => 8,
-                            "u16" => 16,
-                            "u32" => 32,
-                            "u64" => 64,
-                            _ => panic!(
-                                "The unit(={}) should be one of `u8`, `u16`, `u32`, `u64`.",
-                                unit_suffix
-                            ),
-                        };
-                        let unit_amount = len.value();
-                        attrs.size = attrs.unit_size * unit_amount;
-                        data_is_unit = true;
-                    }
-                }
-            }
-        }
-        if !data_is_unit {
-            panic!(
-                "The definition should be a unit struct like `{}`",
-                "pub struct U256([u64; 4]);"
-            );
-        }
-        if generics.lt_token.is_some()
-            || generics.gt_token.is_some()
-            || generics.where_clause.is_some()
-            || !generics.params.is_empty()
-        {
-            panic!("The definition should not have generics")
-        }
-        let name = ident.to_string();
-        Self { name, attrs }
-    }
-}
-
 pub struct UintAttributes {
-    pub derived: bool,
     pub size: u64,
     pub unit_size: u64,
 }
@@ -124,7 +59,6 @@ impl UintAttributes {
 impl ::std::default::Default for UintAttributes {
     fn default() -> Self {
         Self {
-            derived: false,
             size: 0,
             unit_size: 64,
         }
