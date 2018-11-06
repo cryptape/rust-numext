@@ -13,8 +13,8 @@ use core::utils;
 
 impl UintConstructor {
     pub fn defun_pub_conv(&self) {
-        self.defun_pub_conv_from_bytes();
-        self.defun_pub_conv_into_bytes();
+        self.defun_pub_conv_from_slice();
+        self.defun_pub_conv_into_slice();
         self.attach_error_for_conv_from_str();
         self.defun_pub_conv_from_bin_str();
         self.defun_pub_conv_from_oct_str();
@@ -22,13 +22,13 @@ impl UintConstructor {
         self.defun_pub_conv_from_dec_str();
     }
 
-    fn attach_error_for_conv_bytes(&self, conv_type: &str, type_explain: &str) {
+    fn attach_error_for_conv_slice(&self, conv_type: &str, type_explain: &str) {
         let error_name = &self.ts.error_name;
-        let error_item = utils::ident_to_ts(format!("{}Bytes", conv_type).as_ref());
-        let inner_error_name = utils::ident_to_ts(format!("{}BytesError", conv_type).as_ref());
-        let error_explain = format!("failed to convert {} bytes since {{}}", type_explain);
+        let error_item = utils::ident_to_ts(format!("{}Slice", conv_type).as_ref());
+        let inner_error_name = utils::ident_to_ts(format!("{}SliceError", conv_type).as_ref());
+        let error_explain = format!("failed to convert {} slice since {{}}", type_explain);
         let part = quote!(
-            /// Error for parse from bytes.
+            /// Error for parse from slice.
             #[derive(Debug, Fail)]
             pub enum #inner_error_name {
                 #[fail(display = "invalid length: {}", _0)]
@@ -49,116 +49,116 @@ impl UintConstructor {
         self.error(part);
     }
 
-    fn defun_pub_conv_from_bytes(&self) {
-        self.attach_error_for_conv_bytes("From", "from");
+    fn defun_pub_conv_from_slice(&self) {
+        self.attach_error_for_conv_slice("From", "from");
         let error_name = &self.ts.error_name;
         let inner_type = &self.ts.inner_type;
         let bytes_size = &self.ts.bytes_size;
         let unit_amount = &self.ts.unit_amount;
         let part = quote!(
             #[inline]
-            fn _from_bytes(input: &[u8]) -> Self {
+            fn _from_slice(input: &[u8]) -> Self {
                 let mut ret: #inner_type = [0; #unit_amount];
                 unsafe {
-                    let bytes = &mut *(&mut ret as *mut #inner_type as *mut [u8; #bytes_size]);
-                    bytes[0..input.len()].copy_from_slice(input);
+                    let slice = &mut *(&mut ret as *mut #inner_type as *mut [u8; #bytes_size]);
+                    slice[0..input.len()].copy_from_slice(input);
                 }
                 Self::new(ret)
             }
             #[inline]
-            fn _from_bytes_opposite_endian(input: &[u8]) -> Self {
+            fn _from_slice_opposite_endian(input: &[u8]) -> Self {
                 let mut ret: #inner_type = [0; #unit_amount];
                 unsafe {
-                    let bytes = &mut *(&mut ret as *mut #inner_type as *mut [u8; #bytes_size]);
-                    let mut bytes_ptr = bytes.as_mut_ptr();
+                    let slice = &mut *(&mut ret as *mut #inner_type as *mut [u8; #bytes_size]);
+                    let mut slice_ptr = slice.as_mut_ptr();
                     let mut input_ptr = input.as_ptr().offset(input.len() as isize - 1);
                     for _ in 0..input.len() {
-                        *bytes_ptr = *input_ptr;
-                        bytes_ptr = bytes_ptr.offset(1);
+                        *slice_ptr = *input_ptr;
+                        slice_ptr = slice_ptr.offset(1);
                         input_ptr = input_ptr.offset(-1);
                     }
                 }
                 Self::new(ret)
             }
-            /// Convert from little-endian bytes.
+            /// Convert from little-endian slice.
             #[inline]
             pub fn from_little_endian(input: &[u8]) -> Result<Self, #error_name> {
                 if input.len() > #bytes_size {
-                    Err(FromBytesError::InvalidLength(input.len()))?
+                    Err(FromSliceError::InvalidLength(input.len()))?
                 } else if cfg!(target_endian = "little") {
-                    Ok(Self::_from_bytes(input))
+                    Ok(Self::_from_slice(input))
                 } else {
-                    Ok(Self::_from_bytes_opposite_endian(input))
+                    Ok(Self::_from_slice_opposite_endian(input))
                 }
             }
-            /// Convert from big-endian bytes.
+            /// Convert from big-endian slice.
             #[inline]
             pub fn from_big_endian(input: &[u8]) -> Result<Self, #error_name> {
                 if input.len() > #bytes_size {
-                    Err(FromBytesError::InvalidLength(input.len()))?
+                    Err(FromSliceError::InvalidLength(input.len()))?
                 } else if cfg!(target_endian = "big") {
-                    Ok(Self::_from_bytes(input))
+                    Ok(Self::_from_slice(input))
                 } else {
-                    Ok(Self::_from_bytes_opposite_endian(input))
+                    Ok(Self::_from_slice_opposite_endian(input))
                 }
             }
         );
         self.defun(part);
     }
 
-    fn defun_pub_conv_into_bytes(&self) {
-        self.attach_error_for_conv_bytes("Into", "into");
+    fn defun_pub_conv_into_slice(&self) {
+        self.attach_error_for_conv_slice("Into", "into");
         let error_name = &self.ts.error_name;
         let inner_type = &self.ts.inner_type;
         let bytes_size = &self.ts.bytes_size;
         let loop_bytes_size = &utils::pure_uint_list_to_ts(0..self.info.bytes_size);
         let part = quote!(
             #[inline]
-            fn _into_bytes(&self, output: &mut [u8]) {
+            fn _into_slice(&self, output: &mut [u8]) {
                 let inner = self.inner();
                 unsafe {
-                    let bytes = &*(inner as *const #inner_type as *const  [u8; #bytes_size]);
-                    output[0..#bytes_size].copy_from_slice(bytes);
+                    let slice = &*(inner as *const #inner_type as *const  [u8; #bytes_size]);
+                    output[0..#bytes_size].copy_from_slice(slice);
                 }
             }
             #[inline]
-            fn _into_bytes_opposite_endian(&self, output: &mut [u8]) {
+            fn _into_slice_opposite_endian(&self, output: &mut [u8]) {
                 let inner = self.inner();
                 unsafe {
-                    let bytes = &*(inner as *const #inner_type as *const  [u8; #bytes_size]);
-                    let mut bytes_ptr = bytes.as_ptr().offset(#bytes_size - 1);
+                    let slice = &*(inner as *const #inner_type as *const  [u8; #bytes_size]);
+                    let mut slice_ptr = slice.as_ptr().offset(#bytes_size - 1);
                     let mut output_ptr = output.as_mut_ptr();
                     #({
                         let _ = #loop_bytes_size;
-                        *output_ptr = *bytes_ptr;
-                        bytes_ptr = bytes_ptr.offset(-1);
+                        *output_ptr = *slice_ptr;
+                        slice_ptr = slice_ptr.offset(-1);
                         output_ptr = output_ptr.offset(1);
                     })*
                 }
             }
-            /// Convert into little-endian bytes.
+            /// Convert into little-endian slice.
             #[inline]
             pub fn into_little_endian(&self, output: &mut [u8]) -> Result<(), #error_name> {
                 if output.len() != #bytes_size {
-                    Err(IntoBytesError::InvalidLength(output.len()))?
+                    Err(IntoSliceError::InvalidLength(output.len()))?
                 } else if cfg!(target_endian = "little") {
-                    self._into_bytes(output);
+                    self._into_slice(output);
                     Ok(())
                 } else {
-                    self._into_bytes_opposite_endian(output);
+                    self._into_slice_opposite_endian(output);
                     Ok(())
                 }
             }
-            /// Convert into big-endian bytes.
+            /// Convert into big-endian slice.
             #[inline]
             pub fn into_big_endian(&self, output: &mut [u8]) -> Result<(), #error_name> {
                 if output.len() != #bytes_size {
-                    Err(IntoBytesError::InvalidLength(output.len()))?
+                    Err(IntoSliceError::InvalidLength(output.len()))?
                 } else if cfg!(target_endian = "big") {
-                    self._into_bytes(output);
+                    self._into_slice(output);
                     Ok(())
                 } else {
-                    self._into_bytes_opposite_endian(output);
+                    self._into_slice_opposite_endian(output);
                     Ok(())
                 }
             }
