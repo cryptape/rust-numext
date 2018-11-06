@@ -18,7 +18,7 @@ mod extension;
 mod internal;
 
 impl UintConstructor {
-    pub fn construct_all(&self) -> (TokenStream, TokenStream) {
+    pub fn construct_all(&self, ucs: &[Self]) -> (TokenStream, TokenStream) {
         self.clear();
 
         // kernal
@@ -46,6 +46,6 @@ impl UintConstructor {
         // extension
         self.with_rand();
 
-        self.output()
+        self.output(ucs)
     }
 }

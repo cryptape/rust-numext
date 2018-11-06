@@ -8,6 +8,8 @@
 
 //! Define the struct and the methods or implement built-in traits to modify the struct directly.
 
+use proc_macro2::TokenStream;
+
 use core::constructor::UintConstructor;
 use core::utils;
 
@@ -15,6 +17,72 @@ impl UintConstructor {
     pub fn define_kernel(&self) {
         self.defun_priv_kernel();
         self.defun_pub_kernel();
+        self.deftrait_uint_convert();
+    }
+
+    pub fn convert_into(&self, uc: &Self) -> TokenStream {
+        let this_name = &self.ts.name;
+        let that_name = &uc.ts.name;
+        let stmts = if self.info.bits_size == uc.info.bits_size {
+            if self.info.unit_bits_size == uc.info.unit_bits_size {
+                // same inner
+                quote!(
+                    let inner = self.inner();
+                    let val = #that_name::new(inner.clone());
+                    (val, false)
+                )
+            } else if uc.info.unit_bits_size == 8 {
+                // into u8 array
+                let that_unit_amount = &uc.ts.unit_amount;
+                quote!(
+                    let mut inner = [0u8; #that_unit_amount];
+                    self.into_little_endian(&mut inner[..]).unwrap();
+                    let val = #that_name::new(inner);
+                    (val, false)
+                )
+            } else if self.info.unit_bits_size == 8 {
+                // from u8 array
+                quote!(
+                    let inner = self.inner();
+                    let val = #that_name::from_little_endian(&inner[..]).unwrap();
+                    (val, false)
+                )
+            } else {
+                // same size, diff inner, no u8 array
+                let that_bytes_size = &uc.ts.bytes_size;
+                quote!(
+                    let mut tmp = [0u8; #that_bytes_size];
+                    self.into_little_endian(&mut tmp[..]).unwrap();
+                    let val = #that_name::from_little_endian(&tmp[..]).unwrap();
+                    (val, false)
+                )
+            }
+        } else if self.info.bits_size < uc.info.bits_size {
+            let this_bytes_size = &self.ts.bytes_size;
+            quote!(
+                let mut tmp = [0u8; #this_bytes_size];
+                self.into_little_endian(&mut tmp[..]).unwrap();
+                let val = #that_name::from_little_endian(&tmp[..]).unwrap();
+                (val, false)
+            )
+        } else {
+            let this_bytes_size = &self.ts.bytes_size;
+            let that_bytes_size = &uc.ts.bytes_size;
+            quote!(
+                let mut tmp = [0u8; #this_bytes_size];
+                self.into_little_endian(&mut tmp[..]).unwrap();
+                let val = #that_name::from_little_endian(&tmp[..#that_bytes_size]).unwrap();
+                (val, true)
+            )
+        };
+        quote!(
+            impl prelude::UintConvert<#that_name> for #this_name {
+                #[inline]
+                fn convert_into(&self) -> (#that_name, bool) {
+                    #stmts
+                }
+            }
+        )
     }
 
     fn defun_priv_kernel(&self) {
@@ -85,5 +153,13 @@ impl UintConstructor {
             }
         );
         self.defun(part);
+    }
+
+    fn deftrait_uint_convert(&self) {
+        let part = quote!(pub trait UintConvert<T> {
+            /// Convert a fixed uint into another, return the new fixed uint and if it be truncated.
+            fn convert_into(&self) -> (T, bool);
+        });
+        self.prelude(part);
     }
 }

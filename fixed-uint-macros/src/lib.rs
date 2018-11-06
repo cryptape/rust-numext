@@ -26,20 +26,18 @@ mod parsed;
 pub fn construct_fixed_uints(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let inputs = parse_macro_input!(input as funclike::UintDefinitions);
     let expanded = {
-        let mut inputs_iter = inputs.inner.into_iter();
-        if let Some(input) = inputs_iter.next() {
-            let parsed: parsed::UintDefinition = input.into();
-            let constructor = core::UintConstructor::new(parsed);
-            let (one_uint, common) = constructor.construct_all();
-            let all_uints = inputs_iter
-                .map(|input| {
-                    let parsed: parsed::UintDefinition = input.into();
-                    core::UintConstructor::new(parsed).construct_all()
-                }).fold(one_uint, |uints, (uint, _)| quote!(#uints #uint));
-            quote!(#common #all_uints)
-        } else {
-            quote!()
-        }
+        inputs
+            .inner
+            .into_iter()
+            .map(|input| {
+                let parsed: parsed::UintDefinition = input.into();
+                core::UintConstructor::new(parsed)
+            }).fold((quote!(), Vec::new()), |(uints, mut ucs), uc| {
+                let (uint, public) = uc.construct_all(&ucs[..]);
+                let uints = quote!(#uints #public #uint);
+                ucs.push(uc);
+                (uints, ucs)
+            }).0
     };
     expanded.into()
 }

@@ -102,17 +102,19 @@ pub struct UintConstructor {
     // Cache TokenStreams
     pub ts: UintTokenStreams,
 
-    // Outputs
+    // Outputs (for each)
     uint_common: Cell<Vec<TokenStream>>,
     // Outputs (define methods)
     defuns: Cell<Vec<TokenStream>>,
     // Outputs (implement traits)
     implts: Cell<Vec<TokenStream>>,
 
-    // Outputs
+    // Outputs (once)
     common: Cell<Vec<TokenStream>>,
     // Outputs (errors)
     errors: Cell<Vec<TokenStream>>,
+    // Outputs (traits)
+    preludes: Cell<Vec<TokenStream>>,
 }
 
 impl UintConstructor {
@@ -124,6 +126,7 @@ impl UintConstructor {
         let implts = Cell::new(Vec::new());
         let common = Cell::new(Vec::new());
         let errors = Cell::new(Vec::new());
+        let preludes = Cell::new(Vec::new());
         UintConstructor {
             info,
             ts,
@@ -132,6 +135,7 @@ impl UintConstructor {
             implts,
             common,
             errors,
+            preludes,
         }
     }
 
@@ -163,9 +167,27 @@ impl UintConstructor {
         self.attach_common(part);
     }
 
-    pub fn output(&self) -> (TokenStream, TokenStream) {
+    fn deftraits(&self) {
+        let part = {
+            let preludes = self.preludes.take();
+            if preludes.is_empty() {
+                quote!()
+            } else {
+                let preludes = TokenStream::from_iter(preludes);
+                quote!(
+                    pub mod prelude {
+                        #preludes
+                    }
+                )
+            }
+        };
+        self.attach_common(part);
+    }
+
+    pub fn output(&self, ucs: &[Self]) -> (TokenStream, TokenStream) {
         self.defstruct();
         self.deferror();
+        self.deftraits();
         let name = &self.ts.name;
         let uint_common = TokenStream::from_iter(self.uint_common.take());
         let defuns = TokenStream::from_iter(self.defuns.take());
@@ -179,8 +201,18 @@ impl UintConstructor {
 
             #implts
         );
-        let common = TokenStream::from_iter(self.common.take());
-        (one_uint, common)
+        let public = if ucs.is_empty() {
+            // define common part for all fixed uints
+            TokenStream::from_iter(self.common.take())
+        } else {
+            // define convert methods (From, Into) between two fixed uints
+            ucs.iter().fold(quote!(), |all, ref uc| {
+                let convert_into = self.convert_into(uc);
+                let convert_from = uc.convert_into(self);
+                quote!(#all #convert_into #convert_from)
+            })
+        };
+        (one_uint, public)
     }
 
     pub fn clear(&self) {
@@ -219,5 +251,11 @@ impl UintConstructor {
         let mut o = self.errors.take();
         o.push(part);
         self.errors.set(o);
+    }
+
+    pub fn prelude(&self, part: TokenStream) {
+        let mut o = self.preludes.take();
+        o.push(part);
+        self.preludes.set(o);
     }
 }
