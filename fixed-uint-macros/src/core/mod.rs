@@ -44,6 +44,7 @@ impl UintConstructor {
         self.impl_traits_std_iter();
 
         // extension
+        #[cfg(feature = "rand")]
         self.with_rand();
 
         self.output(ucs)

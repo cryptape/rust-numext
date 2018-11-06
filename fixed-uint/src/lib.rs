@@ -8,6 +8,7 @@
 
 #[macro_use]
 extern crate failure;
+#[cfg(feature = "impl_rand")]
 extern crate rand;
 
 extern crate numext_fixed_uint_macros;

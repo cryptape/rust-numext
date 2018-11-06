@@ -10,4 +10,5 @@
 //!
 //! The dependencies should be in the `Cargo.toml`.
 
+#![allow(dead_code)]
 mod rand;
