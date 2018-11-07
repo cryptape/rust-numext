@@ -11,6 +11,7 @@
 //! [`rand`]: https://crates.io/crates/rand
 
 use core::constructor::UintConstructor;
+use core::utils;
 
 impl UintConstructor {
     pub fn with_rand(&self) {
@@ -18,16 +19,38 @@ impl UintConstructor {
     }
 
     fn with_rand_defun_pub(&self) {
+        let name = &self.ts.name;
+        let bytes_size = &self.ts.bytes_size;
         let inner_type = &self.ts.inner_type;
-        let unit_amount = &self.ts.unit_amount;
+        let loop_unit_amount = &utils::pure_uint_list_to_ts(0..self.info.unit_amount);
+        let part = quote!(
+            impl rand::AsByteSliceMut for #name {
+                #[inline]
+                fn as_byte_slice_mut(&mut self) -> &mut [u8] {
+                    let inner = self.mut_inner();
+                    unsafe {
+                        &mut *(inner as *mut #inner_type as *mut [u8; #bytes_size])
+                    }
+                }
+                #[inline]
+                fn to_le(&mut self) {
+                    let inner = self.mut_inner();
+                    #({
+                        let idx = #loop_unit_amount;
+                        inner[idx] = inner[idx].to_le();
+                    })*
+                }
+            }
+        );
+        self.implt(part);
         let part = quote!(
             /// Create a random fixed uint with a input random core.
             #[inline]
             pub fn random<R: rand::RngCore>(rng: &mut R) -> Self {
                 use rand::Rng;
-                let mut data: #inner_type = [0; #unit_amount];
-                rng.fill(&mut data);
-                Self::new(data)
+                let mut ret = Self::default();
+                rng.fill(&mut ret);
+                ret
             }
             /// Create a random fixed uint.
             #[inline]

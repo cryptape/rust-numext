@@ -114,8 +114,9 @@ impl UintConstructor {
                     None
                 } else {
                     let inner = self.inner();
-                    let unit_idx = index / #unit_bytes_size;
-                    let byte_idx = index % #unit_bytes_size;
+                    let unit_bytes_size = #unit_bytes_size;
+                    let unit_idx = index / unit_bytes_size;
+                    let byte_idx = index % unit_bytes_size;
                     let v = (inner[unit_idx] >> (8 * byte_idx)) & 0xff;
                     Some(v as u8)
                 }
@@ -128,8 +129,9 @@ impl UintConstructor {
                     false
                 } else {
                     let inner = self.mut_inner();
-                    let unit_idx = index / #unit_bytes_size;
-                    let byte_idx = index % #unit_bytes_size;
+                    let unit_bytes_size = #unit_bytes_size;
+                    let unit_idx = index / unit_bytes_size;
+                    let byte_idx = index % unit_bytes_size;
                     inner[unit_idx] &= !((0xff as #unit_suffix) << (8 * byte_idx));
                     inner[unit_idx] |= (byte as #unit_suffix) << (8 * byte_idx);
                     true
