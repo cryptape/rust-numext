@@ -5,7 +5,7 @@ authors = ["Boyu Yang <yangby@cryptape.com>"]
 
 [dependencies]
 numext-fixed-uint = { path = "../fixed-uint", features = ["impl_rand", "impl_serde"] }
-uint = { version = "0.4", features = ["std"] }
+ethereum-types = "0.4.0"
 proptest = "0.8"
 rand = "0.5"
 

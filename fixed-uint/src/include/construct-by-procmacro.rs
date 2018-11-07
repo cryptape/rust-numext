@@ -35,13 +35,5 @@ construct_fixed_uints!(
     },
     U4096 {
         size = 4096,
-    },
-    H256 {
-        size = 256,
-        unit_size = 8,
-    },
-    H512 {
-        size = 512,
-        unit_size = 8,
-    },
+    }
 );
