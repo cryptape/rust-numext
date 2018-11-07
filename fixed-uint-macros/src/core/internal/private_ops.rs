@@ -674,14 +674,23 @@ impl UintConstructor {
                     let src = self.inner();
                     let bit_offset = (rhs % #unit_bits_size) as usize;
                     let unit_offset = (rhs / #unit_bits_size) as usize;
-                    let bit_cover = #unit_bits_size - bit_offset;
                     let mut idx = unit_offset as usize;
-                    ret[idx] = src[0] << bit_offset;
-                    idx += 1;
-                    while idx < #unit_amount {
-                        ret[idx] = (src[idx - unit_offset] << bit_offset)
-                            | (src[idx - unit_offset - 1] >> bit_cover);
+                    if bit_offset == 0 {
+                        ret[idx] = src[0];
                         idx += 1;
+                        while idx < #unit_amount {
+                            ret[idx] = src[idx - unit_offset];
+                            idx += 1;
+                        }
+                    } else {
+                        let bit_cover = #unit_bits_size - bit_offset;
+                        ret[idx] = src[0] << bit_offset;
+                        idx += 1;
+                        while idx < #unit_amount {
+                            ret[idx] = (src[idx - unit_offset] << bit_offset)
+                                | (src[idx - unit_offset - 1] >> bit_cover);
+                            idx += 1;
+                        }
                     }
                     Self::new(ret)
                 } else {
@@ -698,14 +707,22 @@ impl UintConstructor {
                     let src = self.inner();
                     let bit_offset = (rhs % #unit_bits_size) as usize;
                     let unit_offset = (rhs / #unit_bits_size) as usize;
-                    let bit_cover = #unit_bits_size - bit_offset;
                     let mut idx = 0;
-                    while idx < #unit_amount - unit_offset - 1 {
-                        ret[idx] = (src[idx + unit_offset] >> bit_offset)
-                            | (src[idx + unit_offset + 1] << bit_cover);
-                        idx += 1;
+                    if bit_offset == 0 {
+                        while idx < #unit_amount - unit_offset - 1 {
+                            ret[idx] = src[idx + unit_offset];
+                            idx += 1;
+                        }
+                        ret[idx] = src[idx + unit_offset];
+                    } else {
+                        let bit_cover = #unit_bits_size - bit_offset;
+                        while idx < #unit_amount - unit_offset - 1 {
+                            ret[idx] = (src[idx + unit_offset] >> bit_offset)
+                                | (src[idx + unit_offset + 1] << bit_cover);
+                            idx += 1;
+                        }
+                        ret[idx] = src[idx + unit_offset] >> bit_offset;
                     }
-                    ret[idx] = src[idx + unit_offset] >> bit_offset;
                     Self::new(ret)
                 } else {
                     Self::zero()
