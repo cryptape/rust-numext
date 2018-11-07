@@ -33,7 +33,7 @@ impl UintConstructor {
                     let data = self.inner();
                     let alternate = f.alternate();
                     write!(f, stringify!(#name))?;
-                    write!(f, " [")?;
+                    write!(f, " ( [")?;
                     if alternate {
                         writeln!(f)?;
                         #(
@@ -45,7 +45,7 @@ impl UintConstructor {
                         #(
                             write!(f, ", {:#x}", data[#loop_unit_amount_skip_first])?;
                         )*
-                        write!(f, " ]")
+                        write!(f, " ] )")
                     }
                 }
             }

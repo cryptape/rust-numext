@@ -143,7 +143,12 @@ impl UintConstructor {
         let name = &self.ts.name;
         let inner_type = &self.ts.inner_type;
         let part = quote!(
-            pub struct #name (#inner_type);
+            /// Little-endian fixed integer type.
+            ///
+            /// # Notice:
+            ///
+            /// *Avoid to use the inner type directly.*
+            pub struct #name (pub #inner_type);
         );
         self.attach_uint(part);
     }
