@@ -55,9 +55,10 @@ impl UintConstructor {
         let inner_type = &self.ts.inner_type;
         let bytes_size = &self.ts.bytes_size;
         let unit_amount = &self.ts.unit_amount;
+        let unit_bytes_size = &self.ts.unit_bytes_size;
         let part = quote!(
             #[inline]
-            fn _from_slice(input: &[u8]) -> Self {
+            fn _from_le_slice_on_le_platform(input: &[u8]) -> Self {
                 let mut ret: #inner_type = [0; #unit_amount];
                 unsafe {
                     let slice = &mut *(&mut ret as *mut #inner_type as *mut [u8; #bytes_size]);
@@ -66,7 +67,7 @@ impl UintConstructor {
                 Self::new(ret)
             }
             #[inline]
-            fn _from_slice_opposite_endian(input: &[u8]) -> Self {
+            fn _from_be_slice_on_le_platform(input: &[u8]) -> Self {
                 let mut ret: #inner_type = [0; #unit_amount];
                 unsafe {
                     let slice = &mut *(&mut ret as *mut #inner_type as *mut [u8; #bytes_size]);
@@ -80,15 +81,49 @@ impl UintConstructor {
                 }
                 Self::new(ret)
             }
+            // TODO more tests
+            #[inline]
+            fn _from_le_slice_on_be_platform(input: &[u8]) -> Self {
+                let mut ret: #inner_type = [0; #unit_amount];
+                unsafe {
+                    let slice = &mut *(&mut ret as *mut #inner_type as *mut [u8; #bytes_size]);
+                    slice[0..input.len()].copy_from_slice(input);
+                }
+                let input_units = input.len() / #unit_bytes_size + 1;
+                for x in ret.iter_mut().take(input_units) {
+                    *x = x.swap_bytes();
+                }
+                Self::new(ret)
+            }
+            // TODO more tests
+            #[inline]
+            fn _from_be_slice_on_be_platform(input: &[u8]) -> Self {
+                let mut ret: #inner_type = [0; #unit_amount];
+                unsafe {
+                    let slice = &mut *(&mut ret as *mut #inner_type as *mut [u8; #bytes_size]);
+                    let mut slice_ptr = slice.as_mut_ptr();
+                    let mut input_ptr = input.as_ptr().offset(input.len() as isize - 1);
+                    for _ in 0..input.len() {
+                        *slice_ptr = *input_ptr;
+                        slice_ptr = slice_ptr.offset(1);
+                        input_ptr = input_ptr.offset(-1);
+                    }
+                }
+                let input_units = input.len() / #unit_bytes_size + 1;
+                for x in ret.iter_mut().take(input_units) {
+                    *x = x.swap_bytes();
+                }
+                Self::new(ret)
+            }
             /// Convert from little-endian slice.
             #[inline]
             pub fn from_little_endian(input: &[u8]) -> Result<Self, #error_name> {
                 if input.len() > #bytes_size {
                     Err(FromSliceError::InvalidLength(input.len()))?
                 } else if cfg!(target_endian = "little") {
-                    Ok(Self::_from_slice(input))
+                    Ok(Self::_from_le_slice_on_le_platform(input))
                 } else {
-                    Ok(Self::_from_slice_opposite_endian(input))
+                    Ok(Self::_from_le_slice_on_be_platform(input))
                 }
             }
             /// Convert from big-endian slice.
@@ -96,10 +131,10 @@ impl UintConstructor {
             pub fn from_big_endian(input: &[u8]) -> Result<Self, #error_name> {
                 if input.len() > #bytes_size {
                     Err(FromSliceError::InvalidLength(input.len()))?
-                } else if cfg!(target_endian = "big") {
-                    Ok(Self::_from_slice(input))
+                } else if cfg!(target_endian = "little") {
+                    Ok(Self::_from_be_slice_on_le_platform(input))
                 } else {
-                    Ok(Self::_from_slice_opposite_endian(input))
+                    Ok(Self::_from_be_slice_on_be_platform(input))
                 }
             }
         );
@@ -112,9 +147,35 @@ impl UintConstructor {
         let inner_type = &self.ts.inner_type;
         let bytes_size = &self.ts.bytes_size;
         let loop_bytes_size = &utils::pure_uint_list_to_ts(0..self.info.bytes_size);
+        let loop_unit_amount = &utils::pure_uint_list_to_ts(0..self.info.unit_amount);
+        let loop_unit_amount_rev = &utils::pure_uint_list_to_ts((0..self.info.unit_amount).rev());
+        let loop_unit_bytes_size = &utils::pure_uint_list_to_ts(0..self.info.unit_bytes_size);
+        let copys_unit_bytes_size = &vec![&self.ts.unit_bytes_size; self.info.unit_amount as usize];
+        let copys_part_for_into_le_slice_on_be_platform = {
+            let part = quote!(
+                #({
+                    let _ = #loop_unit_bytes_size;
+                    slice_ptr = slice_ptr.offset(-1);
+                    *output_ptr = *slice_ptr;
+                    output_ptr = output_ptr.offset(1);
+                })*
+            );
+            &vec![part; self.info.unit_amount as usize]
+        };
+        let copys_part_for_into_be_slice_on_be_platform = {
+            let part = quote!(
+                #({
+                    let _ = #loop_unit_bytes_size;
+                    *output_ptr = *slice_ptr;
+                    slice_ptr = slice_ptr.offset(1);
+                    output_ptr = output_ptr.offset(1);
+                })*
+            );
+            &vec![part; self.info.unit_amount as usize]
+        };
         let part = quote!(
             #[inline]
-            fn _into_slice(&self, output: &mut [u8]) {
+            fn _into_le_slice_on_le_platform(&self, output: &mut [u8]) {
                 let inner = self.inner();
                 unsafe {
                     let slice = &*(inner as *const #inner_type as *const  [u8; #bytes_size]);
@@ -122,7 +183,7 @@ impl UintConstructor {
                 }
             }
             #[inline]
-            fn _into_slice_opposite_endian(&self, output: &mut [u8]) {
+            fn _into_be_slice_on_le_platform(&self, output: &mut [u8]) {
                 let inner = self.inner();
                 unsafe {
                     let slice = &*(inner as *const #inner_type as *const  [u8; #bytes_size]);
@@ -136,16 +197,46 @@ impl UintConstructor {
                     })*
                 }
             }
+            // TODO more tests
+            #[inline]
+            fn _into_le_slice_on_be_platform(&self, output: &mut [u8]) {
+                let inner = self.inner();
+                unsafe {
+                    let slice = &*(inner as *const #inner_type as *const  [u8; #bytes_size]);
+                    let slice_ptr_tmp = slice.as_ptr();
+                    let mut output_ptr = output.as_mut_ptr();
+                    #({
+                        let idx = (#loop_unit_amount+1) * #copys_unit_bytes_size;
+                        let mut slice_ptr = slice_ptr_tmp.offset(idx);
+                        #copys_part_for_into_le_slice_on_be_platform
+                    })*
+                }
+            }
+            // TODO more tests
+            #[inline]
+            fn _into_be_slice_on_be_platform(&self, output: &mut [u8]) {
+                let inner = self.inner();
+                unsafe {
+                    let slice = &*(inner as *const #inner_type as *const  [u8; #bytes_size]);
+                    let slice_ptr_tmp = slice.as_ptr();
+                    let mut output_ptr = output.as_mut_ptr();
+                    #({
+                        let idx = #loop_unit_amount_rev * #copys_unit_bytes_size;
+                        let mut slice_ptr = slice_ptr_tmp.offset(idx);
+                        #copys_part_for_into_be_slice_on_be_platform
+                    })*
+                }
+            }
             /// Convert into little-endian slice.
             #[inline]
             pub fn into_little_endian(&self, output: &mut [u8]) -> Result<(), #error_name> {
                 if output.len() != #bytes_size {
                     Err(IntoSliceError::InvalidLength(output.len()))?
                 } else if cfg!(target_endian = "little") {
-                    self._into_slice(output);
+                    self._into_le_slice_on_le_platform(output);
                     Ok(())
                 } else {
-                    self._into_slice_opposite_endian(output);
+                    self._into_le_slice_on_be_platform(output);
                     Ok(())
                 }
             }
@@ -154,11 +245,11 @@ impl UintConstructor {
             pub fn into_big_endian(&self, output: &mut [u8]) -> Result<(), #error_name> {
                 if output.len() != #bytes_size {
                     Err(IntoSliceError::InvalidLength(output.len()))?
-                } else if cfg!(target_endian = "big") {
-                    self._into_slice(output);
+                } else if cfg!(target_endian = "little") {
+                    self._into_be_slice_on_le_platform(output);
                     Ok(())
                 } else {
-                    self._into_slice_opposite_endian(output);
+                    self._into_be_slice_on_be_platform(output);
                     Ok(())
                 }
             }
