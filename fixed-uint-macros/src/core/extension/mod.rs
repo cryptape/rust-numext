@@ -10,4 +10,7 @@
 //!
 //! The dependencies should be in the `Cargo.toml`.
 
+#![allow(dead_code)]
+mod heapsize;
 mod rand;
+mod serde;

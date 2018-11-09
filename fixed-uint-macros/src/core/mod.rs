@@ -44,7 +44,12 @@ impl UintConstructor {
         self.impl_traits_std_iter();
 
         // extension
+        #[cfg(feature = "rand")]
         self.with_rand();
+        #[cfg(feature = "heapsize")]
+        self.with_heapsize();
+        #[cfg(feature = "serde")]
+        self.with_serde();
 
         self.output(ucs)
     }

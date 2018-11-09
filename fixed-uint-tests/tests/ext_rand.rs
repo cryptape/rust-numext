@@ -7,6 +7,7 @@
 // except according to those terms.
 
 extern crate numext_fixed_uint;
+extern crate serde_json;
 
 macro_rules! check_rand {
     ($name:ident, $uint:ident) => {

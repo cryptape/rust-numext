@@ -6,8 +6,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+extern crate ethereum_types as uint;
 extern crate numext_fixed_uint as nfuint;
-extern crate uint;
 
 #[test]
 fn sum() {
