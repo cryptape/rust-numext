@@ -8,6 +8,7 @@
 
 use proc_macro2::{Span, TokenStream};
 use quote::ToTokens;
+use std::iter::FromIterator;
 use syn;
 
 /// Get a nonnegative integer literal without type.
@@ -34,4 +35,9 @@ where
     T: Iterator<Item = u64>,
 {
     vals.map(pure_uint_to_ts).collect()
+}
+
+/// Repeat a token stream.
+pub fn repeat_ts(ts: TokenStream, times: usize) -> TokenStream {
+    TokenStream::from_iter(vec![ts; times])
 }

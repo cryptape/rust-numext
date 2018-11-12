@@ -60,14 +60,23 @@ impl UintConstructor {
         format_char: char,
         exp: u64,
     ) {
+        if self.info.is_hash {
+            self.impl_traits_std_fmt_base_2pow2n_for_hash(
+                trait_name,
+                prefix_char,
+                format_char,
+                exp,
+            );
+            return;
+        }
         let name = &self.ts.name;
-        let unit_bits_size = &self.ts.unit_bits_size;
         let unit_amount = &self.ts.unit_amount;
         let trait_name = utils::ident_to_ts(trait_name);
         let prefix = format!("0{}", prefix_char);
         let write_tpl = format!("{{:{}}}", format_char);
         let write_tpl_padded = format!("{{:0width${}}}", format_char);
-        let exp = utils::pure_uint_to_ts(exp);
+        let width = self.info.unit_bits_size / exp;
+        let width = utils::pure_uint_to_ts(width);
         let part = quote!(
             impl ::std::fmt::#trait_name for #name {
                 fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
@@ -75,7 +84,6 @@ impl UintConstructor {
                     if f.alternate() {
                         write!(f, #prefix)?;
                     }
-                    let width = #unit_bits_size / #exp;
                     let mut idx = #unit_amount - 1;
                     while idx > 0 {
                         if data[idx] == 0 {
@@ -90,11 +98,50 @@ impl UintConstructor {
                         write!(f, #write_tpl, data[idx])?;
                         idx -= 1;
                         while idx > 0 {
-                            write!(f, #write_tpl_padded, data[idx], width=width)?;
+                            write!(f, #write_tpl_padded, data[idx], width=#width)?;
                             idx -= 1;
                         }
-                        write!(f, #write_tpl_padded, data[0], width=width)
+                        write!(f, #write_tpl_padded, data[0], width=#width)
                     }
+                }
+            }
+        );
+        self.implt(part);
+    }
+
+    fn impl_traits_std_fmt_base_2pow2n_for_hash(
+        &self,
+        trait_name: &str,
+        prefix_char: char,
+        format_char: char,
+        exp: u64,
+    ) {
+        let name = &self.ts.name;
+        let trait_name = utils::ident_to_ts(trait_name);
+        let prefix = format!("0{}", prefix_char);
+        let write_tpl_padded = format!("{{:0width${}}}", format_char);
+        let width = self.info.unit_bits_size / exp;
+        let width = &utils::pure_uint_to_ts(width);
+        let loop_unit_amount_skip_first_rev =
+            &utils::pure_uint_list_to_ts((1..self.info.unit_amount).rev());
+        let loop_write_tpl_padded =
+            &vec![write_tpl_padded.as_str(); self.info.unit_amount as usize - 1];
+        let loop_width = &vec![width; self.info.unit_amount as usize - 1];
+        let part = quote!(
+            impl ::std::fmt::#trait_name for #name {
+                fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+                    let data = self.inner();
+                    if f.alternate() {
+                        write!(f, #prefix)?;
+                    }
+                    #(
+                        write!(
+                            f,
+                            #loop_write_tpl_padded,
+                            data[#loop_unit_amount_skip_first_rev],
+                            width=#loop_width)?;
+                    )*
+                    write!(f, #write_tpl_padded, data[0], width=#width)
                 }
             }
         );
@@ -133,10 +180,16 @@ impl UintConstructor {
     }
 
     pub fn impl_traits_std_fmt_binary(&self) {
+        if self.info.is_hash {
+            return;
+        }
         self.impl_traits_std_fmt_base_2pow2n("Binary", 'b', 'b', 1);
     }
 
     pub fn impl_traits_std_fmt_octal(&self) {
+        if self.info.is_hash {
+            return;
+        }
         self.impl_traits_std_fmt_base_lt10("Octal", "0o", 8);
     }
 
@@ -149,6 +202,9 @@ impl UintConstructor {
     }
 
     pub fn impl_traits_std_fmt_display(&self) {
+        if self.info.is_hash {
+            return;
+        }
         self.impl_traits_std_fmt_base_lt10("Display", "", 10);
     }
 }
