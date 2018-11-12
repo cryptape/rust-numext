@@ -1,5 +1,5 @@
 [package]
-name = "numext-fixed-uint-macros"
+name = "numext-constructor"
 version = "0.1.0"
 authors = ["Boyu Yang <yangby@cryptape.com>"]
 
@@ -10,7 +10,6 @@ proc-macro2 = "0.4"
 
 [lib]
 proc-macro = true
-
 
 [features]
 default = []

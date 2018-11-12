@@ -10,7 +10,7 @@
 //!
 //! [`::std::iter`]: https://doc.rust-lang.org/std/iter/index.html#traits
 
-use core::constructor::UintConstructor;
+use super::super::constructor::UintConstructor;
 
 impl UintConstructor {
     pub fn impl_traits_std_iter(&self) {

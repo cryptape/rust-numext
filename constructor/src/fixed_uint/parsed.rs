@@ -10,7 +10,7 @@
 
 use syn;
 
-use funclike;
+use super::funclike;
 
 pub struct UintDefinition {
     pub name: String,

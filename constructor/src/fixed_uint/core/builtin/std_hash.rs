@@ -10,7 +10,7 @@
 //!
 //! [`::std::hash`]: https://doc.rust-lang.org/std/hash/index.html#traits
 
-use core::constructor::UintConstructor;
+use super::super::constructor::UintConstructor;
 
 impl UintConstructor {
     pub fn impl_traits_std_hash(&self) {

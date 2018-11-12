@@ -8,8 +8,8 @@
 
 //! Define private methods about operators.
 
-use core::constructor::UintConstructor;
-use core::utils;
+use super::super::constructor::UintConstructor;
+use super::super::utils;
 
 impl UintConstructor {
     pub fn defun_priv_ops(&self) {

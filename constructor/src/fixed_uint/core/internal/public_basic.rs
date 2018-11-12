@@ -8,8 +8,8 @@
 
 //! Define public methods about bits and bytes.
 
-use core::constructor::UintConstructor;
-use core::utils;
+use super::super::constructor::UintConstructor;
+use super::super::utils;
 
 impl UintConstructor {
     pub fn defun_pub_basic(&self) {

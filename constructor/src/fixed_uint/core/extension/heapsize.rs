@@ -6,23 +6,23 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-//! Implement built-in traits in [`::std::clone`].
-//!
-//! [`::std::clone`]: https://doc.rust-lang.org/std/clone/index.html#traits
+//! Use [`heapsize`] for measuring heap allocations in Rust programs.
 
-use core::constructor::UintConstructor;
+//! [`heapsize`]: https://crates.io/crates/heapsize
+
+use super::super::constructor::UintConstructor;
 
 impl UintConstructor {
-    pub fn impl_traits_std_clone(&self) {
+    pub fn with_heapsize(&self) {
+        self.with_heapsize_defun_pub();
+    }
+
+    fn with_heapsize_defun_pub(&self) {
         let name = &self.ts.name;
         let part = quote!(
-            impl ::std::clone::Clone for #name {
-                #[inline]
-                fn clone(&self) -> Self {
-                    unsafe {
-                        let ret: Self = ::std::mem::transmute_copy(self);
-                        ret
-                    }
+            impl heapsize::HeapSizeOf for #name {
+                fn heap_size_of_children(&self) -> usize {
+                    0
                 }
             }
         );

@@ -6,23 +6,20 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-//! Use [`heapsize`] for measuring heap allocations in Rust programs.
+//! Implement built-in traits in [`::std::default`].
+//!
+//! [`::std::default`]: https://doc.rust-lang.org/std/default/index.html#traits
 
-//! [`heapsize`]: https://crates.io/crates/heapsize
-
-use core::constructor::UintConstructor;
+use super::super::constructor::UintConstructor;
 
 impl UintConstructor {
-    pub fn with_heapsize(&self) {
-        self.with_heapsize_defun_pub();
-    }
-
-    fn with_heapsize_defun_pub(&self) {
+    pub fn impl_traits_std_default(&self) {
         let name = &self.ts.name;
         let part = quote!(
-            impl heapsize::HeapSizeOf for #name {
-                fn heap_size_of_children(&self) -> usize {
-                    0
+            impl ::std::default::Default for #name {
+                #[inline]
+                fn default()  -> Self {
+                    Self::zero()
                 }
             }
         );

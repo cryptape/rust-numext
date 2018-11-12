@@ -17,9 +17,9 @@ extern crate rand;
 #[cfg(feature = "impl_serde")]
 extern crate serde;
 
-extern crate numext_fixed_uint_macros;
+extern crate numext_constructor;
 
-numext_fixed_uint_macros::construct_fixed_uints!(
+numext_constructor::construct_fixed_uints!(
     U128 {
         size = 128,
     },

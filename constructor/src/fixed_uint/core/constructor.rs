@@ -12,7 +12,7 @@ use proc_macro2::TokenStream;
 use std::cell::Cell;
 use std::iter::FromIterator;
 
-use parsed;
+use super::super::parsed;
 
 use super::utils;
 

@@ -6,20 +6,23 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-//! Implement built-in traits in [`::std::default`].
+//! Implement built-in traits in [`::std::clone`].
 //!
-//! [`::std::default`]: https://doc.rust-lang.org/std/default/index.html#traits
+//! [`::std::clone`]: https://doc.rust-lang.org/std/clone/index.html#traits
 
-use core::constructor::UintConstructor;
+use super::super::constructor::UintConstructor;
 
 impl UintConstructor {
-    pub fn impl_traits_std_default(&self) {
+    pub fn impl_traits_std_clone(&self) {
         let name = &self.ts.name;
         let part = quote!(
-            impl ::std::default::Default for #name {
+            impl ::std::clone::Clone for #name {
                 #[inline]
-                fn default()  -> Self {
-                    Self::zero()
+                fn clone(&self) -> Self {
+                    unsafe {
+                        let ret: Self = ::std::mem::transmute_copy(self);
+                        ret
+                    }
                 }
             }
         );

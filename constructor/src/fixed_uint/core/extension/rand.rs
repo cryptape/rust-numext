@@ -10,8 +10,8 @@
 //!
 //! [`rand`]: https://crates.io/crates/rand
 
-use core::constructor::UintConstructor;
-use core::utils;
+use super::super::constructor::UintConstructor;
+use super::super::utils;
 
 impl UintConstructor {
     pub fn with_rand(&self) {

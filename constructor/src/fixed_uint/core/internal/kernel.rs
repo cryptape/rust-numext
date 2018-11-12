@@ -10,8 +10,8 @@
 
 use proc_macro2::TokenStream;
 
-use core::constructor::UintConstructor;
-use core::utils;
+use super::super::constructor::UintConstructor;
+use super::super::utils;
 
 impl UintConstructor {
     pub fn define_kernel(&self) {

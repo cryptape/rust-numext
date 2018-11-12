@@ -10,8 +10,8 @@
 //!
 //! [`::std::cmp`]: https://doc.rust-lang.org/std/cmp/index.html#traits
 
-use core::constructor::UintConstructor;
-use core::utils;
+use super::super::constructor::UintConstructor;
+use super::super::utils;
 
 impl UintConstructor {
     pub fn impl_traits_std_cmp(&self) {

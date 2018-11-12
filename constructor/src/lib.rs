@@ -16,22 +16,18 @@ extern crate syn;
 #[macro_use]
 extern crate quote;
 
-mod core;
-
-mod funclike;
-
-mod parsed;
+mod fixed_uint;
 
 #[proc_macro]
 pub fn construct_fixed_uints(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    let inputs = parse_macro_input!(input as funclike::UintDefinitions);
+    let inputs = parse_macro_input!(input as fixed_uint::funclike::UintDefinitions);
     let expanded = {
         inputs
             .inner
             .into_iter()
             .map(|input| {
-                let parsed: parsed::UintDefinition = input.into();
-                core::UintConstructor::new(parsed)
+                let parsed: fixed_uint::parsed::UintDefinition = input.into();
+                fixed_uint::core::UintConstructor::new(parsed)
             }).fold((quote!(), Vec::new()), |(uints, mut ucs), uc| {
                 let (uint, public) = uc.construct_all(&ucs[..]);
                 let uints = quote!(#uints #public #uint);
