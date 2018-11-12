@@ -8,8 +8,39 @@
 
 use proc_macro2::{Span, TokenStream};
 use quote::ToTokens;
-use std::iter::FromIterator;
 use syn;
+
+macro_rules! parse_attr_with_check {
+    (Int, $key:ident, $input:ident, $output:ident) => {
+        $output.$key = $input.value();
+    };
+    (Bool, $key:ident, $input:ident, $output:ident) => {
+        $output.$key = $input.value;
+    };
+    ($lit_type:ident, $key:ident, $input:expr, $output:ident, $check:ident) => {{
+        if $check.contains(stringify!($key)) {
+            panic!(
+                "Error because attribute `{}` has been set more than once",
+                stringify!($key)
+            );
+        }
+        $check.insert(stringify!($key));
+        let parse_is_ok = if let syn::Lit::$lit_type(ref value) = $input {
+            parse_attr_with_check!($lit_type, $key, value, $output);
+            true
+        } else {
+            false
+        };
+        if !parse_is_ok {
+            let value = $input;
+            panic!(
+                "Failed to parse attribute `{}`(={})",
+                stringify!($key),
+                quote!(#value)
+            );
+        }
+    }};
+}
 
 /// Get a nonnegative integer literal without type.
 pub fn pure_uint_to_ts(val: u64) -> TokenStream {
@@ -35,9 +66,4 @@ where
     T: Iterator<Item = u64>,
 {
     vals.map(pure_uint_to_ts).collect()
-}
-
-/// Repeat a token stream.
-pub fn repeat_ts(ts: TokenStream, times: usize) -> TokenStream {
-    TokenStream::from_iter(vec![ts; times])
 }

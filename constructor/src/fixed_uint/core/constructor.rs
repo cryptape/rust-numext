@@ -14,7 +14,7 @@ use std::iter::FromIterator;
 
 use super::super::parsed;
 
-use super::utils;
+use utils;
 
 pub struct UintInformation {
     pub name: String,
@@ -23,7 +23,6 @@ pub struct UintInformation {
     pub unit_bits_size: u64,
     pub unit_bytes_size: u64,
     pub unit_amount: u64,
-    pub is_hash: bool,
 }
 
 impl ::std::convert::From<parsed::UintDefinition> for UintInformation {
@@ -39,7 +38,6 @@ impl ::std::convert::From<parsed::UintDefinition> for UintInformation {
         let unit_bytes_size = attrs.unit_size / 8;
         // how many units in an unsigned integer
         let unit_amount = attrs.size / attrs.unit_size;
-        let is_hash = attrs.is_hash;
         Self {
             name,
             bits_size,
@@ -47,7 +45,6 @@ impl ::std::convert::From<parsed::UintDefinition> for UintInformation {
             unit_bits_size,
             unit_bytes_size,
             unit_amount,
-            is_hash,
         }
     }
 }

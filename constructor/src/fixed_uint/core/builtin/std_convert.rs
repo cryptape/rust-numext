@@ -13,7 +13,7 @@
 //! [`::std::convert`]: https://doc.rust-lang.org/std/convert/index.html#traits
 
 use super::super::constructor::UintConstructor;
-use super::super::utils;
+use utils;
 
 impl UintConstructor {
     pub fn impl_traits_std_convert(&self) {

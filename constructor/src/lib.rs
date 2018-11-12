@@ -16,11 +16,15 @@ extern crate syn;
 #[macro_use]
 extern crate quote;
 
+#[macro_use]
+mod utils;
+
+mod definition;
 mod fixed_uint;
 
 #[proc_macro]
 pub fn construct_fixed_uints(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    let inputs = parse_macro_input!(input as fixed_uint::funclike::UintDefinitions);
+    let inputs = parse_macro_input!(input as definition::Definitions);
     let expanded = {
         inputs
             .inner

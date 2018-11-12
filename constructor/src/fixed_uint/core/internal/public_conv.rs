@@ -9,7 +9,7 @@
 //! Define public methods about convert.
 
 use super::super::constructor::UintConstructor;
-use super::super::utils;
+use utils;
 
 impl UintConstructor {
     pub fn defun_pub_conv(&self) {
@@ -287,9 +287,6 @@ impl UintConstructor {
     }
 
     fn defun_pub_conv_from_bin_str(&self) {
-        if self.info.is_hash {
-            return;
-        }
         let error_name = &self.ts.error_name;
         let bits_size = &self.ts.bits_size;
         let unit_bits_size = &self.ts.unit_bits_size;
@@ -338,9 +335,6 @@ impl UintConstructor {
     }
 
     fn defun_pub_conv_from_oct_str(&self) {
-        if self.info.is_hash {
-            return;
-        }
         let name = &self.ts.name;
         let error_name = &self.ts.error_name;
         let char_amount_max = utils::pure_uint_to_ts(if self.info.bits_size % 3 == 0 {
@@ -381,10 +375,6 @@ impl UintConstructor {
     }
 
     fn defun_pub_conv_from_hex_str(&self) {
-        if self.info.is_hash {
-            self.defun_pub_conv_from_hex_str_for_hash();
-            return;
-        }
         let error_name = &self.ts.error_name;
         let unit_suffix = &self.ts.unit_suffix;
         let char_amount_max = utils::pure_uint_to_ts(self.info.bytes_size * 2);
@@ -452,56 +442,7 @@ impl UintConstructor {
         self.defun(part);
     }
 
-    fn defun_pub_conv_from_hex_str_for_hash(&self) {
-        let error_name = &self.ts.error_name;
-        let unit_suffix = &self.ts.unit_suffix;
-        let char_amount_max = utils::pure_uint_to_ts(self.info.bytes_size * 2);
-        let unit_char_amount_max = self.info.unit_bytes_size * 2;
-        let part_one_unit = quote!({
-            k *= 16;
-            let chr = input_bytes.next().unwrap_or_else(|| unreachable!());
-            let v = match chr {
-                b'a'...b'f' => chr - b'a' + 10,
-                b'A'...b'F' => chr - b'A' + 10,
-                b'0'...b'9' => chr - b'0',
-                _ => Err(FromStrError::InvalidCharacter { chr, idx })?,
-            };
-            k += v;
-            idx += 1;
-        });
-        let part_all_units = &utils::repeat_ts(part_one_unit, unit_char_amount_max as usize);
-        let loop_part_all_units = &vec![part_all_units; self.info.unit_amount as usize];
-        let loop_unit_amount = &utils::pure_uint_list_to_ts((0..self.info.unit_amount).rev());
-        let loop_unit_suffix = &vec![unit_suffix; self.info.unit_amount as usize];
-        let part = quote!(
-            /// Convert from a hexadecimal string.
-            #[inline]
-            pub fn from_hex_str(input: &str) -> Result<Self, #error_name> {
-                let len = input.len();
-                if len != #char_amount_max {
-                    Err(FromStrError::InvalidLength(len))?;
-                }
-                let mut ret = Self::zero();
-                {
-                    let inner = ret.mut_inner();
-                    let mut input_bytes = input.bytes();
-                    let mut idx = 0;
-                    #({
-                        let mut k: #loop_unit_suffix = 0;
-                        #loop_part_all_units
-                        inner[#loop_unit_amount] = k;
-                    })*
-                }
-                Ok(ret)
-            }
-        );
-        self.defun(part);
-    }
-
     fn defun_pub_conv_from_dec_str(&self) {
-        if self.info.is_hash {
-            return;
-        }
         let name = &self.ts.name;
         let error_name = &self.ts.error_name;
         let char_amount_max = utils::pure_uint_to_ts(if self.info.bits_size % 10 == 0 {

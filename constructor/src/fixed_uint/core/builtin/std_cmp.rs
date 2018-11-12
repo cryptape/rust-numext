@@ -11,7 +11,7 @@
 //! [`::std::cmp`]: https://doc.rust-lang.org/std/cmp/index.html#traits
 
 use super::super::constructor::UintConstructor;
-use super::super::utils;
+use utils;
 
 impl UintConstructor {
     pub fn impl_traits_std_cmp(&self) {

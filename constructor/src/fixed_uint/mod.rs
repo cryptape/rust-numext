@@ -7,5 +7,4 @@
 // except according to those terms.
 
 pub mod core;
-pub mod funclike;
 pub mod parsed;

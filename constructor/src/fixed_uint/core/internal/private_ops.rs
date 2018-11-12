@@ -9,7 +9,7 @@
 //! Define private methods about operators.
 
 use super::super::constructor::UintConstructor;
-use super::super::utils;
+use utils;
 
 impl UintConstructor {
     pub fn defun_priv_ops(&self) {

@@ -11,7 +11,7 @@
 //! [`rand`]: https://crates.io/crates/rand
 
 use super::super::constructor::UintConstructor;
-use super::super::utils;
+use utils;
 
 impl UintConstructor {
     pub fn with_rand(&self) {

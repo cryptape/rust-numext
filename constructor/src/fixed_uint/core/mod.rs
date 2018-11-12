@@ -8,8 +8,6 @@
 
 use proc_macro2::TokenStream;
 
-pub mod utils;
-
 mod constructor;
 pub use self::constructor::UintConstructor;
 

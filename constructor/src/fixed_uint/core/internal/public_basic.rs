@@ -9,7 +9,7 @@
 //! Define public methods about bits and bytes.
 
 use super::super::constructor::UintConstructor;
-use super::super::utils;
+use utils;
 
 impl UintConstructor {
     pub fn defun_pub_basic(&self) {

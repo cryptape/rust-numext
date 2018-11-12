@@ -10,15 +10,15 @@
 
 use syn;
 
-use super::funclike;
+use definition;
 
 pub struct UintDefinition {
     pub name: String,
     pub attrs: UintAttributes,
 }
 
-impl ::std::convert::From<funclike::UintDefinition> for UintDefinition {
-    fn from(input: funclike::UintDefinition) -> Self {
+impl ::std::convert::From<definition::Definition> for UintDefinition {
+    fn from(input: definition::Definition) -> Self {
         let name = input.name.to_string();
         let attrs = input.attrs.into();
         Self { name, attrs }
@@ -28,7 +28,6 @@ impl ::std::convert::From<funclike::UintDefinition> for UintDefinition {
 pub struct UintAttributes {
     pub size: u64,
     pub unit_size: u64,
-    pub is_hash: bool,
 }
 
 impl UintAttributes {
@@ -50,9 +49,7 @@ impl UintAttributes {
         }
 
         if !check.contains("unit_size") {
-            self.unit_size = if self.is_hash {
-                8
-            } else if self.size % 64 == 0 {
+            self.unit_size = if self.size % 64 == 0 {
                 64
             } else if self.size % 32 == 0 {
                 32
@@ -66,8 +63,6 @@ impl UintAttributes {
                     self.size
                 );
             };
-        } else if self.is_hash {
-            panic!("The `unit_size` for hashes is fixed (= 8), do not set it manually.");
         } else {
             // Do NOT use 128 as unit size, since there is no way to get overflow part of multiply.
             match self.unit_size {
@@ -96,52 +91,18 @@ impl ::std::default::Default for UintAttributes {
         Self {
             size: 0,
             unit_size: 64,
-            is_hash: false,
         }
     }
 }
 
-macro_rules! parse_attr_with_check {
-    (Int, $key:ident, $input:ident, $output:ident) => {
-        $output.$key = $input.value();
-    };
-    (Bool, $key:ident, $input:ident, $output:ident) => {
-        $output.$key = $input.value;
-    };
-    ($lit_type:ident, $key:ident, $input:expr, $output:ident, $check:ident) => {{
-        if $check.contains(stringify!($key)) {
-            panic!(
-                "Error because attribute `{}` has been set more than once",
-                stringify!($key)
-            );
-        }
-        $check.insert(stringify!($key));
-        let parse_is_ok = if let syn::Lit::$lit_type(ref value) = $input {
-            parse_attr_with_check!($lit_type, $key, value, $output);
-            true
-        } else {
-            false
-        };
-        if !parse_is_ok {
-            let value = $input;
-            panic!(
-                "Failed to parse attribute `{}`(={})",
-                stringify!($key),
-                quote!(#value)
-            );
-        }
-    }};
-}
-
-impl ::std::convert::From<funclike::UintAttributes> for UintAttributes {
-    fn from(input: funclike::UintAttributes) -> Self {
+impl ::std::convert::From<definition::Attributes> for UintAttributes {
+    fn from(input: definition::Attributes) -> Self {
         let mut ret = Self::default();
         let mut check = ::std::collections::HashSet::new();
         for attr in input.into_iter() {
             match attr.key.to_string().as_ref() {
                 "size" => parse_attr_with_check!(Int, size, attr.value, ret, check),
                 "unit_size" => parse_attr_with_check!(Int, unit_size, attr.value, ret, check),
-                "is_hash" => parse_attr_with_check!(Bool, is_hash, attr.value, ret, check),
                 key => panic!("Unknown attribute `{}`", key),
             }
         }

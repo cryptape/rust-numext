@@ -13,7 +13,7 @@
 //! [`::std::ops`]: https://doc.rust-lang.org/std/ops/index.html#traits
 
 use super::super::constructor::UintConstructor;
-use super::super::utils;
+use utils;
 
 impl UintConstructor {
     pub fn impl_traits_std_ops(&self) {

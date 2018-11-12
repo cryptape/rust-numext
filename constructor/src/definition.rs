@@ -6,16 +6,16 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-//! Parse the input for the macro `construct_uints`.
+//! Parse the input for the macros.
 
 use syn;
 
-pub struct UintDefinitions {
-    pub inner: syn::punctuated::Punctuated<UintDefinition, Token![,]>,
+pub struct Definitions {
+    pub inner: syn::punctuated::Punctuated<Definition, Token![,]>,
 }
-pub type UintAttributes = syn::punctuated::Punctuated<UintAttribute, Token![,]>;
+pub type Attributes = syn::punctuated::Punctuated<Attribute, Token![,]>;
 
-impl syn::parse::Parse for UintDefinitions {
+impl syn::parse::Parse for Definitions {
     fn parse(input: syn::parse::ParseStream) -> syn::parse::Result<Self> {
         Ok(Self {
             inner: input.parse_terminated(syn::parse::Parse::parse)?,
@@ -23,12 +23,12 @@ impl syn::parse::Parse for UintDefinitions {
     }
 }
 
-pub struct UintDefinition {
+pub struct Definition {
     pub name: syn::Ident,
-    pub attrs: UintAttributes,
+    pub attrs: Attributes,
 }
 
-impl syn::parse::Parse for UintDefinition {
+impl syn::parse::Parse for Definition {
     fn parse(input: syn::parse::ParseStream) -> syn::parse::Result<Self> {
         let name = input.parse()?;
         let content;
@@ -38,13 +38,13 @@ impl syn::parse::Parse for UintDefinition {
     }
 }
 
-pub struct UintAttribute {
+pub struct Attribute {
     pub key: syn::Ident,
     _eq: Token![=],
     pub value: syn::Lit,
 }
 
-impl syn::parse::Parse for UintAttribute {
+impl syn::parse::Parse for Attribute {
     fn parse(input: syn::parse::ParseStream) -> syn::parse::Result<Self> {
         Ok(Self {
             key: input.parse()?,
