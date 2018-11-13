@@ -10,7 +10,7 @@
 //!
 //! [`serde`]: https://crates.io/crates/serde
 
-use super::super::constructor::UintConstructor;
+use fixed_uint::UintConstructor;
 
 impl UintConstructor {
     pub fn with_serde(&self) {

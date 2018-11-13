@@ -15,7 +15,7 @@
 //! [methods]: https://doc.rust-lang.org/std/primitive.u64.html#methods
 //! [`count_ones`]: https://doc.rust-lang.org/std/primitive.u64.html#method.count_ones
 
-use super::super::constructor::UintConstructor;
+use fixed_uint::UintConstructor;
 use utils;
 
 impl UintConstructor {

@@ -10,7 +10,7 @@
 //!
 //! [`::std::default`]: https://doc.rust-lang.org/std/default/index.html#traits
 
-use super::super::constructor::UintConstructor;
+use fixed_uint::UintConstructor;
 
 impl UintConstructor {
     pub fn impl_traits_std_default(&self) {

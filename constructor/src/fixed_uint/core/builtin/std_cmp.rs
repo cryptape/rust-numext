@@ -10,7 +10,7 @@
 //!
 //! [`::std::cmp`]: https://doc.rust-lang.org/std/cmp/index.html#traits
 
-use super::super::constructor::UintConstructor;
+use fixed_uint::UintConstructor;
 use utils;
 
 impl UintConstructor {

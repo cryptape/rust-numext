@@ -8,7 +8,7 @@
 
 //! Define private methods about operators.
 
-use super::super::constructor::UintConstructor;
+use fixed_uint::UintConstructor;
 use utils;
 
 impl UintConstructor {

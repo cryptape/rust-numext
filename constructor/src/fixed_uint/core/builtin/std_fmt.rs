@@ -10,7 +10,7 @@
 //!
 //! [`::std::fmt`]: https://doc.rust-lang.org/std/fmt/index.html#traits
 
-use super::super::constructor::UintConstructor;
+use fixed_uint::UintConstructor;
 use utils;
 
 impl UintConstructor {

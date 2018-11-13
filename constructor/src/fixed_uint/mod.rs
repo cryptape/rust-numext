@@ -8,3 +8,5 @@
 
 pub mod core;
 pub mod parsed;
+
+pub use self::core::UintConstructor;

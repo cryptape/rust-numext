@@ -10,7 +10,7 @@
 
 use proc_macro2::TokenStream;
 
-use super::super::constructor::UintConstructor;
+use fixed_uint::UintConstructor;
 use utils;
 
 impl UintConstructor {

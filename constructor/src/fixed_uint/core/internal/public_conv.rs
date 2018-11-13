@@ -8,7 +8,7 @@
 
 //! Define public methods about convert.
 
-use super::super::constructor::UintConstructor;
+use fixed_uint::UintConstructor;
 use utils;
 
 impl UintConstructor {
