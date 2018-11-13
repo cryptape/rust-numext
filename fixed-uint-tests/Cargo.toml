@@ -1,7 +1,10 @@
 [package]
 name = "numext-fixed-uint-tests"
 version = "0.1.0"
-authors = ["Boyu Yang <yangby@cryptape.com>"]
+authors = [
+    "Boyu Yang <yangby@cryptape.com>",
+    "zhangsoledad <787953403@qq.com>",
+]
 autobenches = false
 
 [dependencies]
