@@ -9,7 +9,7 @@
 #[macro_use]
 extern crate criterion;
 
-extern crate ethereum_types as uint;
+extern crate ethereum_types as etypes;
 
 extern crate numext_fixed_uint as nfuint;
 extern crate numext_fixed_uint_tests as nfuint_tests;
@@ -34,7 +34,9 @@ macro_rules! bench_std_ops_shift {
                     "nfuint",
                     |b, v| std_ops_shift!($opr, b, v, nfuint::U256, $bits),
                     vec![nfuint_tests::tools::lebytes()],
-                ).with_function("uint", |b, v| std_ops_shift!($opr, b, v, uint::U256, $bits)),
+                ).with_function("etypes", |b, v| {
+                    std_ops_shift!($opr, b, v, etypes::U256, $bits)
+                }),
             );
         }
     };

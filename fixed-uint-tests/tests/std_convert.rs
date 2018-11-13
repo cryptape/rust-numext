@@ -9,7 +9,7 @@
 #[macro_use]
 extern crate proptest;
 
-extern crate ethereum_types as uint;
+extern crate ethereum_types as etypes;
 extern crate numext_fixed_uint as nfuint;
 extern crate numext_fixed_uint_tests as nfuint_tests;
 
@@ -21,15 +21,15 @@ macro_rules! std_convert_from {
         proptest! {
             #[test]
             fn $name(val in any::<$from_type>()) {
-                let le_uint: props::U256LeBytes = {
-                    let ret: uint::U256 = val.into();
+                let expected: props::U256LeBytes = {
+                    let ret: etypes::U256 = val.into();
                     ret.into()
                 };
-                let le_nfuint: props::U256LeBytes = {
+                let result: props::U256LeBytes = {
                     let ret: nfuint::U256 = val.into();
                     ret.into()
                 };
-                assert_eq!(le_uint, le_nfuint);
+                assert_eq!(expected, result);
             }
         }
     };
@@ -55,16 +55,16 @@ std_convert_from!(from_u64, u64);
 proptest! {
     #[test]
     fn from_u128(val in any::<u128>()) {
-        let le_uint: props::U256LeBytes = {
-            let hi: uint::U256 = ((val >> 64) as u64).into();
-            let lo: uint::U256 = (val as u64).into();
+        let expected: props::U256LeBytes = {
+            let hi: etypes::U256 = ((val >> 64) as u64).into();
+            let lo: etypes::U256 = (val as u64).into();
             let ret = (hi << 64) + lo;
             ret.into()
         };
-        let le_nfuint: props::U256LeBytes = {
+        let result: props::U256LeBytes = {
             let ret: nfuint::U256 = val.into();
             ret.into()
         };
-        assert_eq!(le_uint, le_nfuint);
+        assert_eq!(expected, result);
     }
 }

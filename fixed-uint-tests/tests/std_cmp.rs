@@ -9,7 +9,7 @@
 #[macro_use]
 extern crate proptest;
 
-extern crate ethereum_types as uint;
+extern crate ethereum_types as etypes;
 extern crate numext_fixed_uint as nfuint;
 extern crate numext_fixed_uint_tests as nfuint_tests;
 
@@ -19,15 +19,15 @@ use proptest::prelude::{any, any_with};
 proptest! {
     #[test]
     fn random(ref pair in any_with::<props::U256Pair>(props::U256PairParameters::Random)) {
-        let result_uint = {
-            let (ref lhs, ref rhs): (uint::U256, uint::U256) = pair.into();
+        let result_etypes = {
+            let (ref lhs, ref rhs): (etypes::U256, etypes::U256) = pair.into();
             (lhs > rhs, lhs >= rhs, lhs == rhs, lhs <= rhs, lhs < rhs)
         };
         let result_nfuint = {
             let (ref lhs, ref rhs): (nfuint::U256, nfuint::U256) = pair.into();
             (lhs > rhs, lhs >= rhs, lhs == rhs, lhs <= rhs, lhs < rhs)
         };
-        assert_eq!(result_uint, result_nfuint);
+        assert_eq!(result_etypes, result_nfuint);
         assert_eq!(result_nfuint.1, result_nfuint.0 || result_nfuint.2);
     }
 }

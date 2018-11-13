@@ -8,8 +8,8 @@
 
 //! Support proptest.
 
+use etypes;
 use nfuint;
-use uint;
 
 use proptest::arbitrary::Arbitrary;
 use proptest::prelude::RngCore;
@@ -60,7 +60,7 @@ impl ::std::fmt::Debug for U256LeBytes {
     }
 }
 
-impl<'a> ::std::convert::From<&'a U256LeBytes> for uint::U256 {
+impl<'a> ::std::convert::From<&'a U256LeBytes> for etypes::U256 {
     fn from(bytes: &U256LeBytes) -> Self {
         Self::from_little_endian(&bytes.inner)
     }
@@ -72,7 +72,7 @@ impl<'a> ::std::convert::From<&'a U256LeBytes> for nfuint::U256 {
     }
 }
 
-impl ::std::convert::From<U256LeBytes> for uint::U256 {
+impl ::std::convert::From<U256LeBytes> for etypes::U256 {
     fn from(bytes: U256LeBytes) -> Self {
         Self::from_little_endian(&bytes.inner)
     }
@@ -84,8 +84,8 @@ impl ::std::convert::From<U256LeBytes> for nfuint::U256 {
     }
 }
 
-impl<'a> ::std::convert::From<&'a uint::U256> for U256LeBytes {
-    fn from(u: &uint::U256) -> Self {
+impl<'a> ::std::convert::From<&'a etypes::U256> for U256LeBytes {
+    fn from(u: &etypes::U256) -> Self {
         let mut inner = [0u8; 32];
         u.to_little_endian(&mut inner);
         Self { inner }
@@ -100,8 +100,8 @@ impl<'a> ::std::convert::From<&'a nfuint::U256> for U256LeBytes {
     }
 }
 
-impl ::std::convert::From<uint::U256> for U256LeBytes {
-    fn from(u: uint::U256) -> Self {
+impl ::std::convert::From<etypes::U256> for U256LeBytes {
+    fn from(u: etypes::U256) -> Self {
         let mut inner = [0u8; 32];
         u.to_little_endian(&mut inner);
         Self { inner }
@@ -339,7 +339,7 @@ impl ::std::fmt::Debug for U256Pair {
     }
 }
 
-impl<'a> ::std::convert::From<&'a U256Pair> for (uint::U256, uint::U256) {
+impl<'a> ::std::convert::From<&'a U256Pair> for (etypes::U256, etypes::U256) {
     fn from(pair: &U256Pair) -> Self {
         let U256Pair {
             ref lhs, ref rhs, ..
@@ -357,7 +357,7 @@ impl<'a> ::std::convert::From<&'a U256Pair> for (nfuint::U256, nfuint::U256) {
     }
 }
 
-impl ::std::convert::From<U256Pair> for (uint::U256, uint::U256) {
+impl ::std::convert::From<U256Pair> for (etypes::U256, etypes::U256) {
     fn from(pair: U256Pair) -> Self {
         let U256Pair { lhs, rhs, .. } = pair;
         (lhs.into(), rhs.into())

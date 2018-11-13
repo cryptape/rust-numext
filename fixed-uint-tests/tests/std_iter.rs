@@ -6,7 +6,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-extern crate ethereum_types as uint;
+extern crate ethereum_types as etypes;
 extern crate numext_fixed_uint as nfuint;
 
 #[test]
@@ -25,16 +25,16 @@ fn sum() {
 #[test]
 fn product() {
     // 99! > 2**512 > 98!
-    let mut check_uint = uint::U512::from(1);
+    let mut expected_tmp = etypes::U512::from(1);
     for max in 1u8..98 {
-        check_uint *= max;
+        expected_tmp *= max;
         let result: nfuint::U512 = (1..=max).map(nfuint::U512::from).product();
-        let check = nfuint::U512::from_dec_str(format!("{}", check_uint).as_ref()).unwrap();
-        assert_eq!(result, check);
+        let expected = nfuint::U512::from_dec_str(format!("{}", expected_tmp).as_ref()).unwrap();
+        assert_eq!(result, expected);
     }
     let max = 536u128;
     let result: nfuint::U4096 = (1..=max).map(nfuint::U4096::from).product();
-    let check = nfuint::U4096::from_hex_str(
+    let expected = nfuint::U4096::from_hex_str(
         "ffb1f702086548f51cf4de42574c8d73bb1b404ad975927b72884f1d80672bfe\
          61ad8adfe7721a4fc7d8854fd37c17e891a9d90e18974c3fb9a690950dd518d7\
          459377443610e2c61546d7c4a0b13945023ba8905d7081bda4677bbcbf8fd995\
@@ -52,5 +52,5 @@ fn product() {
          0000000000000000000000000000000000000000000000000000000000000000\
          000000000000000000000000000000000000000000000000000000000000000",
     ).unwrap();
-    assert_eq!(result, check);
+    assert_eq!(result, expected);
 }

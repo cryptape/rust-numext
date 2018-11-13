@@ -9,7 +9,7 @@
 #[macro_use]
 extern crate proptest;
 
-extern crate ethereum_types as uint;
+extern crate ethereum_types as etypes;
 extern crate numext_fixed_uint as nfuint;
 extern crate numext_fixed_uint_tests as nfuint_tests;
 
@@ -21,8 +21,8 @@ macro_rules! std_ops_binary {
         proptest! {
             #[test]
             fn $name(ref pair in any_with::<props::U256Pair>(props::U256PairParameters::$param)) {
-                let le_uint: props::U256LeBytes = {
-                    let (lhs, rhs): (uint::U256, uint::U256) = pair.into();
+                let le_etypes: props::U256LeBytes = {
+                    let (lhs, rhs): (etypes::U256, etypes::U256) = pair.into();
                     let ret = lhs $opr rhs;
                     ret.into()
                 };
@@ -31,7 +31,7 @@ macro_rules! std_ops_binary {
                     let ret = lhs $opr rhs;
                     ret.into()
                 };
-                assert_eq!(le_uint, le_nfuint);
+                assert_eq!(le_etypes, le_nfuint);
             }
         }
     };
@@ -42,8 +42,8 @@ macro_rules! std_ops_unary {
         proptest! {
             #[test]
             fn $name(ref le in any::<props::U256LeBytes>()) {
-                let le_uint: props::U256LeBytes = {
-                    let val: uint::U256 = le.into();
+                let le_etypes: props::U256LeBytes = {
+                    let val: etypes::U256 = le.into();
                     let ret = $opr val;
                     ret.into()
                 };
@@ -52,7 +52,7 @@ macro_rules! std_ops_unary {
                     let ret = $opr val;
                     ret.into()
                 };
-                assert_eq!(le_uint, le_nfuint);
+                assert_eq!(le_etypes, le_nfuint);
             }
         }
     };

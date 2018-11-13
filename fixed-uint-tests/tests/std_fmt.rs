@@ -9,7 +9,7 @@
 #[macro_use]
 extern crate proptest;
 
-extern crate ethereum_types as uint;
+extern crate ethereum_types as etypes;
 extern crate numext_fixed_uint as nfuint;
 extern crate numext_fixed_uint_tests as nfuint_tests;
 
@@ -30,15 +30,15 @@ macro_rules! std_fmt {
         proptest! {
             #[test]
             fn $name(ref le in any::<props::U256LeBytes>()) {
-                let str_uint = {
-                    let val: uint::U256 = le.into();
+                let expected = {
+                    let val: etypes::U256 = le.into();
                     format!($fmt_str, val)
                 };
-                let str_nfuint = {
+                let result = {
                     let val: nfuint::U256 = le.into();
                     format!($fmt_str, val)
                 };
-                assert_eq!(str_uint, str_nfuint);
+                assert_eq!(expected, result);
             }
         }
     };

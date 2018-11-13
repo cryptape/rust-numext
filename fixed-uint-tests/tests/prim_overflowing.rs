@@ -9,7 +9,7 @@
 #[macro_use]
 extern crate proptest;
 
-extern crate ethereum_types as uint;
+extern crate ethereum_types as etypes;
 extern crate numext_fixed_uint as nfuint;
 extern crate numext_fixed_uint_tests as nfuint_tests;
 
@@ -22,7 +22,7 @@ macro_rules! prim_overflowing {
             #[test]
             fn $func(ref pair in any_with::<props::U256Pair>(props::U256PairParameters::$param)) {
                 let expected: (props::U256LeBytes, bool) = {
-                    let (lhs, rhs): (uint::U256, uint::U256) = pair.into();
+                    let (lhs, rhs): (etypes::U256, etypes::U256) = pair.into();
                     let (ret, of) = lhs.$func(rhs);
                     (ret.into(), of)
                 };
@@ -35,7 +35,7 @@ macro_rules! prim_overflowing {
                 assert_eq!(expected, result);
 
                 let expected: (props::U256LeBytes, bool) = {
-                    let (lhs, rhs): (uint::U256, uint::U256) = pair.into();
+                    let (lhs, rhs): (etypes::U256, etypes::U256) = pair.into();
                     let (ret, of) = (!lhs).$func(!rhs);
                     (ret.into(), of)
                 };
