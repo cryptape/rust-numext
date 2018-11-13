@@ -10,16 +10,16 @@
 //!
 //! [`serde`]: https://crates.io/crates/serde
 
-use super::super::constructor::UintConstructor;
+use fixed_hash::HashConstructor;
 
-impl UintConstructor {
+impl HashConstructor {
     pub fn with_serde(&self) {
         self.with_serde_defun_pub();
     }
 
     fn with_serde_defun_pub(&self) {
         let name = &self.ts.name;
-        let bytes_size = &self.ts.bytes_size;
+        let bytes_size = &self.ts.unit_amount;
         let part = quote!(
             #[cfg(feature = "support_serde")]
             impl serde::Serialize for #name {
@@ -54,7 +54,7 @@ impl UintConstructor {
                     let mut dst = [0u8; #bytes_size * 2 + 2];
                     dst[0] = b'0';
                     dst[1] = b'x';
-                    self.into_big_endian(&mut bytes)
+                    self.into_slice(&mut bytes)
                         .map_err(|e| serde::ser::Error::custom(&format!("{}", e)))?;
 
                     let non_zero = bytes.iter().position(|&b| b != 0);
@@ -92,7 +92,7 @@ impl UintConstructor {
                                 return Err(E::invalid_length(v.len() - 2, &self));
                             }
 
-                            #name::from_hex_str(&v[2..]).map_err(|e| E::custom(&format!("invalid hex bytes: {:?}", e)))
+                            #name::_from_hex_str(&v[2..]).map_err(|e| E::custom(&format!("invalid hex bytes: {:?}", e)))
                         }
 
                         fn visit_string<E>(self, v: String) -> Result<Self::Value, E> where E: serde::de::Error {

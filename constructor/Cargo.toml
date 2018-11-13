@@ -10,9 +10,3 @@ proc-macro2 = "0.4"
 
 [lib]
 proc-macro = true
-
-[features]
-default = []
-rand = []
-serde = []
-heapsize = []

@@ -6,10 +6,15 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-//! Add support for other crates.
-//!
-//! The dependencies should be in the `Cargo.toml`.
+//! Implement rust built-in traits.
 
-mod heapsize;
-mod rand;
-mod serde;
+mod as_primitive;
+
+mod std_clone;
+mod std_cmp;
+mod std_convert;
+mod std_default;
+mod std_fmt;
+mod std_hash;
+mod std_ops;
+mod std_str;

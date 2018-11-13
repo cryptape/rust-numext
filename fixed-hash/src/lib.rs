@@ -19,35 +19,35 @@ extern crate serde;
 
 extern crate numext_constructor;
 
-numext_constructor::construct_fixed_uints!(
-    U128 {
+numext_constructor::construct_fixed_hashes!(
+    H128 {
         size = 128,
     },
-    U160 {
+    H160 {
         size = 160,
     },
-    U224 {
+    H224 {
         size = 224,
     },
-    U256 {
+    H256 {
         size = 256,
     },
-    U384 {
+    H384 {
         size = 384,
     },
-    U512 {
+    H512 {
         size = 512,
     },
-    U520 {
+    H520 {
         size = 520,
     },
-    U1024 {
+    H1024 {
         size = 1024,
     },
-    U2048 {
+    H2048 {
         size = 2048,
     },
-    U4096 {
+    H4096 {
         size = 4096,
     },
 );

@@ -6,10 +6,12 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-//! Add support for other crates.
+//! Add internal methods for hash.
 //!
-//! The dependencies should be in the `Cargo.toml`.
+//! These methods do not depend on any traits or crates, except: Default, Clone.
 
-mod heapsize;
-mod rand;
-mod serde;
+mod kernel;
+mod private_conv;
+mod private_ops;
+mod public_basic;
+mod public_conv;

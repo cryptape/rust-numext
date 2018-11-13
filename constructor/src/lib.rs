@@ -20,6 +20,7 @@ extern crate quote;
 mod utils;
 
 mod definition;
+mod fixed_hash;
 mod fixed_uint;
 
 #[proc_macro]
@@ -37,6 +38,26 @@ pub fn construct_fixed_uints(input: proc_macro::TokenStream) -> proc_macro::Toke
                 let uints = quote!(#uints #public #uint);
                 ucs.push(uc);
                 (uints, ucs)
+            }).0
+    };
+    expanded.into()
+}
+
+#[proc_macro]
+pub fn construct_fixed_hashes(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
+    let inputs = parse_macro_input!(input as definition::Definitions);
+    let expanded = {
+        inputs
+            .inner
+            .into_iter()
+            .map(|input| {
+                let parsed: fixed_hash::parsed::HashDefinition = input.into();
+                fixed_hash::core::HashConstructor::new(parsed)
+            }).fold((quote!(), Vec::new()), |(hashes, mut ucs), uc| {
+                let (hash, public) = uc.construct_all(&ucs[..]);
+                let hashes = quote!(#hashes #public #hash);
+                ucs.push(uc);
+                (hashes, ucs)
             }).0
     };
     expanded.into()

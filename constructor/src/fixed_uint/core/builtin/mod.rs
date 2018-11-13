@@ -6,7 +6,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-//! Implement rust built-in traits and same methods as primitive uints;
+//! Implement rust built-in traits and same methods as primitive uints.
 
 mod as_primitive;
 

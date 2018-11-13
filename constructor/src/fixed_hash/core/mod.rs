@@ -9,13 +9,13 @@
 use proc_macro2::TokenStream;
 
 mod constructor;
-pub use self::constructor::UintConstructor;
+pub use self::constructor::HashConstructor;
 
 mod builtin;
 mod extension;
 mod internal;
 
-impl UintConstructor {
+impl HashConstructor {
     pub fn construct_all(&self, ucs: &[Self]) -> (TokenStream, TokenStream) {
         self.clear();
 
@@ -25,18 +25,18 @@ impl UintConstructor {
         self.impl_traits_std_default();
         self.defun_pub_basic();
 
-        self.impl_traits_std_cmp();
-        self.defun_priv_ops();
-        self.impl_traits_std_ops();
-
         self.defun_priv_conv();
         self.defun_pub_conv();
         self.impl_traits_std_convert();
 
+        self.impl_traits_std_cmp();
+        self.defun_priv_ops();
+        self.impl_traits_std_ops();
+
         self.defun_as_prim();
         self.impl_traits_std_fmt();
         self.impl_traits_std_hash();
-        self.impl_traits_std_iter();
+        self.impl_traits_std_str();
 
         self.with_rand();
         self.with_heapsize();

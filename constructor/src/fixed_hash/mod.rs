@@ -6,10 +6,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-//! Add support for other crates.
-//!
-//! The dependencies should be in the `Cargo.toml`.
+pub mod core;
+pub mod parsed;
 
-mod heapsize;
-mod rand;
-mod serde;
+pub use self::core::HashConstructor;

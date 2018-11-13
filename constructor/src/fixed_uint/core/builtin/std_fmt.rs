@@ -29,6 +29,7 @@ impl UintConstructor {
         let loop_unit_amount_skip_first = &utils::pure_uint_list_to_ts(1..self.info.unit_amount);
         let part = quote!(
             impl ::std::fmt::Debug for #name {
+                #[inline]
                 fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
                     let data = self.inner();
                     let alternate = f.alternate();
@@ -70,6 +71,7 @@ impl UintConstructor {
         let width = utils::pure_uint_to_ts(width);
         let part = quote!(
             impl ::std::fmt::#trait_name for #name {
+                #[inline]
                 fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
                     let data = self.inner();
                     if f.alternate() {
@@ -109,6 +111,7 @@ impl UintConstructor {
         let num = utils::pure_uint_to_ts(num);
         let part = quote!(
             impl ::std::fmt::#trait_name for #name {
+                #[inline]
                 fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
                     if f.alternate() {
                         write!(f, #prefix)?;

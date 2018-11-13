@@ -1,5 +1,5 @@
 [package]
-name = "numext-fixed-uint"
+name = "numext-fixed-hash"
 version = "0.1.0"
 authors = ["Boyu Yang <yangby@cryptape.com>"]
 

@@ -10,36 +10,40 @@
 //!
 //! [`rand`]: https://crates.io/crates/rand
 
-use super::super::constructor::UintConstructor;
+use fixed_hash::HashConstructor;
 use utils;
 
-impl UintConstructor {
+impl HashConstructor {
     pub fn with_rand(&self) {
         self.with_rand_defun_pub();
     }
 
     fn with_rand_defun_pub(&self) {
         let name = &self.ts.name;
-        let bytes_size = &self.ts.bytes_size;
-        let inner_type = &self.ts.inner_type;
-        let loop_unit_amount = &utils::pure_uint_list_to_ts(0..self.info.unit_amount);
+        let part_core = if self.info.expand {
+            let loop_unit_amount = &utils::pure_uint_list_to_ts(0..self.info.unit_amount);
+            quote!(
+                let inner = self.mut_inner();
+                #({
+                    let idx = #loop_unit_amount;
+                    inner[idx] = inner[idx].to_le();
+                })*
+            )
+        } else {
+            quote!(for x in self.mut_inner().iter_mut() {
+                *x = x.to_le()
+            })
+        };
         let part = quote!(
             #[cfg(feature = "support_rand")]
             impl rand::AsByteSliceMut for #name {
                 #[inline]
                 fn as_byte_slice_mut(&mut self) -> &mut [u8] {
-                    let inner = self.mut_inner();
-                    unsafe {
-                        &mut *(inner as *mut #inner_type as *mut [u8; #bytes_size])
-                    }
+                    &mut self.mut_inner()[..]
                 }
                 #[inline]
                 fn to_le(&mut self) {
-                    let inner = self.mut_inner();
-                    #({
-                        let idx = #loop_unit_amount;
-                        inner[idx] = inner[idx].to_le();
-                    })*
+                    #part_core
                 }
             }
         );

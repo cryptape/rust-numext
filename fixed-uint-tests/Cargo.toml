@@ -2,9 +2,10 @@
 name = "numext-fixed-uint-tests"
 version = "0.1.0"
 authors = ["Boyu Yang <yangby@cryptape.com>"]
+autobenches = false
 
 [dependencies]
-numext-fixed-uint = { path = "../fixed-uint", features = ["impl_rand", "impl_serde"] }
+numext-fixed-uint = { path = "../fixed-uint", features = ["support_all"] }
 ethereum-types = "0.4.0"
 proptest = "0.8"
 rand = "0.5"

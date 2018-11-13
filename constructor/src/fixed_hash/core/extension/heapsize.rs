@@ -10,9 +10,9 @@
 
 //! [`heapsize`]: https://crates.io/crates/heapsize
 
-use super::super::constructor::UintConstructor;
+use fixed_hash::HashConstructor;
 
-impl UintConstructor {
+impl HashConstructor {
     pub fn with_heapsize(&self) {
         self.with_heapsize_defun_pub();
     }
