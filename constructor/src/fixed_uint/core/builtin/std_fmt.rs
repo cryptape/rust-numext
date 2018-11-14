@@ -25,6 +25,9 @@ impl UintConstructor {
 
     pub fn impl_traits_std_fmt_debug(&self) {
         let name = &self.ts.name;
+        let width = self.info.unit_bytes_size * 2 + 2;
+        let width = &utils::pure_uint_to_ts(width);
+        let loop_width = &vec![width; self.info.unit_amount as usize];
         let loop_unit_amount = &utils::pure_uint_list_to_ts(0..self.info.unit_amount);
         let loop_unit_amount_skip_first = &utils::pure_uint_list_to_ts(1..self.info.unit_amount);
         let part = quote!(
@@ -38,13 +41,13 @@ impl UintConstructor {
                     if alternate {
                         writeln!(f)?;
                         #(
-                            writeln!(f, "    {:#x},", data[#loop_unit_amount])?;
+                            writeln!(f, "    {:#0width$x},", data[#loop_unit_amount], width=#loop_width)?;
                         )*
                         writeln!(f, "]")
                     } else {
-                        write!(f, " {:#x}", data[0])?;
+                        write!(f, " {:#0width$x}", data[0], width=#width)?;
                         #(
-                            write!(f, ", {:#x}", data[#loop_unit_amount_skip_first])?;
+                            write!(f, ", {:#0width$x}", data[#loop_unit_amount_skip_first], width=#loop_width)?;
                         )*
                         write!(f, " ] )")
                     }

@@ -16,7 +16,7 @@ macro_rules! check_default {
         $( check_default!($uint); )+
     }};
     ($uint:ident) => {
-        assert_eq!(numext_fixed_uint::$uint::zero(), 0u8.into());
+        assert_eq!(numext_fixed_uint::$uint::default(), 0u8.into());
     };
 }
 

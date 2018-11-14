@@ -23,6 +23,7 @@ impl HashConstructor {
         self.impl_traits_std_ops_not();
         self.impl_traits_std_ops_shift('l');
         self.impl_traits_std_ops_shift('r');
+        self.impl_traits_std_ops_index();
     }
 
     // Apply a template to implement some bits operations traits.
@@ -216,5 +217,31 @@ impl HashConstructor {
             );
             self.implt(part);
         }
+    }
+
+    fn impl_traits_std_ops_index(&self) {
+        let name = &self.ts.name;
+        let part = quote!(
+            impl<Idx> ::std::ops::Index<Idx> for #name
+            where
+                Idx: ::std::slice::SliceIndex<[u8], Output = [u8]>
+            {
+                type Output = Idx::Output;
+                #[inline]
+                fn index(&self, index: Idx) -> &Self::Output {
+                    &self.inner()[index]
+                }
+            }
+            impl<Idx> ::std::ops::IndexMut<Idx> for #name
+            where
+                Idx: ::std::slice::SliceIndex<[u8], Output = [u8]>
+            {
+                #[inline]
+                fn index_mut(&mut self, index: Idx) -> &mut Idx::Output {
+                    &mut self.mut_inner()[index]
+                }
+            }
+        );
+        self.implt(part);
     }
 }

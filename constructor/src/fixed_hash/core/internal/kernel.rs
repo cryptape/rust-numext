@@ -96,11 +96,6 @@ impl HashConstructor {
             pub fn zero() -> Self {
                 Self::new([0; #unit_amount])
             }
-            /// Create a new fixed hash and all bits of it are ones.
-            #[inline]
-            pub fn max() -> Self {
-                Self::new([!0; #unit_amount])
-            }
             /// Test if all bits of a fixed hash are zero.
             #[inline]
             pub fn is_zero(&self) -> bool {
@@ -118,6 +113,19 @@ impl HashConstructor {
                 let inner = self.inner();
                 #({
                     if inner[#loop_unit_amount] != !0 {
+                        return false;
+                    }
+                })*
+                true
+            }
+            /// Test if all bits set in a hash are also set in `self`.
+            #[inline]
+            pub fn covers(&self, hash: &Self) -> bool {
+                let inner = self.inner();
+                let rhs = hash.inner();
+                #({
+                    let idx = #loop_unit_amount;
+                    if inner[idx] & rhs[idx] != rhs[idx] {
                         return false;
                     }
                 })*

@@ -92,7 +92,7 @@ impl HashConstructor {
                                 return Err(E::invalid_length(v.len() - 2, &self));
                             }
 
-                            #name::_from_hex_str(&v[2..]).map_err(|e| E::custom(&format!("invalid hex bytes: {:?}", e)))
+                            #name::from_hex_str(&v[2..]).map_err(|e| E::custom(&format!("invalid hex bytes: {:?}", e)))
                         }
 
                         fn visit_string<E>(self, v: String) -> Result<Self::Value, E> where E: serde::de::Error {

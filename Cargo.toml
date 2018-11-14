@@ -6,4 +6,5 @@ members = [
     "fixed-hash",
 
     "fixed-uint-tests",
+    "fixed-hash-tests",
 ]

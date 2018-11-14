@@ -36,13 +36,13 @@ impl HashConstructor {
                     if alternate {
                         writeln!(f)?;
                         #(
-                            writeln!(f, "    {:#x},", data[#loop_unit_amount])?;
+                            writeln!(f, "    {:#04x},", data[#loop_unit_amount])?;
                         )*
                         writeln!(f, "]")
                     } else {
-                        write!(f, " {:#x}", data[0])?;
+                        write!(f, " {:#04x}", data[0])?;
                         #(
-                            write!(f, ", {:#x}", data[#loop_unit_amount_skip_first])?;
+                            write!(f, ", {:#04x}", data[#loop_unit_amount_skip_first])?;
                         )*
                         write!(f, " ] )")
                     }
@@ -59,7 +59,7 @@ impl HashConstructor {
         let write_tpl_padded = format!("{{:02{}}}", format_char);
         let loop_unit_amount = &utils::pure_uint_list_to_ts(0..self.info.unit_amount);
         let loop_write_tpl_padded =
-            &vec![write_tpl_padded.as_str(); self.info.unit_amount as usize - 1];
+            &vec![write_tpl_padded.as_str(); self.info.unit_amount as usize];
         let part_core = if self.info.expand {
             quote!(#(write!(f, #loop_write_tpl_padded, data[#loop_unit_amount])?;)*)
         } else {
@@ -92,6 +92,45 @@ impl HashConstructor {
     }
 
     pub fn impl_traits_std_fmt_display(&self) {
-        self.impl_traits_std_fmt_base_16("Display", 'x', 'x');
+        let name = &self.ts.name;
+        let unit_amount = &self.ts.unit_amount;
+        let trait_name = utils::ident_to_ts("Display");
+        let write_tpl_padded = "{:02x}";
+        let loop_unit_amount = &utils::pure_uint_list_to_ts(0..self.info.unit_amount);
+        let loop_write_tpl_padded = &vec![write_tpl_padded; self.info.unit_amount as usize];
+        let part_core = if self.info.unit_amount > 18 {
+            let omit = format!("..(omit {})..", (self.info.unit_amount - 12) * 2);
+            quote!(
+                write!(f, #write_tpl_padded, data[0])?;
+                write!(f, #write_tpl_padded, data[1])?;
+                write!(f, #write_tpl_padded, data[2])?;
+                write!(f, #write_tpl_padded, data[3])?;
+                write!(f, #write_tpl_padded, data[4])?;
+                write!(f, #write_tpl_padded, data[5])?;
+                write!(f, #omit)?;
+                write!(f, #write_tpl_padded, data[#unit_amount-6])?;
+                write!(f, #write_tpl_padded, data[#unit_amount-5])?;
+                write!(f, #write_tpl_padded, data[#unit_amount-4])?;
+                write!(f, #write_tpl_padded, data[#unit_amount-3])?;
+                write!(f, #write_tpl_padded, data[#unit_amount-2])?;
+                write!(f, #write_tpl_padded, data[#unit_amount-1])?;
+            )
+        } else {
+            quote!(#(write!(f, #loop_write_tpl_padded, data[#loop_unit_amount])?;)*)
+        };
+        let part = quote!(
+            impl ::std::fmt::#trait_name for #name {
+                #[inline]
+                fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+                    let data = self.inner();
+                    if f.alternate() {
+                        write!(f, "0x")?;
+                    }
+                    #part_core
+                    Ok(())
+                }
+            }
+        );
+        self.implt(part);
     }
 }

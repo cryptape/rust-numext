@@ -15,7 +15,7 @@ impl HashConstructor {
     pub fn defun_pub_basic(&self) {
         self.defun_pub_bits_ops();
         self.defun_pub_bytes_ops();
-        self.defun_pub_inner_ops();
+        self.defun_pub_ptr_ops();
     }
 
     fn defun_pub_bits_ops(&self) {
@@ -154,7 +154,7 @@ impl HashConstructor {
         self.defun(part);
     }
 
-    fn defun_pub_inner_ops(&self) {
+    fn defun_pub_ptr_ops(&self) {
         let inner_type = &self.ts.inner_type;
         let part = quote!(
             /// Get the inner bytes slice of a fixed hash.
@@ -167,20 +167,30 @@ impl HashConstructor {
             pub fn as_bytes_mut(&mut self) -> &mut [u8] {
                 &mut self.mut_inner()[..]
             }
+            /// Get the inner bytes of a fixed hash.
+            #[inline]
+            pub fn as_fixed_bytes(&self) -> &#inner_type {
+                self.inner()
+            }
+            /// Get the mutable inner bytes of a fixed hash.
+            #[inline]
+            pub fn as_fixed_bytes_mut(&mut self) -> &#inner_type {
+                self.mut_inner()
+            }
             /// Get the inner bytes array of a fixed hash.
             #[inline]
-            pub fn to_bytes(self) -> #inner_type {
+            pub fn to_fixed_bytes(self) -> #inner_type {
                 self.into_inner()
             }
             /// Get a constant raw pointer to the inner bytes array of a fixed hash.
             #[inline]
             pub fn as_ptr(&self) -> *const u8 {
-                self.as_bytes().as_ptr()
+                self.inner().as_ptr()
             }
             /// Get a mutable raw pointer to the inner bytes array of a fixed hash.
             #[inline]
             pub fn as_mut_ptr(&mut self) -> *mut u8 {
-                self.as_bytes_mut().as_mut_ptr()
+                self.mut_inner().as_mut_ptr()
             }
         );
         self.defun(part);

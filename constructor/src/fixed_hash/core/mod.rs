@@ -25,7 +25,6 @@ impl HashConstructor {
         self.impl_traits_std_default();
         self.defun_pub_basic();
 
-        self.defun_priv_conv();
         self.defun_pub_conv();
         self.impl_traits_std_convert();
 

@@ -22,7 +22,7 @@ impl HashConstructor {
                 /// Convert from a hexadecimal string.
                 #[inline]
                 fn from_str(s: &str) -> Result<Self, Self::Err> {
-                    Self::_from_hex_str(s)
+                    Self::from_hex_str(s)
                 }
             }
         );

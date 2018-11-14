@@ -6,11 +6,11 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-//! Add internal methods for hash.
-//!
-//! These methods do not depend on any traits or crates, except: Default, Clone.
+extern crate ethereum_types as etypes;
+extern crate numext_fixed_hash as nfhash;
 
-mod kernel;
-mod private_ops;
-mod public_basic;
-mod public_conv;
+extern crate proptest;
+extern crate rand;
+
+pub mod props;
+pub mod tools;
