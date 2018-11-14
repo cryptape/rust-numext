@@ -8,18 +8,18 @@
 
 #[macro_use]
 extern crate failure;
-#[cfg(feature = "impl_serde")]
+#[cfg(feature = "support_serde")]
 extern crate faster_hex;
-#[cfg(feature = "impl_heapsize")]
+#[cfg(feature = "support_heapsize")]
 extern crate heapsize;
-#[cfg(feature = "impl_rand")]
+#[cfg(feature = "support_rand")]
 extern crate rand;
-#[cfg(feature = "impl_serde")]
+#[cfg(feature = "support_serde")]
 extern crate serde;
 
-extern crate numext_fixed_uint_macros;
+extern crate numext_constructor;
 
-numext_fixed_uint_macros::construct_fixed_uints!(
+numext_constructor::construct_fixed_uints!(
     U128 {
         size = 128,
     },
@@ -49,45 +49,5 @@ numext_fixed_uint_macros::construct_fixed_uints!(
     },
     U4096 {
         size = 4096,
-    },
-    H128 {
-        size = 128,
-        unit_size = 8,
-    },
-    H160 {
-        size = 160,
-        unit_size = 8,
-    },
-    H224 {
-        size = 224,
-        unit_size = 8,
-    },
-    H256 {
-        size = 256,
-        unit_size = 8,
-    },
-    H384 {
-        size = 384,
-        unit_size = 8,
-    },
-    H512 {
-        size = 512,
-        unit_size = 8,
-    },
-    H520 {
-        size = 520,
-        unit_size = 8,
-    },
-    H1024 {
-        size = 1024,
-        unit_size = 8,
-    },
-    H2048 {
-        size = 2048,
-        unit_size = 8,
-    },
-    H4096 {
-        size = 4096,
-        unit_size = 8,
     },
 );

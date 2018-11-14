@@ -16,14 +16,11 @@ macro_rules! check_default {
         $( check_default!($uint); )+
     }};
     ($uint:ident) => {
-        assert_eq!(numext_fixed_uint::$uint::zero(), 0u8.into());
+        assert_eq!(numext_fixed_uint::$uint::default(), 0u8.into());
     };
 }
 
 #[test]
 fn default() {
-    check_default!([
-        U128, U160, U224, U256, U384, U512, U520, U1024, U2048, U4096, H128, H160, H224, H256,
-        H384, H512, H520, H1024, H2048, H4096,
-    ]);
+    check_default!([U128, U160, U224, U256, U384, U512, U520, U1024, U2048, U4096]);
 }

@@ -33,14 +33,3 @@ check_rand!(rand_u520, U520);
 check_rand!(rand_u1024, U1024);
 check_rand!(rand_u2048, U2048);
 check_rand!(rand_u4096, U4096);
-
-check_rand!(rand_h128, H128);
-check_rand!(rand_h160, H160);
-check_rand!(rand_h224, H224);
-check_rand!(rand_h256, H256);
-check_rand!(rand_h384, H384);
-check_rand!(rand_h512, H512);
-check_rand!(rand_h520, H520);
-check_rand!(rand_h1024, H1024);
-check_rand!(rand_h2048, H2048);
-check_rand!(rand_h4096, H4096);

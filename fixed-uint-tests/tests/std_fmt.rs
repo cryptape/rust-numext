@@ -9,7 +9,7 @@
 #[macro_use]
 extern crate proptest;
 
-extern crate ethereum_types as uint;
+extern crate ethereum_types as etypes;
 extern crate numext_fixed_uint as nfuint;
 extern crate numext_fixed_uint_tests as nfuint_tests;
 
@@ -30,47 +30,48 @@ macro_rules! std_fmt {
         proptest! {
             #[test]
             fn $name(ref le in any::<props::U256LeBytes>()) {
-                let str_uint = {
-                    let val: uint::U256 = le.into();
+                let expected = {
+                    let val: etypes::U256 = le.into();
                     format!($fmt_str, val)
                 };
-                let str_nfuint = {
+                let result = {
                     let val: nfuint::U256 = le.into();
                     format!($fmt_str, val)
                 };
-                assert_eq!(str_uint, str_nfuint);
+                assert_eq!(expected, result);
             }
         }
     };
 }
 
-std_fmt!(display_ramdom, "{}");
+std_fmt!(display_random, "{}");
 
 #[test]
 fn debug() {
-    let x = nfuint::U256([0x10, 0x0, 0x0, 0x0]);
-    let y = nfuint::U256::one() << 4u8;
-    assert_eq!(x, y);
-    check_fmt!("{:?}", nfuint::U128::from(0u128), "U128 ( [ 0x0, 0x0 ] )");
+    check_fmt!(
+        "{:?}",
+        nfuint::U128::from(0u128),
+        "U128 ( [ 0x0000000000000000, 0x0000000000000000 ] )"
+    );
     check_fmt!(
         "{:?}",
         nfuint::U256::from(0u128),
-        "U256 ( [ 0x0, 0x0, 0x0, 0x0 ] )"
+        "U256 ( [ 0x0000000000000000, 0x0000000000000000, 0x0000000000000000, 0x0000000000000000 ] )"
     );
     check_fmt!(
         "{:?}",
         nfuint::U256::from(1u128),
-        "U256 ( [ 0x1, 0x0, 0x0, 0x0 ] )"
+        "U256 ( [ 0x0000000000000001, 0x0000000000000000, 0x0000000000000000, 0x0000000000000000 ] )"
     );
     check_fmt!(
         "{:?}",
         nfuint::U256::from(0x0001_0000_0000_0000_0000u128),
-        "U256 ( [ 0x0, 0x1, 0x0, 0x0 ] )"
+        "U256 ( [ 0x0000000000000000, 0x0000000000000001, 0x0000000000000000, 0x0000000000000000 ] )"
     );
     check_fmt!(
         "{:?}",
         nfuint::U256::from(0x0001_0000_0000_0000_0001u128),
-        "U256 ( [ 0x1, 0x1, 0x0, 0x0 ] )"
+        "U256 ( [ 0x0000000000000001, 0x0000000000000001, 0x0000000000000000, 0x0000000000000000 ] )"
     );
 }
 

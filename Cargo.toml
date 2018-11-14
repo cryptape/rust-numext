@@ -1,6 +1,10 @@
 [workspace]
 members = [
+    "constructor",
+
     "fixed-uint",
-    "fixed-uint-macros",
+    "fixed-hash",
+
     "fixed-uint-tests",
+    "fixed-hash-tests",
 ]
