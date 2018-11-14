@@ -9,7 +9,7 @@ autobenches = false
 
 [dependencies]
 numext-fixed-uint = { path = "../fixed-uint", features = ["support_all"] }
-ethereum-types = "0.4.0"
+ethereum-types = "0.4"
 proptest = "0.8"
 rand = "0.5"
 

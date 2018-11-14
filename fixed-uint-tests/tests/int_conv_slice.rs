@@ -79,11 +79,11 @@ proptest! {
             ret
         };
         let expected: props::U256LeBytes = {
-            let ret = etypes::U256::from_little_endian(&slice[..]);
+            let ret = etypes::U256::from_big_endian(&slice[..]);
             ret.into()
         };
         let result: props::U256LeBytes = {
-            let ret = nfuint::U256::from_little_endian(&slice[..]);
+            let ret = nfuint::U256::from_big_endian(&slice[..]);
             ret.unwrap().into()
         };
         assert_eq!(expected, result);

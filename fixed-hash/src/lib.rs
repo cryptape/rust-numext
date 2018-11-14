@@ -18,6 +18,10 @@ extern crate rand;
 extern crate serde;
 
 extern crate numext_constructor;
+extern crate numext_fixed_uint as nfuint;
+
+#[macro_use]
+mod tools;
 
 numext_constructor::construct_fixed_hashes!(
     H128 {
@@ -51,3 +55,13 @@ numext_constructor::construct_fixed_hashes!(
         size = 4096,
     },
 );
+
+convert_between!(U128, H128, 16);
+convert_between!(U160, H160, 20);
+convert_between!(U224, H224, 28);
+convert_between!(U256, H256, 32);
+convert_between!(U384, H384, 48);
+convert_between!(U512, H512, 64);
+convert_between!(U1024, H1024, 128);
+convert_between!(U2048, H2048, 256);
+convert_between!(U4096, H4096, 512);
