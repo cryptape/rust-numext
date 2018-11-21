@@ -8,8 +8,6 @@
 
 #[macro_use]
 extern crate failure;
-#[cfg(feature = "support_serde")]
-extern crate faster_hex;
 #[cfg(feature = "support_heapsize")]
 extern crate heapsize;
 #[cfg(feature = "support_rand")]

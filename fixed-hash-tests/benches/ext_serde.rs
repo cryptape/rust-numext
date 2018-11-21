@@ -9,40 +9,40 @@
 #[macro_use]
 extern crate criterion;
 extern crate ethereum_types as etypes;
-extern crate numext_fixed_uint as nfuint;
-extern crate numext_fixed_uint_tests as nfuint_tests;
+extern crate numext_fixed_hash as nfhash;
+extern crate numext_fixed_hash_tests as nfhash_tests;
 extern crate serde_json;
 
 use criterion::Criterion;
 
 fn serde(c: &mut Criterion) {
-    let x = nfuint::U256::max_value();
-    let y = etypes::U256::max_value();
+    let x = nfhash::H256::repeat_byte(2);
+    let y = etypes::H256([2; 32]);
 
     let x_json = serde_json::to_string(&x).unwrap();
     let y_json = serde_json::to_string(&y).unwrap();
 
-    c.bench_function("bench_ser_numext_u256", move |b| {
+    c.bench_function("bench_ser_numext_h256", move |b| {
         b.iter(|| {
             let _ = serde_json::to_string(&x);
         })
     });
 
-    c.bench_function("bench_ser_ethereum_types_u256", move |b| {
+    c.bench_function("bench_ser_ethereum_types_h256", move |b| {
         b.iter(|| {
             let _ = serde_json::to_string(&y);
         })
     });
 
-    c.bench_function("bench_de_numext_u256", move |b| {
+    c.bench_function("bench_de_numext_h256", move |b| {
         b.iter(|| {
-            let _: nfuint::U256 = serde_json::from_str(&x_json).unwrap();
+            let _: nfhash::H256 = serde_json::from_str(&x_json).unwrap();
         })
     });
 
-    c.bench_function("bench_de_ethereum_types_u256", move |b| {
+    c.bench_function("bench_de_ethereum_types_h256", move |b| {
         b.iter(|| {
-            let _: etypes::U256 = serde_json::from_str(&y_json).unwrap();
+            let _: etypes::H256 = serde_json::from_str(&y_json).unwrap();
         })
     });
 }
