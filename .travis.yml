@@ -1,7 +1,10 @@
 language: rust
+os:
+  - osx
+  - linux
+  - windows
 rust:
   - stable
-  - beta
   - nightly
 script:
   - RUSTFLAGS='-F warnings' cargo build --verbose --all
