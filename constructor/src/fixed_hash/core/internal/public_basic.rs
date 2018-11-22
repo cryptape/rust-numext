@@ -179,8 +179,13 @@ impl HashConstructor {
             }
             /// Get the inner bytes array of a fixed hash.
             #[inline]
-            pub fn to_fixed_bytes(self) -> #inner_type {
+            pub fn into_fixed_bytes(self) -> #inner_type {
                 self.into_inner()
+            }
+            /// Get a vec of a fixed hash.
+            #[inline]
+            pub fn to_vec(&self) -> Vec<u8> {
+                self.inner().to_vec()
             }
             /// Get a constant raw pointer to the inner bytes array of a fixed hash.
             #[inline]
