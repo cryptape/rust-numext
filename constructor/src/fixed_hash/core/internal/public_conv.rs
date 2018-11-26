@@ -155,7 +155,7 @@ impl HashConstructor {
             })
         };
         let part = quote!(
-            /// Convert from a hexadecimal string.
+            /// Convert from a fixed length hexadecimal string.
             #[inline]
             pub fn from_hex_str(input: &str) -> Result<Self, #error_name> {
                 let len = input.len();
@@ -166,6 +166,47 @@ impl HashConstructor {
                 {
                     let inner = ret.mut_inner();
                     #part_core
+                }
+                Ok(ret)
+            }
+            /// Convert from an arbitrary length zero-trimmed hexadecimal string.
+            /// Fisrt char should not be zero if the input has more than one char.
+            #[inline]
+            pub fn from_trimmed_hex_str(input: &str) -> Result<Self, #error_name> {
+                let len = input.len();
+                if len == 0 || len > #char_amount_max {
+                    Err(FromStrError::InvalidLength(len))?;
+                } else if input.as_bytes()[0] == b'0' {
+                    if len == 1 {
+                        return Ok(Self::zero());
+                    } else {
+                        Err(FromStrError::InvalidCharacter { chr: b'0', idx: 0 })?;
+                    }
+                }
+                let mut ret = Self::zero();
+                let mut input_bytes = input.bytes();
+                let mut idx = 0;
+                let mut unit_idx = (#char_amount_max - len) / 2;
+                let mut high = len % 2 == 0;
+                {
+                    let inner = ret.mut_inner();
+                    for chr in input_bytes {
+                        let v = match chr {
+                            b'a'...b'f' => chr - b'a' + 10,
+                            b'A'...b'F' => chr - b'A' + 10,
+                            b'0'...b'9' => chr - b'0',
+                            _ => Err(FromStrError::InvalidCharacter { chr, idx })?,
+                        };
+                        idx += 1;
+                        if high {
+                            inner[unit_idx] = v * 16;
+                            high = false;
+                        } else {
+                            inner[unit_idx] += v;
+                            high = true;
+                            unit_idx += 1;
+                        }
+                    }
                 }
                 Ok(ret)
             }
