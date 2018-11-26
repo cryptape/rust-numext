@@ -28,6 +28,7 @@ impl UintConstructor {
         self.impl_traits_std_cmp();
         self.defun_priv_ops();
         self.impl_traits_std_ops();
+        self.defun_pub_math();
 
         self.defun_priv_conv();
         self.defun_pub_conv();

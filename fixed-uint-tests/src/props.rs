@@ -10,6 +10,7 @@
 
 use etypes;
 use nfuint;
+use num_bigint;
 
 use proptest::arbitrary::Arbitrary;
 use proptest::prelude::RngCore;
@@ -72,6 +73,12 @@ impl<'a> ::std::convert::From<&'a U256LeBytes> for nfuint::U256 {
     }
 }
 
+impl<'a> ::std::convert::From<&'a U256LeBytes> for num_bigint::BigUint {
+    fn from(bytes: &U256LeBytes) -> Self {
+        Self::from_bytes_le(&bytes.inner)
+    }
+}
+
 impl ::std::convert::From<U256LeBytes> for etypes::U256 {
     fn from(bytes: U256LeBytes) -> Self {
         Self::from_little_endian(&bytes.inner)
@@ -81,6 +88,12 @@ impl ::std::convert::From<U256LeBytes> for etypes::U256 {
 impl ::std::convert::From<U256LeBytes> for nfuint::U256 {
     fn from(bytes: U256LeBytes) -> Self {
         Self::from_little_endian(&bytes.inner).unwrap()
+    }
+}
+
+impl ::std::convert::From<U256LeBytes> for num_bigint::BigUint {
+    fn from(bytes: U256LeBytes) -> Self {
+        Self::from_bytes_le(&bytes.inner)
     }
 }
 
@@ -357,6 +370,15 @@ impl<'a> ::std::convert::From<&'a U256Pair> for (nfuint::U256, nfuint::U256) {
     }
 }
 
+impl<'a> ::std::convert::From<&'a U256Pair> for (num_bigint::BigUint, num_bigint::BigUint) {
+    fn from(pair: &U256Pair) -> Self {
+        let U256Pair {
+            ref lhs, ref rhs, ..
+        } = pair;
+        (lhs.into(), rhs.into())
+    }
+}
+
 impl ::std::convert::From<U256Pair> for (etypes::U256, etypes::U256) {
     fn from(pair: U256Pair) -> Self {
         let U256Pair { lhs, rhs, .. } = pair;
@@ -365,6 +387,13 @@ impl ::std::convert::From<U256Pair> for (etypes::U256, etypes::U256) {
 }
 
 impl ::std::convert::From<U256Pair> for (nfuint::U256, nfuint::U256) {
+    fn from(pair: U256Pair) -> Self {
+        let U256Pair { lhs, rhs, .. } = pair;
+        (lhs.into(), rhs.into())
+    }
+}
+
+impl ::std::convert::From<U256Pair> for (num_bigint::BigUint, num_bigint::BigUint) {
     fn from(pair: U256Pair) -> Self {
         let U256Pair { lhs, rhs, .. } = pair;
         (lhs.into(), rhs.into())

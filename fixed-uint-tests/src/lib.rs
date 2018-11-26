@@ -7,6 +7,7 @@
 // except according to those terms.
 
 extern crate ethereum_types as etypes;
+extern crate num_bigint;
 extern crate numext_fixed_uint as nfuint;
 
 extern crate proptest;

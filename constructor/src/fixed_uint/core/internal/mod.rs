@@ -15,3 +15,4 @@ mod private_conv;
 mod private_ops;
 mod public_basic;
 mod public_conv;
+mod public_math;
