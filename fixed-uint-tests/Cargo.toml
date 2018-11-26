@@ -10,6 +10,8 @@ autobenches = false
 [dependencies]
 numext-fixed-uint = { path = "../fixed-uint", features = ["support_all"] }
 ethereum-types = "0.4"
+num-bigint = "0.2"
+num-integer = "0.1"
 proptest = "0.8"
 rand = "0.5"
 
@@ -23,6 +25,10 @@ harness = false
 
 [[bench]]
 name = "std_ops_shift"
+harness = false
+
+[[bench]]
+name = "int_math"
 harness = false
 
 [[bench]]
