@@ -545,14 +545,23 @@ impl UintConstructor {
                     let dividend = (lhs_highest << #unit_bits_size) + copy.inner()[lhs_idx] as #double_unit_suffix;
                     if dividend >= rhs_highest {
                         let quotient = (dividend / rhs_highest) as #unit_suffix;
-                        let of = {
+                        let mut of = {
                             let ret_tmp = &mut ret[0];
                             let (tmp, of) = quotient.overflowing_add(*ret_tmp);
                             *ret_tmp = tmp;
                             of
                         };
-                        if of {
-                            ret[1] += 1;
+                        let mut idx = 1;
+                        while idx < #unit_amount {
+                            if of {
+                                let ret_tmp = &mut ret[idx];
+                                let (tmp, of_tmp) = ret_tmp.overflowing_add(1);
+                                *ret_tmp = tmp;
+                                of = of_tmp;
+                                idx += 1;
+                            } else {
+                                break;
+                            }
                         }
                         let (minuend, _) = other._mul_unit(quotient);
                         let (copy_new, _) = copy._sub(&minuend);
