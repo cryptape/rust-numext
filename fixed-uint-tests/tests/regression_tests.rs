@@ -16,4 +16,8 @@ fn div_throw_add_overflow() {
         let y = &x / &one;
         assert_eq!(x, y);
     }
+    let x = nfuint::U256::from(4096u32);
+    let y = ((nfuint::U256::one() << 255) / &x) << 1;
+    let z = ((nfuint::U256::one() << 255) / &y) << 1;
+    assert_eq!(x, z);
 }

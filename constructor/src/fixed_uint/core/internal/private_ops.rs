@@ -539,33 +539,30 @@ impl UintConstructor {
                     let (copy_new, _) = copy._sub(&minuend);
                     copy = copy_new;
                 }
-                // when rhs has only one unit
-                if rhs_idx == 0 {
-                    let lhs_highest = copy.inner()[lhs_idx+1] as #double_unit_suffix;
-                    let dividend = (lhs_highest << #unit_bits_size) + copy.inner()[lhs_idx] as #double_unit_suffix;
-                    if dividend >= rhs_highest {
-                        let quotient = (dividend / rhs_highest) as #unit_suffix;
-                        let mut of = {
-                            let ret_tmp = &mut ret[0];
-                            let (tmp, of) = quotient.overflowing_add(*ret_tmp);
+                let mut more: #unit_suffix = 0;
+                while copy >= *other {
+                    let (copy_new, _) = copy._sub(other);
+                    copy = copy_new;
+                    more += 1;
+                }
+                {
+                    let mut of = {
+                        let ret_tmp = &mut ret[0];
+                        let (tmp, of) = more.overflowing_add(*ret_tmp);
+                        *ret_tmp = tmp;
+                        of
+                    };
+                    let mut idx = 1;
+                    while idx < #unit_amount {
+                        if of {
+                            let ret_tmp = &mut ret[idx];
+                            let (tmp, of_tmp) = ret_tmp.overflowing_add(1);
                             *ret_tmp = tmp;
-                            of
-                        };
-                        let mut idx = 1;
-                        while idx < #unit_amount {
-                            if of {
-                                let ret_tmp = &mut ret[idx];
-                                let (tmp, of_tmp) = ret_tmp.overflowing_add(1);
-                                *ret_tmp = tmp;
-                                of = of_tmp;
-                                idx += 1;
-                            } else {
-                                break;
-                            }
+                            of = of_tmp;
+                            idx += 1;
+                        } else {
+                            break;
                         }
-                        let (minuend, _) = other._mul_unit(quotient);
-                        let (copy_new, _) = copy._sub(&minuend);
-                        copy = copy_new;
                     }
                 }
                 Some((Self::new(ret), copy))
