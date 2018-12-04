@@ -42,7 +42,8 @@ macro_rules! bench_std_ops_binary {
                     vec![nfuint_tests::tools::pair(
                         nfuint_tests::props::U256PairParameters::$param,
                     )],
-                ).with_function("etypes", |b, p| {
+                )
+                .with_function("etypes", |b, p| {
                     std_ops_binary!($tag: $opr, b, p, etypes::U256)
                 }),
             );
@@ -68,7 +69,8 @@ macro_rules! bench_std_ops_unary {
                     "nfuint",
                     |b, v| std_ops_unary!($opr, b, v, nfuint::U256),
                     vec![nfuint_tests::tools::lebytes()],
-                ).with_function("etypes", |b, v| std_ops_unary!($opr, b, v, etypes::U256)),
+                )
+                .with_function("etypes", |b, v| std_ops_unary!($opr, b, v, etypes::U256)),
             );
         }
     };

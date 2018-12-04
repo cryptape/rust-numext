@@ -10,7 +10,6 @@
 
 mod as_primitive;
 
-mod std_clone;
 mod std_cmp;
 mod std_convert;
 mod std_default;

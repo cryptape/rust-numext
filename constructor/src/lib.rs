@@ -33,12 +33,14 @@ pub fn construct_fixed_uints(input: proc_macro::TokenStream) -> proc_macro::Toke
             .map(|input| {
                 let parsed: fixed_uint::parsed::UintDefinition = input.into();
                 fixed_uint::core::UintConstructor::new(parsed)
-            }).fold((quote!(), Vec::new()), |(uints, mut ucs), uc| {
+            })
+            .fold((quote!(), Vec::new()), |(uints, mut ucs), uc| {
                 let (uint, public) = uc.construct_all(&ucs[..]);
                 let uints = quote!(#uints #public #uint);
                 ucs.push(uc);
                 (uints, ucs)
-            }).0
+            })
+            .0
     };
     expanded.into()
 }
@@ -53,12 +55,14 @@ pub fn construct_fixed_hashes(input: proc_macro::TokenStream) -> proc_macro::Tok
             .map(|input| {
                 let parsed: fixed_hash::parsed::HashDefinition = input.into();
                 fixed_hash::core::HashConstructor::new(parsed)
-            }).fold((quote!(), Vec::new()), |(hashes, mut ucs), uc| {
+            })
+            .fold((quote!(), Vec::new()), |(hashes, mut ucs), uc| {
                 let (hash, public) = uc.construct_all(&ucs[..]);
                 let hashes = quote!(#hashes #public #hash);
                 ucs.push(uc);
                 (hashes, ucs)
-            }).0
+            })
+            .0
     };
     expanded.into()
 }

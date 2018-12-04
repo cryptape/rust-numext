@@ -34,7 +34,8 @@ macro_rules! bench_std_ops_shift {
                     "nfuint",
                     |b, v| std_ops_shift!($opr, b, v, nfuint::U256, $bits),
                     vec![nfuint_tests::tools::lebytes()],
-                ).with_function("etypes", |b, v| {
+                )
+                .with_function("etypes", |b, v| {
                     std_ops_shift!($opr, b, v, etypes::U256, $bits)
                 }),
             );

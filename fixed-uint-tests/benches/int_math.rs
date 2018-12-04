@@ -34,7 +34,8 @@ fn gcd(c: &mut Criterion) {
             vec![nfuint_tests::tools::pair(
                 nfuint_tests::props::U256PairParameters::Random,
             )],
-        ).with_function("num_bigint", |b, p| gcd!(b, p, num_bigint::BigUint)),
+        )
+        .with_function("num_bigint", |b, p| gcd!(b, p, num_bigint::BigUint)),
     );
 }
 

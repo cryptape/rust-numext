@@ -21,7 +21,6 @@ impl UintConstructor {
 
         self.define_kernel();
 
-        self.impl_traits_std_clone();
         self.impl_traits_std_default();
         self.defun_pub_basic();
 

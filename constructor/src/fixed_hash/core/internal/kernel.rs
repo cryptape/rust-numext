@@ -60,7 +60,7 @@ impl HashConstructor {
         let part = quote!(
             /// Create a new fixed hash with a provided input.
             #[inline]
-            fn new(data: #inner_type) -> Self {
+            const fn new(data: #inner_type) -> Self {
                 #name (data)
             }
             /// Get a reference of the inner data of the fixed hash.
@@ -88,12 +88,12 @@ impl HashConstructor {
         let part = quote!(
             /// Return a new fixed hash where all bytes are set to the given byte.
             #[inline]
-            pub fn repeat_byte(byte: u8) -> Self {
+            pub const fn repeat_byte(byte: u8) -> Self {
                 Self::new([byte; #unit_amount])
             }
             /// Create a new fixed hash and all bits of it are zeros.
             #[inline]
-            pub fn zero() -> Self {
+            pub const fn zero() -> Self {
                 Self::new([0; #unit_amount])
             }
             /// Test if all bits of a fixed hash are zero.
@@ -136,10 +136,12 @@ impl HashConstructor {
     }
 
     fn deftrait_hash_convert(&self) {
-        let part = quote!(pub trait HashConvert<T> {
-            /// Convert a fixed hash into another, return the new fixed hash and if it be truncated.
-            fn convert_into(&self) -> (T, bool);
-        });
+        let part = quote!(
+            pub trait HashConvert<T> {
+                /// Convert a fixed hash into another, return the new fixed hash and if it be truncated.
+                fn convert_into(&self) -> (T, bool);
+            }
+        );
         self.prelude(part);
     }
 }
