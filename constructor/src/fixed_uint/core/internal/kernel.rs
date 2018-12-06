@@ -91,7 +91,7 @@ impl UintConstructor {
         let part = quote!(
             /// Create a new fixed uint with a provided input.
             #[inline]
-            fn new(data: #inner_type) -> Self {
+            const fn new(data: #inner_type) -> Self {
                 #name (data)
             }
             /// Get a reference of the inner data of the fixed uint.
@@ -116,18 +116,20 @@ impl UintConstructor {
     fn defun_pub_kernel(&self) {
         let unit_amount = &self.ts.unit_amount;
         let loop_unit_amount = &utils::pure_uint_list_to_ts(0..self.info.unit_amount);
+        let zero_padding = &utils::pure_uint_list_to_ts(
+            ::std::iter::repeat(0).take((self.info.unit_amount - 1) as usize),
+        );
+        let one = quote!([1, #(#zero_padding),* ]);
         let part = quote!(
             /// Create a new fixed uint and value is zero.
             #[inline]
-            pub fn zero() -> Self {
+            pub const fn zero() -> Self {
                 Self::new([0; #unit_amount])
             }
             /// Create a new fixed uint and value is zero.
             #[inline]
-            pub fn one() -> Self {
-                let mut ret = [0; #unit_amount];
-                ret[0] = 1;
-                Self::new(ret)
+            pub const fn one() -> Self {
+                Self::new( #one )
             }
             /// Test if a fixed uint is zero.
             #[inline]
@@ -156,10 +158,12 @@ impl UintConstructor {
     }
 
     fn deftrait_uint_convert(&self) {
-        let part = quote!(pub trait UintConvert<T> {
-            /// Convert a fixed uint into another, return the new fixed uint and if it be truncated.
-            fn convert_into(&self) -> (T, bool);
-        });
+        let part = quote!(
+            pub trait UintConvert<T> {
+                /// Convert a fixed uint into another, return the new fixed uint and if it be truncated.
+                fn convert_into(&self) -> (T, bool);
+            }
+        );
         self.prelude(part);
     }
 }

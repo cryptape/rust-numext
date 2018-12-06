@@ -118,10 +118,7 @@ impl HashConstructor {
         let inner_type = &self.ts.inner_type;
         let part = quote!(
             /// Fixed hash type.
-            ///
-            /// # Notice:
-            ///
-            /// *Avoid to use the inner type directly.*
+            #[derive(Clone)]
             pub struct #name (pub #inner_type);
         );
         self.attach_hash(part);

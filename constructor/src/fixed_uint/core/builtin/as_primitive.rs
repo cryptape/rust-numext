@@ -32,12 +32,12 @@ impl UintConstructor {
         let part = quote!(
             /// Returns the smallest value that can be represented by this integer type.
             #[inline]
-            pub fn min_value() -> Self {
+            pub const fn min_value() -> Self {
                 Self::new([0; #unit_amount])
             }
             /// Returns the largest value that can be represented by this integer type.
             #[inline]
-            pub fn max_value() -> Self {
+            pub const fn max_value() -> Self {
                 Self::new([!0; #unit_amount])
             }
         );
