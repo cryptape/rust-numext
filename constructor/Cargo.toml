@@ -5,6 +5,14 @@ authors = [
     "Boyu Yang <yangby@cryptape.com>",
     "zhangsoledad <787953403@qq.com>",
 ]
+license = "MIT/Apache-2.0"
+keywords = ["fixed", "hash", "uint"]
+categories = [ "algorithms", "data-structures"]
+description = """
+Fixed-size uint and hash constructor.
+"""
+repository = "https://github.com/yangby-cryptape/rust-numext"
+homepage = "https://github.com/yangby-cryptape/rust-numext"
 
 [dependencies]
 syn = { version = "0.15", features = ["extra-traits"] }
@@ -13,3 +21,6 @@ proc-macro2 = "0.4"
 
 [lib]
 proc-macro = true
+
+[badges]
+travis-ci = { repository = "yangby-cryptape/rust-numext" }
