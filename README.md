@@ -5,7 +5,7 @@
 
 Extend the rust built-in numeric types.
 
-[License]: https://img.shields.io/badge/License-MIT%2FApache--2.0-blue.svg
+[License]: https://img.shields.io/badge/License-Apache--2.0%20OR%20MIT-blue.svg
 [Travis CI]: https://img.shields.io/travis/com/yangby-cryptape/rust-numext.svg
 
 ## License

@@ -5,14 +5,12 @@ authors = [
     "Boyu Yang <yangby@cryptape.com>",
     "zhangsoledad <787953403@qq.com>",
 ]
-license = "MIT/Apache-2.0"
-keywords = ["fixed", "hash", "bignum"]
-categories = [ "algorithms", "data-structures"]
-description = """
-Fixed-size hash types.
-"""
+description = "Fixed-size hash types."
+homepage = "https://yangby-cryptape.github.io/rust-numext/"
 repository = "https://github.com/yangby-cryptape/rust-numext"
-homepage = "https://github.com/yangby-cryptape/rust-numext"
+keywords = ["fixed", "hash", "bignum"]
+categories = ["algorithms", "data-structures"]
+license = "Apache-2.0 OR MIT"
 
 [dependencies]
 numext-constructor = { version = "0.1", path = "../constructor" }
