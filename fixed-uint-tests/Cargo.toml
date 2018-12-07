@@ -1,11 +1,12 @@
 [package]
-name = "nfuint_tests"
+name = "nfuint-tests"
 version = "0.1.0"
 authors = [
     "Boyu Yang <yangby@cryptape.com>",
     "zhangsoledad <787953403@qq.com>",
 ]
 edition = "2018"
+publish = false
 autobenches = false
 
 [dependencies]

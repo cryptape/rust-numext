@@ -1,11 +1,25 @@
 language: rust
 os:
-  - osx
   - linux
+  - osx
   - windows
 rust:
   - stable
+  - beta
   - nightly
+matrix:
+  exclude:
+    - os: osx
+      rust: beta
+    - os: osx
+      rust: nightly
+    - os: windows
+      rust: beta
+    - os: windows
+      rust: nightly
+  allow_failures:
+    - rust: nightly
+  fast_finish: true
 script:
   - RUSTFLAGS='-F warnings' cargo build --verbose --all
   - RUSTFLAGS='-F warnings' cargo test --verbose --all
@@ -17,14 +31,10 @@ jobs:
     - stage: Check
       name: Format
       script:
-        - rustup component add rustfmt-preview
+        - rustup component add rustfmt
         - cargo fmt --all -- --check
-    - stage: Check
-      name: Dependencies
-      script:
-        - cargo check --all --tests --locked
     - stage: Check
       name: Clippy
       script:
-        - rustup component add clippy-preview
+        - rustup component add clippy
         - RUSTFLAGS='-F warnings' cargo clippy --all --tests
