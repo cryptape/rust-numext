@@ -73,8 +73,6 @@ impl UintConstructor {
             #[cfg(feature = "support_serde")]
             impl<'de> serde::Deserialize<'de> for #name {
                 fn deserialize<D>(deserializer: D) -> Result<Self, D::Error> where D: serde::Deserializer<'de> {
-                    let mut dst = [0u8; #bytes_size];
-
                     struct Visitor;
 
                     impl<'b> serde::de::Visitor<'b> for Visitor {
