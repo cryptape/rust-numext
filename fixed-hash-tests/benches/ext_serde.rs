@@ -6,14 +6,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-#[macro_use]
-extern crate criterion;
-extern crate ethereum_types as etypes;
-extern crate numext_fixed_hash as nfhash;
-extern crate numext_fixed_hash_tests as nfhash_tests;
-extern crate serde_json;
-
-use criterion::Criterion;
+use criterion::{criterion_group, criterion_main, Criterion};
 
 fn serde(c: &mut Criterion) {
     let x = nfhash::H256::repeat_byte(2);

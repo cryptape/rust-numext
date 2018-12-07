@@ -1,15 +1,16 @@
 [package]
-name = "numext-fixed-hash-tests"
+name = "nfhash_tests"
 version = "0.1.0"
 authors = [
     "Boyu Yang <yangby@cryptape.com>",
     "zhangsoledad <787953403@qq.com>",
 ]
+edition = "2018"
 autobenches = false
 
 [dependencies]
-numext-fixed-hash = { path = "../fixed-hash", features = ["support_all"] }
-ethereum-types = "0.4"
+nfhash = { path = "../fixed-hash", features = ["support_all"], package = "numext-fixed-hash" }
+etypes = { version = "0.4", package = "ethereum-types" }
 proptest = "0.8"
 rand = "0.5"
 

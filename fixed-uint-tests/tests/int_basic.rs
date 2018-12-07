@@ -6,9 +6,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-extern crate numext_fixed_uint;
-
-use numext_fixed_uint::{U128, U256};
+use nfuint::{U128, U256};
 
 #[test]
 fn bits_ops() {

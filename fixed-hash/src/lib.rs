@@ -7,21 +7,9 @@
 // except according to those terms.
 
 #[macro_use]
-extern crate failure;
-#[cfg(feature = "support_serde")]
-extern crate faster_hex;
-#[cfg(feature = "support_heapsize")]
-extern crate heapsize;
-#[cfg(feature = "support_rand")]
-extern crate rand;
-#[cfg(feature = "support_serde")]
-extern crate serde;
-
-extern crate numext_constructor;
-extern crate numext_fixed_uint as nfuint;
-
-#[macro_use]
 mod tools;
+
+use failure::Fail;
 
 numext_constructor::construct_fixed_hashes!(
     H128 {

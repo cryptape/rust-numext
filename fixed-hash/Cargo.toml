@@ -5,6 +5,7 @@ authors = [
     "Boyu Yang <yangby@cryptape.com>",
     "zhangsoledad <787953403@qq.com>",
 ]
+edition = "2018"
 description = "Fixed-size hash types."
 homepage = "https://yangby-cryptape.github.io/rust-numext/"
 repository = "https://github.com/yangby-cryptape/rust-numext"
@@ -14,7 +15,7 @@ license = "Apache-2.0 OR MIT"
 
 [dependencies]
 numext-constructor = { version = "0.1", path = "../constructor" }
-numext-fixed-uint = { version = "0.1", path = "../fixed-uint" }
+nfuint = { version = "0.1", path = "../fixed-uint", package = "numext-fixed-uint" }
 failure = "0.1"
 rand = { version = "0.5", optional = true }
 heapsize = { version = "0.4", optional = true }
@@ -24,9 +25,9 @@ faster-hex = { version = "0.1", optional = true }
 [features]
 default = []
 support_all = ["support_rand", "support_heapsize", "support_serde"]
-support_rand = ["rand", "numext-fixed-uint/support_rand"]
-support_heapsize = ["heapsize", "numext-fixed-uint/support_heapsize"]
-support_serde = ["serde", "faster-hex", "numext-fixed-uint/support_serde"]
+support_rand = ["rand", "nfuint/support_rand"]
+support_heapsize = ["heapsize", "nfuint/support_heapsize"]
+support_serde = ["serde", "faster-hex", "nfuint/support_serde"]
 
 [badges]
 travis-ci = { repository = "yangby-cryptape/rust-numext" }

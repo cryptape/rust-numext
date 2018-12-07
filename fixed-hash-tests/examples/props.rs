@@ -6,10 +6,6 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-extern crate proptest;
-
-extern crate numext_fixed_hash_tests as nfhash_tests;
-
 use proptest::{
     arbitrary::Arbitrary,
     strategy::{Strategy, ValueTree},

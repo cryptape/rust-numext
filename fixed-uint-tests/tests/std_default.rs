@@ -6,8 +6,6 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-extern crate numext_fixed_uint;
-
 macro_rules! check_default {
     ([$( $uint:ident ),+ ,]) => {{
         check_default![[ $( $uint ),+ ]]
@@ -16,7 +14,7 @@ macro_rules! check_default {
         $( check_default!($uint); )+
     }};
     ($uint:ident) => {
-        assert_eq!(numext_fixed_uint::$uint::default(), 0u8.into());
+        assert_eq!(nfuint::$uint::default(), 0u8.into());
     };
 }
 

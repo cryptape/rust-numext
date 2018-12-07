@@ -15,8 +15,9 @@
 //! [methods]: https://doc.rust-lang.org/std/primitive.u64.html#methods
 //! [`count_ones`]: https://doc.rust-lang.org/std/primitive.u64.html#method.count_ones
 
-use fixed_uint::UintConstructor;
-use utils;
+use crate::fixed_uint::UintConstructor;
+use crate::utils;
+use quote::quote;
 
 impl UintConstructor {
     pub fn defun_as_prim(&self) {

@@ -10,7 +10,8 @@
 
 //! [`heapsize`]: https://crates.io/crates/heapsize
 
-use fixed_hash::HashConstructor;
+use crate::fixed_hash::HashConstructor;
+use quote::quote;
 
 impl HashConstructor {
     pub fn with_heapsize(&self) {

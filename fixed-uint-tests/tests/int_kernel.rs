@@ -6,11 +6,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-extern crate numext_fixed_uint;
-extern crate numext_fixed_uint_tests;
-
-use numext_fixed_uint::{prelude::UintConvert, U128, U256};
-use numext_fixed_uint_tests::tools;
+use nfuint::{prelude::UintConvert, U128, U256};
+use nfuint_tests::tools;
 
 #[test]
 fn kernel() {

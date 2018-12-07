@@ -5,6 +5,7 @@ authors = [
     "Boyu Yang <yangby@cryptape.com>",
     "zhangsoledad <787953403@qq.com>",
 ]
+edition = "2018"
 description = "Fixed-size uint and hash constructor."
 homepage = "https://yangby-cryptape.github.io/rust-numext/"
 repository = "https://github.com/yangby-cryptape/rust-numext"

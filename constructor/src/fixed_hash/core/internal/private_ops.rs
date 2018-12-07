@@ -8,8 +8,9 @@
 
 //! Define private methods about operators.
 
-use fixed_hash::HashConstructor;
-use utils;
+use crate::fixed_hash::HashConstructor;
+use crate::utils;
+use quote::quote;
 
 impl HashConstructor {
     pub fn defun_priv_ops(&self) {

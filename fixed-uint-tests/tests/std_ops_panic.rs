@@ -6,9 +6,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-extern crate numext_fixed_uint;
-
-use numext_fixed_uint::U256;
+use nfuint::U256;
 
 #[test]
 #[should_panic]

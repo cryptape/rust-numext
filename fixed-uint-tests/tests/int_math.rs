@@ -6,19 +6,11 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-#[macro_use]
-extern crate proptest;
-
-extern crate num_bigint;
-extern crate num_integer;
-extern crate numext_fixed_uint as nfuint;
-extern crate numext_fixed_uint_tests as nfuint_tests;
-
 use nfuint::U256;
 use nfuint_tests::props;
 use num_bigint::BigUint;
 use num_integer::Integer;
-use proptest::prelude::any_with;
+use proptest::{prelude::any_with, proptest, proptest_helper};
 
 proptest! {
     #[test]

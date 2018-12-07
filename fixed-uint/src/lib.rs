@@ -6,16 +6,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-#[macro_use]
-extern crate failure;
-#[cfg(feature = "support_heapsize")]
-extern crate heapsize;
-#[cfg(feature = "support_rand")]
-extern crate rand;
-#[cfg(feature = "support_serde")]
-extern crate serde;
-
-extern crate numext_constructor;
+use failure::Fail;
 
 numext_constructor::construct_fixed_uints!(
     U128 {

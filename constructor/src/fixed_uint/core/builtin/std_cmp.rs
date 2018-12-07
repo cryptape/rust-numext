@@ -10,8 +10,9 @@
 //!
 //! [`::std::cmp`]: https://doc.rust-lang.org/std/cmp/index.html#traits
 
-use fixed_uint::UintConstructor;
-use utils;
+use crate::fixed_uint::UintConstructor;
+use crate::utils;
+use quote::quote;
 
 impl UintConstructor {
     pub fn impl_traits_std_cmp(&self) {

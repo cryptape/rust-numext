@@ -6,16 +6,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-#[macro_use]
-extern crate proptest;
-
-extern crate ethereum_types as etypes;
-
-extern crate numext_fixed_hash as nfhash;
-extern crate numext_fixed_hash_tests as nfhash_tests;
-
 use nfhash_tests::props;
-use proptest::prelude::any;
+use proptest::{prelude::any, proptest, proptest_helper};
 
 proptest! {
     #[test]

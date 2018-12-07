@@ -10,7 +10,8 @@
 //!
 //! [`::std::iter`]: https://doc.rust-lang.org/std/iter/index.html#traits
 
-use fixed_uint::UintConstructor;
+use crate::fixed_uint::UintConstructor;
+use quote::quote;
 
 impl UintConstructor {
     pub fn impl_traits_std_iter(&self) {

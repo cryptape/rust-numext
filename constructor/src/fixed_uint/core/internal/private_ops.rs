@@ -8,8 +8,9 @@
 
 //! Define private methods about operators.
 
-use fixed_uint::UintConstructor;
-use utils;
+use crate::fixed_uint::UintConstructor;
+use crate::utils;
+use quote::quote;
 
 impl UintConstructor {
     pub fn defun_priv_ops(&self) {

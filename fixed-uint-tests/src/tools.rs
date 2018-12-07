@@ -8,7 +8,7 @@
 
 //! Testing tools.
 
-use props::{U256LeBytes, U256Pair, U256PairParameters};
+use crate::props::{U256LeBytes, U256Pair, U256PairParameters};
 use proptest::test_runner::TestRunner;
 use rand::{self, Rng};
 

@@ -1,15 +1,16 @@
 [package]
-name = "numext-fixed-uint-tests"
+name = "nfuint_tests"
 version = "0.1.0"
 authors = [
     "Boyu Yang <yangby@cryptape.com>",
     "zhangsoledad <787953403@qq.com>",
 ]
+edition = "2018"
 autobenches = false
 
 [dependencies]
-numext-fixed-uint = { path = "../fixed-uint", features = ["support_all"] }
-ethereum-types = "0.4"
+nfuint = { path = "../fixed-uint", features = ["support_all"], package = "numext-fixed-uint" }
+etypes = { version = "0.4", package = "ethereum-types" }
 num-bigint = "0.2"
 num-integer = "0.1"
 proptest = "0.8"

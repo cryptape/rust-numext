@@ -6,16 +6,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-#[macro_use]
-extern crate criterion;
-
-extern crate num_bigint;
-extern crate num_integer;
-
-extern crate numext_fixed_uint as nfuint;
-extern crate numext_fixed_uint_tests as nfuint_tests;
-
-use criterion::{black_box, Criterion, ParameterizedBenchmark};
+use criterion::{black_box, criterion_group, criterion_main, Criterion, ParameterizedBenchmark};
 use num_integer::Integer;
 
 macro_rules! gcd {

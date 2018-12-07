@@ -10,8 +10,9 @@
 //!
 //! [`rand`]: https://crates.io/crates/rand
 
-use fixed_hash::HashConstructor;
-use utils;
+use crate::fixed_hash::HashConstructor;
+use crate::utils;
+use quote::quote;
 
 impl HashConstructor {
     pub fn with_rand(&self) {
