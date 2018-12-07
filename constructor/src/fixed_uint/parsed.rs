@@ -10,7 +10,7 @@
 
 use syn;
 
-use definition;
+use crate::definition;
 
 pub struct UintDefinition {
     pub name: String,

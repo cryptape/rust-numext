@@ -8,13 +8,12 @@
 
 //! Constructor for Uint.
 
+use super::super::parsed;
+use crate::utils;
 use proc_macro2::TokenStream;
+use quote::quote;
 use std::cell::Cell;
 use std::iter::FromIterator;
-
-use super::super::parsed;
-
-use utils;
 
 pub struct UintInformation {
     pub name: String,

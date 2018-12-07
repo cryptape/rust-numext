@@ -8,7 +8,7 @@
 
 //! Testing tools.
 
-use props::H256Bytes;
+use crate::props::H256Bytes;
 use proptest::test_runner::TestRunner;
 use rand::{self, Rng};
 

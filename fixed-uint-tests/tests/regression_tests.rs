@@ -6,8 +6,6 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-extern crate numext_fixed_uint as nfuint;
-
 #[test]
 fn div_throw_add_overflow() {
     let one = nfuint::U256::one();

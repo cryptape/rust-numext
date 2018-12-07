@@ -8,7 +8,7 @@
 
 //! Parse the input for the macros.
 
-use syn;
+use syn::{self, braced, Token};
 
 pub struct Definitions {
     pub inner: syn::punctuated::Punctuated<Definition, Token![,]>,

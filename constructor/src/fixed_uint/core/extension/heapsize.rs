@@ -10,7 +10,8 @@
 
 //! [`heapsize`]: https://crates.io/crates/heapsize
 
-use fixed_uint::UintConstructor;
+use crate::fixed_uint::UintConstructor;
+use quote::quote;
 
 impl UintConstructor {
     pub fn with_heapsize(&self) {

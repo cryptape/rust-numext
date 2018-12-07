@@ -8,8 +8,9 @@
 
 //! Define public methods about convert.
 
-use fixed_hash::HashConstructor;
-use utils;
+use crate::fixed_hash::HashConstructor;
+use crate::utils;
+use quote::quote;
 
 impl HashConstructor {
     pub fn defun_pub_conv(&self) {

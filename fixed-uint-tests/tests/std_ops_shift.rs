@@ -9,10 +9,6 @@
 #[macro_use]
 extern crate proptest;
 
-extern crate ethereum_types as etypes;
-extern crate numext_fixed_uint as nfuint;
-extern crate numext_fixed_uint_tests as nfuint_tests;
-
 use nfuint_tests::props;
 use proptest::prelude::any;
 

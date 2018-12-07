@@ -9,10 +9,6 @@
 #![recursion_limit = "512"]
 
 extern crate proc_macro;
-extern crate proc_macro2;
-
-#[macro_use]
-extern crate syn;
 #[macro_use]
 extern crate quote;
 
@@ -22,6 +18,9 @@ mod utils;
 mod definition;
 mod fixed_hash;
 mod fixed_uint;
+
+use quote::quote;
+use syn::parse_macro_input;
 
 #[proc_macro]
 pub fn construct_fixed_uints(input: proc_macro::TokenStream) -> proc_macro::TokenStream {

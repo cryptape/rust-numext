@@ -12,8 +12,9 @@
 //!
 //! [`::std::ops`]: https://doc.rust-lang.org/std/ops/index.html#traits
 
-use fixed_uint::UintConstructor;
-use utils;
+use crate::fixed_uint::UintConstructor;
+use crate::utils;
+use quote::quote;
 
 impl UintConstructor {
     pub fn impl_traits_std_ops(&self) {

@@ -10,7 +10,8 @@
 //!
 //! [`::std::str`]: https://doc.rust-lang.org/std/str/index.html#traits
 
-use fixed_hash::HashConstructor;
+use crate::fixed_hash::HashConstructor;
+use quote::quote;
 
 impl HashConstructor {
     pub fn impl_traits_std_str(&self) {

@@ -10,8 +10,9 @@
 //!
 //! [`::std::cmp`]: https://doc.rust-lang.org/std/cmp/index.html#traits
 
-use fixed_hash::HashConstructor;
-use utils;
+use crate::fixed_hash::HashConstructor;
+use crate::utils;
+use quote::quote;
 
 impl HashConstructor {
     pub fn impl_traits_std_cmp(&self) {

@@ -6,9 +6,6 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-extern crate ethereum_types as etypes;
-extern crate numext_fixed_uint as nfuint;
-
 #[test]
 fn sum() {
     let multiple = nfuint::U256::one() << 223u64;

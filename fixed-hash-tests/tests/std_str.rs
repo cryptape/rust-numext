@@ -9,10 +9,6 @@
 #[macro_use]
 extern crate proptest;
 
-extern crate ethereum_types as etypes;
-extern crate numext_fixed_hash as nfhash;
-extern crate numext_fixed_hash_tests as nfhash_tests;
-
 use std::str::FromStr;
 
 use nfhash_tests::props;

@@ -8,8 +8,9 @@
 
 //! Define public methods about convert.
 
-use fixed_uint::UintConstructor;
-use utils;
+use crate::fixed_uint::UintConstructor;
+use crate::utils;
+use quote::quote;
 
 impl UintConstructor {
     pub fn defun_pub_conv(&self) {

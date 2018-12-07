@@ -10,8 +10,9 @@
 //!
 //! [`rand`]: https://crates.io/crates/rand
 
-use fixed_uint::UintConstructor;
-use utils;
+use crate::fixed_uint::UintConstructor;
+use crate::utils;
+use quote::quote;
 
 impl UintConstructor {
     pub fn with_rand(&self) {

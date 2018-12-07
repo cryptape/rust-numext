@@ -10,7 +10,8 @@
 //!
 //! [`::std::convert`]: https://doc.rust-lang.org/std/convert/index.html#traits
 
-use fixed_hash::HashConstructor;
+use crate::fixed_hash::HashConstructor;
+use quote::quote;
 
 impl HashConstructor {
     pub fn impl_traits_std_convert(&self) {

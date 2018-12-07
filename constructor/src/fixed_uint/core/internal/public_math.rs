@@ -8,7 +8,8 @@
 
 //! Define public methods for mathematics.
 
-use fixed_uint::UintConstructor;
+use crate::fixed_uint::UintConstructor;
+use quote::quote;
 
 impl UintConstructor {
     pub fn defun_pub_math(&self) {

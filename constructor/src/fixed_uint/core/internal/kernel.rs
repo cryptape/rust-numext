@@ -8,10 +8,10 @@
 
 //! Define the struct and the methods or implement built-in traits to modify the struct directly.
 
+use crate::fixed_uint::UintConstructor;
+use crate::utils;
 use proc_macro2::TokenStream;
-
-use fixed_uint::UintConstructor;
-use utils;
+use quote::quote;
 
 impl UintConstructor {
     pub fn define_kernel(&self) {

@@ -6,8 +6,6 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-extern crate numext_fixed_hash as nfhash;
-
 macro_rules! check_default {
     ([$( $hash:ident: $size:expr ),+ ,]) => {{
         check_default![[ $( $hash: $size ),+ ]]

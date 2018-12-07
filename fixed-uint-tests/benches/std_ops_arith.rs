@@ -6,15 +6,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-#[macro_use]
-extern crate criterion;
-
-extern crate ethereum_types as etypes;
-
-extern crate numext_fixed_uint as nfuint;
-extern crate numext_fixed_uint_tests as nfuint_tests;
-
-use criterion::{black_box, Criterion, ParameterizedBenchmark};
+use criterion::{black_box, criterion_group, criterion_main, Criterion, ParameterizedBenchmark};
 
 macro_rules! std_ops_binary {
     (direct: $opr:tt, $bencher:ident, $pair:ident, $type:ty) => {{

@@ -6,15 +6,12 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-extern crate numext_fixed_hash;
-extern crate serde_json;
-
 macro_rules! check_rand {
     ($name:ident, $uint:ident) => {
         #[test]
         fn $name() {
-            let x = numext_fixed_hash::$uint::thread_random();
-            let y = numext_fixed_hash::$uint::thread_random();
+            let x = nfhash::$uint::thread_random();
+            let y = nfhash::$uint::thread_random();
             // If this test is failed, please check if there is a bug or you are too luckly.
             assert!(!x.is_zero());
             assert!(!y.is_zero());

@@ -6,19 +6,13 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-#[macro_use]
-extern crate proptest;
-extern crate numext_fixed_hash;
-extern crate numext_fixed_hash_tests as nfhash_tests;
-extern crate serde_json;
-
 use nfhash_tests::props;
-use proptest::prelude::any;
+use proptest::{prelude::any, proptest, proptest_helper};
 
 proptest! {
     #[test]
     fn with_serde_defun_public(ref le in any::<props::H256Bytes>()) {
-        let val: numext_fixed_hash::H256 = le.into();
+        let val: nfhash::H256 = le.into();
         let json = serde_json::to_string(&val);
         assert!(json.is_ok());
         let json = json.unwrap();

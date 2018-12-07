@@ -10,7 +10,8 @@
 //!
 //! [`serde`]: https://crates.io/crates/serde
 
-use fixed_hash::HashConstructor;
+use crate::fixed_hash::HashConstructor;
+use quote::quote;
 
 impl HashConstructor {
     pub fn with_serde(&self) {
