@@ -37,4 +37,4 @@ jobs:
       name: Clippy
       script:
         - rustup component add clippy
-        - RUSTFLAGS='-F warnings' cargo clippy --all --tests
+        - RUSTFLAGS='-F warnings' cargo clippy --all --all-targets --all-features

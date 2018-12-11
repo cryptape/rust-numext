@@ -5,7 +5,7 @@
 
 Extend the rust built-in numeric types.
 
-* [`constructor`] [![Constructor Badge]](https://crates.io/crates/numext-constructor) :  `construct_fixed_hashes!` and `construct_fixed_uints!` proc-macro.
+* [`constructor`] [![Constructor Badge]](https://crates.io/crates/numext-constructor) :  `construct_fixed_hashes!` and `construct_fixed_uints!` proc-macros.
 
 * [`fixed-uint`] [![Uint Doc]](https://docs.rs/numext-fixed-uint) [![Uint Badge]](https://crates.io/crates/numext-fixed-uint) :  Fixed-size uint structures.
 
