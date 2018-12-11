@@ -17,6 +17,7 @@ impl HashConstructor {
         self.defun_pub_bits_ops();
         self.defun_pub_bytes_ops();
         self.defun_pub_ptr_ops();
+        self.defun_pub_mem_ops();
     }
 
     fn defun_pub_bits_ops(&self) {
@@ -26,7 +27,7 @@ impl HashConstructor {
         let part = quote!(
             /// Return the count of bits.
             #[inline]
-            pub fn count_bits() -> u64 {
+            pub const fn count_bits() -> u64 {
                 #bits_size
             }
             /// Return a specific bit, or return None when overlows.
@@ -100,7 +101,7 @@ impl HashConstructor {
         let part = quote!(
             /// Return the count of bytes.
             #[inline]
-            pub fn count_bytes() -> u64 {
+            pub const fn count_bytes() -> u64 {
                 #bytes_size
             }
             /// Return a specific byte, or return None when overlows.
@@ -197,6 +198,20 @@ impl HashConstructor {
             #[inline]
             pub fn as_mut_ptr(&mut self) -> *mut u8 {
                 self.mut_inner().as_mut_ptr()
+            }
+        );
+        self.defun(part);
+    }
+
+    fn defun_pub_mem_ops(&self) {
+        let bytes_size = &self.ts.unit_amount;
+        let part = quote!(
+            /// Return the size used by this type in bytes, actually.
+            ///
+            /// This size is greater than or equal to the bytes of this fixed type.
+            #[inline]
+            pub const fn size_of() -> usize {
+                #bytes_size
             }
         );
         self.defun(part);
