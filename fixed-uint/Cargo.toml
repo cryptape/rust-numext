@@ -1,6 +1,6 @@
 [package]
 name = "numext-fixed-uint"
-version = "0.1.0"
+version = "0.1.1"
 authors = [
     "Boyu Yang <yangby@cryptape.com>",
     "zhangsoledad <787953403@qq.com>",

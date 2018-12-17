@@ -26,6 +26,7 @@ script:
 stages:
   - Check
   - Test
+  - Deploy
 jobs:
   include:
     - stage: Check
@@ -38,3 +39,19 @@ jobs:
       script:
         - rustup component add clippy
         - RUSTFLAGS='-F warnings' cargo clippy --all --all-targets --all-features
+    - stage: Deploy
+      if: branch = master
+      name: Deploy
+      script:
+        - |
+            for crate in \
+                    constructor \
+                    fixed-uint \
+                    fixed-hash; do
+                cargo clean
+                cd "${crate}" \
+                    && cargo publish --token "${CARGO_PUBLISH_TOKEN}" \
+                    && echo "Publish ${crate} is DONE." \
+                    || echo "Failed to publish ${crate}."
+                cd ..
+            done
