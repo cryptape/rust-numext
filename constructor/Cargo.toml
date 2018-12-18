@@ -1,6 +1,6 @@
 [package]
 name = "numext-constructor"
-version = "0.1.1"
+version = "0.1.2"
 authors = [
     "Boyu Yang <yangby@cryptape.com>",
     "zhangsoledad <787953403@qq.com>",

@@ -1,6 +1,6 @@
 [package]
 name = "numext-fixed-hash"
-version = "0.1.1"
+version = "0.1.2"
 authors = [
     "Boyu Yang <yangby@cryptape.com>",
     "zhangsoledad <787953403@qq.com>",
@@ -14,8 +14,8 @@ categories = ["algorithms", "data-structures"]
 license = "Apache-2.0 OR MIT"
 
 [dependencies]
-numext-constructor = { version = "0.1", path = "../constructor" }
-nfuint = { version = "0.1", path = "../fixed-uint", package = "numext-fixed-uint" }
+numext-constructor = { version = "~0.1.2", path = "../constructor" }
+nfuint = { version = "~0.1.2", path = "../fixed-uint", package = "numext-fixed-uint" }
 failure = "0.1"
 rand = { version = "0.5", optional = true }
 heapsize = { version = "0.4", optional = true }
