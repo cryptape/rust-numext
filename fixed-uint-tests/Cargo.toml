@@ -10,16 +10,16 @@ publish = false
 autobenches = false
 
 [dependencies]
-nfuint = { path = "../fixed-uint", features = ["support_all"], package = "numext-fixed-uint" }
-etypes = { version = "0.4", package = "ethereum-types" }
-num-bigint = "0.2"
-num-integer = "0.1"
-proptest = "0.8"
-rand = "0.5"
+nfuint = { package = "numext-fixed-uint", version = "~0.1.0", path = "../fixed-uint", features = ["support_all"] }
+etypes = { package = "ethereum-types", version = "~0.4" }
+num-bigint = "~0.2"
+num-integer = "~0.1"
+proptest = "~0.8"
+rand = "~0.5"
 
 [dev-dependencies]
-criterion = "0.2"
-serde_json = "1.0"
+criterion = "~0.2"
+serde_json = "~1.0"
 
 [[bench]]
 name = "std_ops_arith"
