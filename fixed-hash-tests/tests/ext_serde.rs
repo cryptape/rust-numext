@@ -20,4 +20,11 @@ proptest! {
         assert!(y.is_ok());
         assert_eq!(val, y.unwrap());
     }
+
+    #[test]
+    fn without_0x_prefix(ref json in "\"[0-9a-fA-F]{64}\"") {
+        let y = serde_json::from_str::<nfhash::H256>(&json);
+        assert!(y.is_err());
+        assert!(format!("{:?}", y.err().unwrap()).contains("with 64 digits"));
+    }
 }
