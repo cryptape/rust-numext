@@ -79,19 +79,27 @@ impl UintConstructor {
                         type Value = #name;
 
                         fn expecting(&self, formatter: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
-                            write!(formatter, "a 0x-prefixed hex string with {}", #bytes_size)
+                            write!(formatter, "a 0x-prefixed hex string with at most {} digits", #bytes_size * 2)
                         }
 
                         fn visit_str<E>(self, v: &str) -> Result<Self::Value, E> where E: serde::de::Error {
                             if v.len() < 2  || &v[0..2] != "0x" {
-                                return Err(E::custom("Invalid format"));
+                                return Err(E::custom(format_args!(
+                                    "invalid format, expected {}",
+                                    &self as &serde::de::Expected
+                                )));
                             }
 
                             if v.len() > #bytes_size * 2 + 2 {
                                 return Err(E::invalid_length(v.len() - 2, &self));
                             }
 
-                            #name::from_hex_str(&v[2..]).map_err(|e| E::custom(&format!("invalid hex bytes: {:?}", e)))
+                            #name::from_hex_str(&v[2..]).map_err(|e| {
+                                E::custom(format_args!(
+                                    "invalid hex bytes: {:?}, expected {}",
+                                    e, &self as &serde::de::Expected
+                                ))
+                            })
                         }
 
                         fn visit_string<E>(self, v: String) -> Result<Self::Value, E> where E: serde::de::Error {
