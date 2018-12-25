@@ -83,7 +83,7 @@ def rustfmt_block(block, indent):
     return None
 
 
-def rustfmt_quote(path):
+def rustfmt_quote(path, check_mode):
     """Execute rustfmt for rust code inside "quote!()" in the provided file."""
     indent = 0
     end_pattern = re.compile('[})]')
@@ -118,6 +118,8 @@ def rustfmt_quote(path):
                     end_pattern = re.compile('^{}[)}}]'.format(leading_spaces))
 
     if changed:
+        if check_mode:
+            sys.exit(1)
         with io.open(path, 'w', encoding='utf-8') as file:
             for line in out_lines:
                 file.write(line)
@@ -129,7 +131,9 @@ def main():
     """Traverse files and execute rustfmt to each."""
     # Traverse the current directory, and format files which are ends with
     # ".rs" and not in directories named ".git" or "target".
-    if len(sys.argv) == 1:
+    no_input = len(sys.argv) == 1
+    check_mode = False if no_input else sys.argv[1] == '--check'
+    if no_input or (check_mode and len(sys.argv) == 2):
         for root, dirs, files in os.walk('.'):
             if '.git' in dirs:
                 dirs.remove('.git')
@@ -139,13 +143,14 @@ def main():
             for name in files:
                 if name.endswith('.rs'):
                     path = os.path.join(root, name)
-                    if rustfmt_quote(path):
+                    if rustfmt_quote(path, check_mode):
                         print('rustfmt_quote {}'.format(path))
 
     # Format the provided files.
     else:
-        for arg in sys.argv[1:]:
-            rustfmt_quote(arg)
+        start = 2 if check_mode else 1
+        for arg in sys.argv[start:]:
+            rustfmt_quote(arg, check_mode)
 
 
 if __name__ == '__main__':

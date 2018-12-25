@@ -203,7 +203,8 @@ impl UintConstructor {
                 let mut ret: #inner_type = unsafe { ::std::mem::uninitialized() };
                 let ret_ptr = &mut ret as *mut #inner_type as *mut #unit_suffix;
                 let mut of = false;
-                #loop_part(Self::new(ret), of)
+                #loop_part;
+                (Self::new(ret), of)
             }
         );
         self.defun(part);
@@ -243,7 +244,8 @@ impl UintConstructor {
                 let mut ret: #inner_type = unsafe { ::std::mem::uninitialized() };
                 let ret_ptr = &mut ret as *mut #inner_type as *mut #unit_suffix;
                 let mut of = false;
-                #loop_part(Self::new(ret), of)
+                #loop_part;
+                (Self::new(ret), of)
             }
         );
         self.defun(part);
