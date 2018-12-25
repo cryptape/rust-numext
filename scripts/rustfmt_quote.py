@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+"""Format rust code inside "quote!()".
+
+Try best to let rust code inside "quote!()" fake normal rust code and
+process them by rustfmt.
+"""
 
 from __future__ import print_function
 
@@ -10,14 +15,12 @@ import re
 import io
 
 RUSTFMT_PATH = os.getenv('RUSTFMT_PATH', 'rustfmt')
-SPACE_PATTERN = re.compile(' *')
-START_PATTERN = re.compile('quote!\s*[({]$')
-QUOTE_TOKEN_PATTERN = re.compile('#([_a-zA-Z][_a-zA-Z0-9]*)')
+SPACE_PATTERN = re.compile(r' *')
+START_PATTERN = re.compile(r'quote!\s*[({]$')
+QUOTE_TOKEN_PATTERN = re.compile(r'#([_a-zA-Z][_a-zA-Z0-9]*)')
 
-MOD_BLOCK_PATTERN = re.compile(
-    r'(?m)^\s*    (?:impl[ <]|(?:pub )?trait)')
-FN_BLOCK_PATTERN = re.compile(
-    r'(?m)^\s*    (?:pub |const )?fn ')
+MOD_BLOCK_PATTERN = re.compile(r'(?m)^\s*    (?:impl[ <]|(?:pub )?trait)')
+FN_BLOCK_PATTERN = re.compile(r'(?m)^\s*    (?:pub |const )?fn ')
 
 MOD_START = "mod rustfmt {\n".encode('utf-8')
 IMPL_START = "impl Rustfmt {\n".encode('utf-8')
@@ -31,6 +34,7 @@ BLACKLIST = re.compile(
 
 
 def write_block(block, indent, file):
+    """Try to fake normal rust code so as to can process by rustfmt."""
     for _ in range(indent - 1):
         file.write(MOD_START)
 
@@ -47,31 +51,40 @@ def write_block(block, indent, file):
         file.write(FN_START)
 
     file.write(QUOTE_TOKEN_PATTERN.sub(u'Δ\\1', block).encode('utf-8'))
+
     for _ in range(indent):
         file.write(MOD_END)
 
 
-def rustfmt(block, indent):
-    # whitelist
-    if BLACKLIST.search(block) is not None:
-        return
+def rustfmt_block(block, indent):
+    """Execute rustfmt for a piece of rust code."""
+    # Will skip code which rustfmt can't handle them properly.
+    if BLACKLIST.search(block) is None:
 
-    rustfmt = subprocess.Popen(
-        RUSTFMT_PATH, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        rustfmt = subprocess.Popen(
+            RUSTFMT_PATH,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE)
 
-    write_block(block, indent, rustfmt.stdin)
-    rustfmt.stdin.close()
+        write_block(block, indent, rustfmt.stdin)
+        rustfmt.stdin.close()
 
-    if rustfmt.wait() == 0:
-        outlines = [l.decode('utf-8').replace(u'Δ', u'#')
-                    for l in rustfmt.stdout.readlines()]
-        return u''.join(outlines[indent:-indent])
-    else:
+        if rustfmt.wait() == 0:
+            outlines = [
+                l.decode('utf-8').replace(u'Δ', u'#')
+                for l in rustfmt.stdout.readlines()
+            ]
+            return u''.join(outlines[indent:-indent])
+
         write_block(block, indent, sys.stderr)
         sys.stderr.write(rustfmt.stderr.read())
 
+    return None
+
 
 def rustfmt_quote(path):
+    """Execute rustfmt for rust code inside "quote!()" in the provided file."""
     indent = 0
     end_pattern = re.compile('[})]')
     in_quote = False
@@ -85,7 +98,7 @@ def rustfmt_quote(path):
                 if end_pattern.match(line) is not None:
                     in_quote = False
                     block = u''.join(quote_lines)
-                    fmt_result = rustfmt(block, indent)
+                    fmt_result = rustfmt_block(block, indent)
                     if fmt_result is not None and fmt_result != block:
                         changed = True
                         out_lines.append(fmt_result)
@@ -109,11 +122,13 @@ def rustfmt_quote(path):
             for line in out_lines:
                 file.write(line)
 
-    return len(quote_lines) > 0
+    return changed
 
 
-if __name__ == '__main__':
-
+def main():
+    """Traverse files and execute rustfmt to each."""
+    # Traverse the current directory, and format files which are ends with
+    # ".rs" and not in directories named ".git" or "target".
     if len(sys.argv) == 1:
         for root, dirs, files in os.walk('.'):
             if '.git' in dirs:
@@ -127,6 +142,11 @@ if __name__ == '__main__':
                     if rustfmt_quote(path):
                         print('rustfmt_quote {}'.format(path))
 
+    # Format the provided files.
     else:
         for arg in sys.argv[1:]:
             rustfmt_quote(arg)
+
+
+if __name__ == '__main__':
+    main()
