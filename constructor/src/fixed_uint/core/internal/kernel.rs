@@ -92,7 +92,7 @@ impl UintConstructor {
             /// Create a new fixed uint with a provided input.
             #[inline]
             const fn new(data: #inner_type) -> Self {
-                #name (data)
+                #name(data)
             }
             /// Get a reference of the inner data of the fixed uint.
             #[inline]

@@ -109,12 +109,12 @@ impl HashConstructor {
                 write!(f, #write_tpl_padded, data[4])?;
                 write!(f, #write_tpl_padded, data[5])?;
                 write!(f, #omit)?;
-                write!(f, #write_tpl_padded, data[#unit_amount-6])?;
-                write!(f, #write_tpl_padded, data[#unit_amount-5])?;
-                write!(f, #write_tpl_padded, data[#unit_amount-4])?;
-                write!(f, #write_tpl_padded, data[#unit_amount-3])?;
-                write!(f, #write_tpl_padded, data[#unit_amount-2])?;
-                write!(f, #write_tpl_padded, data[#unit_amount-1])?;
+                write!(f, #write_tpl_padded, data[#unit_amount - 6])?;
+                write!(f, #write_tpl_padded, data[#unit_amount - 5])?;
+                write!(f, #write_tpl_padded, data[#unit_amount - 4])?;
+                write!(f, #write_tpl_padded, data[#unit_amount - 3])?;
+                write!(f, #write_tpl_padded, data[#unit_amount - 2])?;
+                write!(f, #write_tpl_padded, data[#unit_amount - 1])?;
             )
         } else {
             quote!(#(write!(f, #loop_write_tpl_padded, data[#loop_unit_amount])?;)*)

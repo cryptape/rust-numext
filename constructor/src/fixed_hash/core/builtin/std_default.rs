@@ -19,7 +19,7 @@ impl HashConstructor {
         let part = quote!(
             impl ::std::default::Default for #name {
                 #[inline]
-                fn default()  -> Self {
+                fn default() -> Self {
                     Self::zero()
                 }
             }

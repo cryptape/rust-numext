@@ -180,12 +180,16 @@ impl UintConstructor {
                     let (val_n, of_n) = #unit_suffix::overflowing_add(lhs[#i], rhs[#i]);
                     // The carry only can be one.
                     let (val_o, of_o) = #unit_suffix::overflowing_add(val_n, 1);
-                    unsafe { ::std::ptr::write(ret_ptr.offset(#i), val_o); }
+                    unsafe {
+                        ::std::ptr::write(ret_ptr.offset(#i), val_o);
+                    }
                     // Can not overflow twice.
                     of_n || of_o
                 } else {
                     let (val_n, of_n) = #unit_suffix::overflowing_add(lhs[#i], rhs[#i]);
-                    unsafe { ::std::ptr::write(ret_ptr.offset(#i), val_n); }
+                    unsafe {
+                        ::std::ptr::write(ret_ptr.offset(#i), val_n);
+                    }
                     of_n
                 };
             );
@@ -199,8 +203,7 @@ impl UintConstructor {
                 let mut ret: #inner_type = unsafe { ::std::mem::uninitialized() };
                 let ret_ptr = &mut ret as *mut #inner_type as *mut #unit_suffix;
                 let mut of = false;
-                #loop_part
-                (Self::new(ret), of)
+                #loop_part(Self::new(ret), of)
             }
         );
         self.defun(part);
@@ -217,12 +220,16 @@ impl UintConstructor {
                     let (val_n, of_n) = #unit_suffix::overflowing_sub(lhs[#i], rhs[#i]);
                     // The carry only can be one.
                     let (val_o, of_o) = #unit_suffix::overflowing_sub(val_n, 1);
-                    unsafe { ::std::ptr::write(ret_ptr.offset(#i), val_o); }
+                    unsafe {
+                        ::std::ptr::write(ret_ptr.offset(#i), val_o);
+                    }
                     // Can not overflow twice.
                     of_n || of_o
                 } else {
                     let (val_n, of_n) = #unit_suffix::overflowing_sub(lhs[#i], rhs[#i]);
-                    unsafe { ::std::ptr::write(ret_ptr.offset(#i), val_n); }
+                    unsafe {
+                        ::std::ptr::write(ret_ptr.offset(#i), val_n);
+                    }
                     of_n
                 };
             );
@@ -236,8 +243,7 @@ impl UintConstructor {
                 let mut ret: #inner_type = unsafe { ::std::mem::uninitialized() };
                 let ret_ptr = &mut ret as *mut #inner_type as *mut #unit_suffix;
                 let mut of = false;
-                #loop_part
-                (Self::new(ret), of)
+                #loop_part(Self::new(ret), of)
             }
         );
         self.defun(part);
@@ -256,7 +262,7 @@ impl UintConstructor {
                     let lidx_max_opt = self._highest_nonzero_unit();
                     let ridx_max_opt = other._highest_nonzero_unit();
                     if lidx_max_opt.is_none() || ridx_max_opt.is_none() {
-                        return (Self::zero(), false)
+                        return (Self::zero(), false);
                     }
                     (lidx_max_opt.unwrap(), ridx_max_opt.unwrap())
                 };
@@ -280,7 +286,9 @@ impl UintConstructor {
                         let mut k = lidx + ridx;
 
                         // store low part of current result
-                        if k >= #unit_amount { break; }
+                        if k >= #unit_amount {
+                            break;
+                        }
 
                         let lx = lhs[lidx] as #double_unit_suffix;
                         let rx = rhs[ridx] as #double_unit_suffix;
@@ -494,7 +502,9 @@ impl UintConstructor {
                     let lhs_highest = copy.inner()[lhs_idx] as #double_unit_suffix;
                     // if lhs highest byte is ZERO, the skip it
                     if lhs_highest == 0 {
-                        if ret_idx == 0 { break; }
+                        if ret_idx == 0 {
+                            break;
+                        }
                         ret_idx -= 1;
                         lhs_idx -= 1;
                         continue;
@@ -505,10 +515,13 @@ impl UintConstructor {
                     let dividend = if lhs_highest >= divisor {
                         lhs_highest
                     } else {
-                        if ret_idx == 0 { break; }
+                        if ret_idx == 0 {
+                            break;
+                        }
                         lhs_idx -= 1;
                         ret_idx -= 1;
-                        (lhs_highest << #unit_bits_size) + copy.inner()[lhs_idx] as #double_unit_suffix
+                        (lhs_highest << #unit_bits_size)
+                            + copy.inner()[lhs_idx] as #double_unit_suffix
                     };
                     let quotient = (dividend / divisor) as #unit_suffix;
                     let of = {
@@ -519,14 +532,14 @@ impl UintConstructor {
                     };
                     if of {
                         // `ret[ret_idx+1]+1` could not overflow
-                        ret[ret_idx+1] += 1;
+                        ret[ret_idx + 1] += 1;
                     }
                     let minuend = {
                         let (mut minuend_tmp, _) = other._mul_unit(quotient);
                         // left shift
                         let mut idx = #unit_amount - 1;
                         while idx > ret_idx {
-                            minuend_tmp.mut_inner()[idx] = minuend_tmp.inner()[idx-ret_idx];
+                            minuend_tmp.mut_inner()[idx] = minuend_tmp.inner()[idx - ret_idx];
                             idx -= 1;
                         }
                         minuend_tmp.mut_inner()[ret_idx] = minuend_tmp.inner()[0];

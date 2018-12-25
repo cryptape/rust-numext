@@ -111,33 +111,53 @@ impl UintConstructor {
             #[inline]
             pub fn checked_add(&self, rhs: &Self) -> Option<Self> {
                 let (ret, of) = self._add(rhs);
-                if of { None } else { Some(ret) }
+                if of {
+                    None
+                } else {
+                    Some(ret)
+                }
             }
             /// Checked integer subtraction. Computes `self - rhs`,
             /// returning `None` if overflow occurred.
             #[inline]
             pub fn checked_sub(&self, rhs: &Self) -> Option<Self> {
                 let (ret, of) = self._sub(rhs);
-                if of { None } else { Some(ret) }
+                if of {
+                    None
+                } else {
+                    Some(ret)
+                }
             }
             /// Checked integer multiplication. Computes `self * rhs`,
             /// returning `None` if overflow occurred.
             #[inline]
             pub fn checked_mul(&self, rhs: &Self) -> Option<Self> {
                 let (ret, of) = self._mul(rhs);
-                if of { None } else { Some(ret) }
+                if of {
+                    None
+                } else {
+                    Some(ret)
+                }
             }
             /// Checked integer division. Computes `self / rhs`, returning `None` if `rhs == 0`.
             #[inline]
             pub fn checked_div(&self, rhs: &Self) -> Option<Self> {
                 let (ret, of) = self._div(rhs);
-                if of { None } else { Some(ret) }
+                if of {
+                    None
+                } else {
+                    Some(ret)
+                }
             }
             /// Checked integer remainder. Computes `self % rhs`, returning `None` if `rhs == 0`.
             #[inline]
             pub fn checked_rem(&self, rhs: &Self) -> Option<Self> {
                 let (ret, of) = self._rem(rhs);
-                if of { None } else { Some(ret) }
+                if of {
+                    None
+                } else {
+                    Some(ret)
+                }
             }
             /// Checked shift left. Computes `self << rhs`,
             /// returning `None` if `rhs` is larger than or equal to the number of bits in `self`.
@@ -180,21 +200,33 @@ impl UintConstructor {
             #[inline]
             pub fn saturating_add(&self, rhs: &Self) -> Self {
                 let (ret, of) = self._add(rhs);
-                if of { Self::max_value() } else { ret }
+                if of {
+                    Self::max_value()
+                } else {
+                    ret
+                }
             }
             /// Checked integer subtraction. Computes `self - rhs`,
             /// returning `None` if overflow occurred.
             #[inline]
             pub fn saturating_sub(&self, rhs: &Self) -> Self {
                 let (ret, of) = self._sub(rhs);
-                if of { Self::zero() } else { ret }
+                if of {
+                    Self::zero()
+                } else {
+                    ret
+                }
             }
             /// Checked integer multiplication. Computes `self * rhs`,
             /// returning `None` if overflow occurred.
             #[inline]
             pub fn saturating_mul(&self, rhs: &Self) -> Self {
                 let (ret, of) = self._mul(rhs);
-                if of { Self::max_value() } else { ret }
+                if of {
+                    Self::max_value()
+                } else {
+                    ret
+                }
             }
         );
         self.defun(part);
@@ -301,7 +333,7 @@ impl UintConstructor {
                     if of {
                         unreachable!();
                     }
-                    (val , true)
+                    (val, true)
                 }
             }
         );
