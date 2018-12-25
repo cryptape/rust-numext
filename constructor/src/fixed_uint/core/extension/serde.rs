@@ -91,7 +91,7 @@ impl UintConstructor {
                         ) -> ::std::fmt::Result {
                             write!(
                                 formatter,
-                                "a 0x-prefixed hex string with at most {} digits",
+                                "a 0x-prefixed, no leading zeroes allowed hex string with at most {} digits",
                                 #bytes_size * 2
                             )
                         }
@@ -100,7 +100,8 @@ impl UintConstructor {
                         where
                             E: serde::de::Error,
                         {
-                            if v.len() < 2 || &v[0..2] != "0x" {
+                            if v.len() <= 2 || &v[0..2] != "0x" || (v.len() > 3 && &v[2..3] == "0")
+                            {
                                 return Err(E::custom(format_args!(
                                     "invalid format, expected {}",
                                     &self as &serde::de::Expected

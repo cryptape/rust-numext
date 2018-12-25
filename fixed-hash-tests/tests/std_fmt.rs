@@ -64,8 +64,8 @@ proptest! {
     }
 }
 
-std_fmt!(h256_random, H256, 32, "[0-9a-fA-F]{64}");
-std_fmt!(h4096_random, H4096, 512, "[0-9a-fA-F]{1024}");
+std_fmt!(h256_random, H256, 32, "[[:xdigit:]]{64}");
+std_fmt!(h4096_random, H4096, 512, "[[:xdigit:]]{1024}");
 
 #[test]
 fn debug() {

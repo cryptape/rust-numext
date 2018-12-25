@@ -22,24 +22,51 @@ proptest! {
     }
 
     #[test]
-    fn without_0x_prefix(ref json in "\"[0-9a-fA-F]{64}\"") {
-        let y = serde_json::from_str::<nfuint::U256>(&json);
-        assert!(y.is_err());
-        assert!(format!("{:?}", y.err().unwrap()).contains("with at most 64 digits"));
+    fn deserialize(ref json in "\"0x([[:xdigit:]&&[^0]][[:xdigit:]]{0,63}|0)\"") {
+        let result = serde_json::from_str::<nfuint::U256>(&json);
+        assert!(result.is_ok());
     }
 }
 
-#[test]
-fn deserialize_error_message() {
-    let json = "\"0123456789ABCDEF0123456789ABCDEF\"";
-    let y: Result<nfuint::U128, serde_json::Error> = serde_json::from_str(&json);
-    assert!(y.unwrap_err().to_string().starts_with("invalid format"));
-
-    let json = "\"0x0123456789ABCDEF0123456789ABCDEF0\"";
-    let y: Result<nfuint::U128, serde_json::Error> = serde_json::from_str(&json);
-    assert!(y.unwrap_err().to_string().starts_with("invalid length"));
-
-    let json = "\"0x0123456789ABCDEF0123456789ABCDEG\"";
-    let y: Result<nfuint::U128, serde_json::Error> = serde_json::from_str(&json);
-    assert!(y.unwrap_err().to_string().starts_with("invalid hex bytes"));
+macro_rules! check_de_error {
+    ($name:ident, $uint:ident, $regex:expr, $msg_start:expr) => {
+        proptest! {
+            #[test]
+            fn $name(ref json in $regex) {
+                let result = serde_json::from_str::<nfuint::$uint>(&json);
+                assert!(result.is_err());
+                let errmsg = result.unwrap_err().to_string();
+                assert!(errmsg.contains("with at most 64 digits"));
+                assert!(errmsg.starts_with($msg_start));
+            }
+        }
+    };
 }
+
+check_de_error!(
+    deserialize_without_or_only_0x_prefix,
+    U256,
+    "\"([[:xdigit]:&&[^0]][[:xdigit:]]{0,63}|0x)\"",
+    "invalid format"
+);
+
+check_de_error!(
+    deserialize_with_redundant_zeros,
+    U256,
+    "\"0x0[[:xdigit:]]{1,63}\"",
+    "invalid format"
+);
+
+check_de_error!(
+    deserialize_with_invalid_hex_bytes,
+    U256,
+    "\"0x[[:alnum:]&&[:^xdigit:]]\"",
+    "invalid hex bytes"
+);
+
+check_de_error!(
+    deserialize_more_hex_bytes,
+    U256,
+    "\"0x[[:xdigit:]&&[^0]][[:xdigit:]]{64,}\"",
+    "invalid length"
+);

@@ -55,5 +55,5 @@ macro_rules! from_trimmed_hex_str {
     };
 }
 
-from_hex_str!(h256_from_hex_str, H256, "[0-9a-fA-F]{64}");
-from_trimmed_hex_str!(h256_from_trimmed_hex_str, H256, "[0-9a-fA-F]{64}");
+from_hex_str!(h256_from_hex_str, H256, "[[:xdigit:]]{64}");
+from_trimmed_hex_str!(h256_from_trimmed_hex_str, H256, "[[:xdigit:]]{64}");
