@@ -64,15 +64,15 @@ impl HashConstructor {
                         where
                             E: serde::de::Error,
                         {
-                            if v.len() != #bytes_size * 2 + 2 {
-                                return Err(E::invalid_length(v.len() - 2, &self));
-                            }
-
-                            if &v[0..2] != "0x" {
+                            if v.len() < 2 || &v[0..2] != "0x" {
                                 return Err(E::custom(format_args!(
                                     "invalid format, expected {}",
                                     &self as &serde::de::Expected
                                 )));
+                            }
+
+                            if v.len() != #bytes_size * 2 + 2 {
+                                return Err(E::invalid_length(v.len() - 2, &self));
                             }
 
                             #name::from_hex_str(&v[2..]).map_err(|e| {

@@ -28,3 +28,18 @@ proptest! {
         assert!(format!("{:?}", y.err().unwrap()).contains("with 64 digits"));
     }
 }
+
+#[test]
+fn deserialize_error_message() {
+    let json = "\"0123456789ABCDEF0123456789ABCDEF\"";
+    let y: Result<nfhash::H128, serde_json::Error> = serde_json::from_str(&json);
+    assert!(y.unwrap_err().to_string().starts_with("invalid format"));
+
+    let json = "\"0x0123456789ABCDEF\"";
+    let y: Result<nfhash::H128, serde_json::Error> = serde_json::from_str(&json);
+    assert!(y.unwrap_err().to_string().starts_with("invalid length"));
+
+    let json = "\"0x0123456789ABCDEF0123456789ABCDEG\"";
+    let y: Result<nfhash::H128, serde_json::Error> = serde_json::from_str(&json);
+    assert!(y.unwrap_err().to_string().starts_with("invalid hex bytes"));
+}
