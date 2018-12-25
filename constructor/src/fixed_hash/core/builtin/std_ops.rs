@@ -38,7 +38,7 @@ impl HashConstructor {
         let part = quote!(
             impl<'a, Rhs> ::std::ops::#trait_name<Rhs> for &'a #name
             where
-                Rhs: ::std::convert::Into<#name>
+                Rhs: ::std::convert::Into<#name>,
             {
                 type Output = #name;
                 #[inline]
@@ -48,7 +48,7 @@ impl HashConstructor {
             }
             impl<Rhs> ::std::ops::#trait_name<Rhs> for #name
             where
-                Rhs: ::std::convert::Into<#name>
+                Rhs: ::std::convert::Into<#name>,
             {
                 type Output = #name;
                 #[inline]
@@ -58,31 +58,28 @@ impl HashConstructor {
             }
             impl<Rhs> ::std::ops::#trait_assign_name<Rhs> for #name
             where
-                Rhs: ::std::convert::Into<#name>
+                Rhs: ::std::convert::Into<#name>,
             {
                 #[inline]
                 fn #func_assign_name(&mut self, other: Rhs) {
                     *self = self.#real_func(&other.into());
                 }
             }
-            impl<'a, 'b> ::std::ops::#trait_name<&'b #name> for &'a #name
-            {
+            impl<'a, 'b> ::std::ops::#trait_name<&'b #name> for &'a #name {
                 type Output = #name;
                 #[inline]
                 fn #func_name(self, other: &#name) -> Self::Output {
                     self.#real_func(other)
                 }
             }
-            impl<'a> ::std::ops::#trait_name<&'a #name> for #name
-            {
+            impl<'a> ::std::ops::#trait_name<&'a #name> for #name {
                 type Output = #name;
                 #[inline]
                 fn #func_name(self, other: &#name) -> Self::Output {
                     self.#real_func(other)
                 }
             }
-            impl<'a> ::std::ops::#trait_assign_name<&'a #name> for #name
-            {
+            impl<'a> ::std::ops::#trait_assign_name<&'a #name> for #name {
                 #[inline]
                 fn #func_assign_name(&mut self, other: &#name) {
                     *self = self.#real_func(other);
@@ -124,7 +121,7 @@ impl HashConstructor {
             let uint_name = utils::ident_to_ts(uint_name);
             let real_func = utils::ident_to_ts(format!("_ush{}", direction).as_ref());
             let part = quote!(
-                impl<'a,'b> ::std::ops::#trait_name<&'a #uint_name> for &'b #name {
+                impl<'a, 'b> ::std::ops::#trait_name<&'a #uint_name> for &'b #name {
                     type Output = #name;
                     #[inline]
                     fn #func_name(self, other: &#uint_name) -> Self::Output {
@@ -173,7 +170,7 @@ impl HashConstructor {
             let int_name = utils::ident_to_ts(int_name);
             let real_func = utils::ident_to_ts(format!("_ish{}", direction).as_ref());
             let part = quote!(
-                impl<'a,'b> ::std::ops::#trait_name<&'a #int_name> for &'b #name {
+                impl<'a, 'b> ::std::ops::#trait_name<&'a #int_name> for &'b #name {
                     type Output = #name;
                     #[inline]
                     fn #func_name(self, other: &#int_name) -> Self::Output {
@@ -225,7 +222,7 @@ impl HashConstructor {
         let part = quote!(
             impl<Idx> ::std::ops::Index<Idx> for #name
             where
-                Idx: ::std::slice::SliceIndex<[u8], Output = [u8]>
+                Idx: ::std::slice::SliceIndex<[u8], Output = [u8]>,
             {
                 type Output = Idx::Output;
                 #[inline]
@@ -235,7 +232,7 @@ impl HashConstructor {
             }
             impl<Idx> ::std::ops::IndexMut<Idx> for #name
             where
-                Idx: ::std::slice::SliceIndex<[u8], Output = [u8]>
+                Idx: ::std::slice::SliceIndex<[u8], Output = [u8]>,
             {
                 #[inline]
                 fn index_mut(&mut self, index: Idx) -> &mut Idx::Output {

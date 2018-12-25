@@ -95,10 +95,10 @@ impl UintConstructor {
                         write!(f, #write_tpl, data[idx])?;
                         idx -= 1;
                         while idx > 0 {
-                            write!(f, #write_tpl_padded, data[idx], width=#width)?;
+                            write!(f, #write_tpl_padded, data[idx], width = #width)?;
                             idx -= 1;
                         }
-                        write!(f, #write_tpl_padded, data[0], width=#width)
+                        write!(f, #write_tpl_padded, data[0], width = #width)
                     }
                 }
             }

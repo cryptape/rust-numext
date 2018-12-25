@@ -40,7 +40,8 @@ impl HashConstructor {
             let that_bytes_size = &uc.ts.unit_amount;
             quote!(
                 let mut ret = #that_name::zero();
-                ret.mut_inner().copy_from_slice(&self.inner()[..#that_bytes_size]);
+                ret.mut_inner()
+                    .copy_from_slice(&self.inner()[..#that_bytes_size]);
                 (ret, true)
             )
         };
@@ -61,7 +62,7 @@ impl HashConstructor {
             /// Create a new fixed hash with a provided input.
             #[inline]
             const fn new(data: #inner_type) -> Self {
-                #name (data)
+                #name(data)
             }
             /// Get a reference of the inner data of the fixed hash.
             #[inline]

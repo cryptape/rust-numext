@@ -24,30 +24,46 @@ impl HashConstructor {
         let part = quote!(
             #[cfg(feature = "support_serde")]
             impl serde::Serialize for #name {
-                fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: serde::Serializer {
+                fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+                where
+                    S: serde::Serializer,
+                {
                     let bytes = self.as_bytes();
                     let mut dst = [0u8; #bytes_size * 2 + 2];
                     dst[0] = b'0';
                     dst[1] = b'x';
                     faster_hex::hex_to(bytes, &mut dst[2..])
                         .map_err(|e| serde::ser::Error::custom(&format!("{}", e)))?;
-                    serializer.serialize_str(unsafe {::std::str::from_utf8_unchecked(&dst)})
+                    serializer.serialize_str(unsafe { ::std::str::from_utf8_unchecked(&dst) })
                 }
             }
 
             #[cfg(feature = "support_serde")]
             impl<'de> serde::Deserialize<'de> for #name {
-                fn deserialize<D>(deserializer: D) -> Result<Self, D::Error> where D: serde::Deserializer<'de> {
+                fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+                where
+                    D: serde::Deserializer<'de>,
+                {
                     struct Visitor;
 
                     impl<'b> serde::de::Visitor<'b> for Visitor {
                         type Value = #name;
 
-                        fn expecting(&self, formatter: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
-                            write!(formatter, "a 0x-prefixed hex string with {} digits", #bytes_size * 2)
+                        fn expecting(
+                            &self,
+                            formatter: &mut ::std::fmt::Formatter,
+                        ) -> ::std::fmt::Result {
+                            write!(
+                                formatter,
+                                "a 0x-prefixed hex string with {} digits",
+                                #bytes_size * 2
+                            )
                         }
 
-                        fn visit_str<E>(self, v: &str) -> Result<Self::Value, E> where E: serde::de::Error {
+                        fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
+                        where
+                            E: serde::de::Error,
+                        {
                             if v.len() != #bytes_size * 2 + 2 {
                                 return Err(E::invalid_length(v.len() - 2, &self));
                             }
@@ -67,7 +83,10 @@ impl HashConstructor {
                             })
                         }
 
-                        fn visit_string<E>(self, v: String) -> Result<Self::Value, E> where E: serde::de::Error {
+                        fn visit_string<E>(self, v: String) -> Result<Self::Value, E>
+                        where
+                            E: serde::de::Error,
+                        {
                             self.visit_str(&v)
                         }
                     }

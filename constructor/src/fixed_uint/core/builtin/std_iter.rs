@@ -26,7 +26,7 @@ impl UintConstructor {
                 #[inline]
                 fn sum<I>(iter: I) -> Self
                 where
-                    I: ::std::iter::Iterator<Item = &'a #name>
+                    I: ::std::iter::Iterator<Item = &'a #name>,
                 {
                     iter.fold(Self::zero(), ::std::ops::Add::add)
                 }
@@ -35,7 +35,7 @@ impl UintConstructor {
                 #[inline]
                 fn sum<I>(iter: I) -> Self
                 where
-                    I: ::std::iter::Iterator<Item = #name>
+                    I: ::std::iter::Iterator<Item = #name>,
                 {
                     iter.fold(Self::zero(), ::std::ops::Add::add)
                 }
@@ -51,7 +51,7 @@ impl UintConstructor {
                 #[inline]
                 fn product<I>(iter: I) -> Self
                 where
-                    I: ::std::iter::Iterator<Item = &'a #name>
+                    I: ::std::iter::Iterator<Item = &'a #name>,
                 {
                     iter.fold(Self::one(), ::std::ops::Mul::mul)
                 }
@@ -60,7 +60,7 @@ impl UintConstructor {
                 #[inline]
                 fn product<I>(iter: I) -> Self
                 where
-                    I: ::std::iter::Iterator<Item = #name>
+                    I: ::std::iter::Iterator<Item = #name>,
                 {
                     iter.fold(Self::one(), ::std::ops::Mul::mul)
                 }

@@ -144,7 +144,7 @@ impl UintConstructor {
         let part = quote!(
             /// Little-endian fixed integer type.
             #[derive(Clone)]
-            pub struct #name (pub #inner_type);
+            pub struct #name(pub #inner_type);
         );
         self.attach_uint(part);
     }
