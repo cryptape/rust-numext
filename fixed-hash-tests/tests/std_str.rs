@@ -26,4 +26,4 @@ macro_rules! std_str {
     };
 }
 
-std_str!(h256_from_str, H256, "[0-9a-fA-F]{64}");
+std_str!(h256_from_str, H256, "[[:xdigit:]]{64}");

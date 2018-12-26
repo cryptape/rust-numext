@@ -64,7 +64,7 @@ impl HashConstructor {
                         where
                             E: serde::de::Error,
                         {
-                            if v.len() < 2 || &v[0..2] != "0x" {
+                            if v.len() <= 2 || &v[0..2] != "0x" {
                                 return Err(E::custom(format_args!(
                                     "invalid format, expected {}",
                                     &self as &serde::de::Expected
