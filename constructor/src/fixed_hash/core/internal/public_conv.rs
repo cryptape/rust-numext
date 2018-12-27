@@ -17,6 +17,7 @@ impl HashConstructor {
         self.defun_pub_conv_from_slice();
         self.defun_pub_conv_into_slice();
         self.attach_error_for_conv_from_str();
+        self.defun_pub_conv_from_hex_str_dict();
         self.defun_pub_conv_from_hex_str();
     }
 
@@ -114,45 +115,99 @@ impl HashConstructor {
         self.error(part);
     }
 
+    fn defun_pub_conv_from_hex_str_dict(&self) {
+        let part = quote!(
+            pub(crate) const U8MX: u8 = u8::max_value();
+            pub(crate) static DICT_HEX_LO: [u8; 256] = [
+                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
+                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
+                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
+                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+                0x08, 0x09, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e,
+                0x0f, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
+                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, 0x0a,
+                0x0b, 0x0c, 0x0d, 0x0e, 0x0f, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
+                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
+                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
+                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
+                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
+                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
+                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
+                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
+                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
+                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
+                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
+                U8MX, U8MX, U8MX, U8MX,
+            ];
+            pub(crate) static DICT_HEX_HI: [u8; 256] = [
+                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
+                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
+                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
+                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, 0x00, 0x10, 0x20, 0x30, 0x40, 0x50, 0x60, 0x70,
+                0x80, 0x90, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, 0xa0, 0xb0, 0xc0, 0xd0, 0xe0,
+                0xf0, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
+                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, 0xa0,
+                0xb0, 0xc0, 0xd0, 0xe0, 0xf0, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
+                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
+                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
+                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
+                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
+                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
+                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
+                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
+                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
+                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
+                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
+                U8MX, U8MX, U8MX, U8MX,
+            ];
+        );
+        self.util(part);
+    }
+
     fn defun_pub_conv_from_hex_str(&self) {
         let error_name = &self.ts.error_name;
+        let utils_name = &self.ts.utils_name;
         let char_amount_max = utils::pure_uint_to_ts(self.info.unit_amount * 2);
         let part_core = if self.info.expand {
             let loop_unit_amount = &utils::pure_uint_list_to_ts(0..self.info.unit_amount);
+            let loop_utils_name_copy1 = &vec![utils_name; self.info.unit_amount as usize];
+            let loop_utils_name_copy2 = &vec![utils_name; self.info.unit_amount as usize];
+            let loop_utils_name_copy3 = &vec![utils_name; self.info.unit_amount as usize];
+            let loop_utils_name_copy4 = &vec![utils_name; self.info.unit_amount as usize];
             quote!(
                 let mut input_bytes = input.bytes();
                 #({
                     let idx = #loop_unit_amount;
-                    let chr = input_bytes.next().unwrap_or_else(|| unreachable!());
-                    let hi = match chr {
-                        b'a'...b'f' => chr - b'a' + 10,
-                        b'A'...b'F' => chr - b'A' + 10,
-                        b'0'...b'9' => chr - b'0',
-                        _ => Err(FromStrError::InvalidCharacter { chr, idx: idx*2 })?,
+                    let hi = {
+                        let chr = input_bytes.next().unwrap_or_else(|| unreachable!());
+                        let hi = #loop_utils_name_copy1::DICT_HEX_HI[usize::from(chr)];
+                        if hi == #loop_utils_name_copy2::U8MX {
+                            Err(FromStrError::InvalidCharacter { chr, idx: idx*2 })?;
+                        };
+                        hi
                     };
-                    let chr = input_bytes.next().unwrap_or_else(|| unreachable!());
-                    let lo = match chr {
-                        b'a'...b'f' => chr - b'a' + 10,
-                        b'A'...b'F' => chr - b'A' + 10,
-                        b'0'...b'9' => chr - b'0',
-                        _ => Err(FromStrError::InvalidCharacter { chr, idx: idx*2+1 })?,
+                    let lo = {
+                        let chr = input_bytes.next().unwrap_or_else(|| unreachable!());
+                        let lo = #loop_utils_name_copy3::DICT_HEX_LO[usize::from(chr)];
+                        if lo == #loop_utils_name_copy4::U8MX  {
+                            Err(FromStrError::InvalidCharacter { chr, idx: idx*2+1 })?;
+                        };
+                        lo
                     };
-                    inner[idx] = (hi << 4) | lo;
+                    inner[idx] = hi | lo;
                 })*
             )
         } else {
             quote!(for (idx, chr) in input.bytes().enumerate() {
-                let val = match chr {
-                    b'a'...b'f' => chr - b'a' + 10,
-                    b'A'...b'F' => chr - b'A' + 10,
-                    b'0'...b'9' => chr - b'0',
-                    _ => Err(FromStrError::InvalidCharacter { chr, idx })?,
-                };
-                if idx % 2 == 0 {
-                    inner[idx / 2] |= val << 4;
+                let val = if idx % 2 == 0 {
+                    #utils_name::DICT_HEX_HI[usize::from(chr)]
                 } else {
-                    inner[idx / 2] |= val;
+                    #utils_name::DICT_HEX_LO[usize::from(chr)]
+                };
+                if val == #utils_name::U8MX {
+                    Err(FromStrError::InvalidCharacter { chr, idx })?;
                 }
+                inner[idx / 2] |= val;
             })
         };
         let part = quote!(
@@ -192,18 +247,19 @@ impl HashConstructor {
                 {
                     let inner = ret.mut_inner();
                     for chr in input_bytes {
-                        let v = match chr {
-                            b'a'...b'f' => chr - b'a' + 10,
-                            b'A'...b'F' => chr - b'A' + 10,
-                            b'0'...b'9' => chr - b'0',
-                            _ => Err(FromStrError::InvalidCharacter { chr, idx })?,
+                        let val = if high {
+                            #utils_name::DICT_HEX_HI[usize::from(chr)]
+                        } else {
+                            #utils_name::DICT_HEX_LO[usize::from(chr)]
                         };
+                        if val == #utils_name::U8MX {
+                            Err(FromStrError::InvalidCharacter { chr, idx })?;
+                        }
                         idx += 1;
+                        inner[unit_idx] |= val;
                         if high {
-                            inner[unit_idx] = v * 16;
                             high = false;
                         } else {
-                            inner[unit_idx] += v;
                             high = true;
                             unit_idx += 1;
                         }

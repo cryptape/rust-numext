@@ -6,7 +6,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-#![recursion_limit = "512"]
+#![recursion_limit = "1024"]
 
 extern crate proc_macro;
 #[macro_use]
