@@ -47,6 +47,7 @@ pub struct HashTokenStreams {
     pub unit_amount: TokenStream,
     pub inner_type: TokenStream,
     pub error_name: TokenStream,
+    pub utils_name: TokenStream,
 }
 
 impl<'a> ::std::convert::From<&'a HashInformation> for HashTokenStreams {
@@ -58,6 +59,7 @@ impl<'a> ::std::convert::From<&'a HashInformation> for HashTokenStreams {
         let inner_type = quote!([u8; #unit_amount]);
 
         let error_name = utils::ident_to_ts("FixedHashError");
+        let utils_name = utils::ident_to_ts("utils");
 
         Self {
             name,
@@ -65,6 +67,7 @@ impl<'a> ::std::convert::From<&'a HashInformation> for HashTokenStreams {
             unit_amount,
             inner_type,
             error_name,
+            utils_name,
         }
     }
 }
@@ -86,6 +89,8 @@ pub struct HashConstructor {
     common: Cell<Vec<TokenStream>>,
     // Outputs (errors)
     errors: Cell<Vec<TokenStream>>,
+    // Outputs (utils)
+    utils: Cell<Vec<TokenStream>>,
     // Outputs (traits)
     preludes: Cell<Vec<TokenStream>>,
 }
@@ -99,6 +104,7 @@ impl HashConstructor {
         let implts = Cell::new(Vec::new());
         let common = Cell::new(Vec::new());
         let errors = Cell::new(Vec::new());
+        let utils = Cell::new(Vec::new());
         let preludes = Cell::new(Vec::new());
         HashConstructor {
             info,
@@ -108,6 +114,7 @@ impl HashConstructor {
             implts,
             common,
             errors,
+            utils,
             preludes,
         }
     }
@@ -142,6 +149,24 @@ impl HashConstructor {
         self.attach_common(part);
     }
 
+    fn defutils(&self) {
+        let utils_name = &self.ts.utils_name;
+        let part = {
+            let utils = self.utils.take();
+            if utils.is_empty() {
+                quote!()
+            } else {
+                let utils = TokenStream::from_iter(utils);
+                quote!(
+                    pub mod #utils_name {
+                        #utils
+                    }
+                )
+            }
+        };
+        self.attach_common(part);
+    }
+
     fn deftraits(&self) {
         let part = {
             let preludes = self.preludes.take();
@@ -162,6 +187,7 @@ impl HashConstructor {
     pub fn output(&self, ucs: &[Self]) -> (TokenStream, TokenStream) {
         self.defstruct();
         self.deferror();
+        self.defutils();
         self.deftraits();
         let name = &self.ts.name;
         let hash_common = TokenStream::from_iter(self.hash_common.take());
@@ -196,6 +222,7 @@ impl HashConstructor {
         let _ = self.implts.take();
         let _ = self.common.take();
         let _ = self.errors.take();
+        let _ = self.utils.take();
     }
 
     pub fn attach_hash(&self, part: TokenStream) {
@@ -226,6 +253,12 @@ impl HashConstructor {
         let mut o = self.errors.take();
         o.push(part);
         self.errors.set(o);
+    }
+
+    pub fn util(&self, part: TokenStream) {
+        let mut o = self.utils.take();
+        o.push(part);
+        self.utils.set(o);
     }
 
     pub fn prelude(&self, part: TokenStream) {

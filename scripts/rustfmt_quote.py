@@ -30,7 +30,7 @@ MOD_END = "}\n".encode('utf-8')
 
 # Code that should not run rustfmt in the quote block
 BLACKLIST = re.compile(
-    r'(?m)^\s*(?:#(?:errors|preludes|defuns|part_core)|}?\)\*)\s*$')
+    r'(?m)^\s*(?:#(?:errors|utils|preludes|defuns|part_core)|}?\)\*)\s*$')
 
 
 def write_block(block, indent, file):

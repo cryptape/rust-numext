@@ -18,8 +18,11 @@ impl UintConstructor {
         self.defun_pub_conv_into_slice();
         self.attach_error_for_conv_from_str();
         self.defun_pub_conv_from_bin_str();
+        self.defun_pub_conv_from_oct_str_dict();
         self.defun_pub_conv_from_oct_str();
+        self.defun_pub_conv_from_hex_str_dict();
         self.defun_pub_conv_from_hex_str();
+        self.defun_pub_conv_from_dec_str_dict();
         self.defun_pub_conv_from_dec_str();
     }
 
@@ -335,9 +338,39 @@ impl UintConstructor {
         self.defun(part);
     }
 
+    fn defun_pub_conv_from_oct_str_dict(&self) {
+        let part = quote!(
+            // Error for OCT dict.
+            pub(crate) const EOCT: u8 = u8::max_value();
+            pub(crate) static DICT_OCT: [u8; 256] = [
+                EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT,
+                EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT,
+                EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT,
+                EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+                EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT,
+                EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT,
+                EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT,
+                EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT,
+                EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT,
+                EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT,
+                EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT,
+                EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT,
+                EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT,
+                EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT,
+                EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT,
+                EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT,
+                EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT,
+                EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT, EOCT,
+                EOCT, EOCT, EOCT, EOCT,
+            ];
+        );
+        self.util(part);
+    }
+
     fn defun_pub_conv_from_oct_str(&self) {
         let name = &self.ts.name;
         let error_name = &self.ts.error_name;
+        let utils_name = &self.ts.utils_name;
         let char_amount_max = utils::pure_uint_to_ts(if self.info.bits_size % 3 == 0 {
             self.info.bits_size / 3
         } else {
@@ -355,14 +388,15 @@ impl UintConstructor {
                 }
                 let mut ret = Self::zero();
                 for (idx, chr) in input.bytes().enumerate() {
-                    if chr < b'0' && chr > b'7' {
+                    let v = #utils_name::DICT_OCT[usize::from(chr)];
+                    if v == #utils_name::EOCT {
                         Err(FromStrError::InvalidCharacter { chr, idx })?;
                     }
                     let (ret_new, of) = ret._mul_unit(8);
                     if of {
                         Err(FromStrError::Overflow(len))?;
                     }
-                    let u = #name::from(chr - b'0');
+                    let u = #name::from(v);
                     let (ret_new, of) = ret_new._add(&u);
                     if of {
                         Err(FromStrError::Overflow(len))?;
@@ -375,8 +409,38 @@ impl UintConstructor {
         self.defun(part);
     }
 
+    fn defun_pub_conv_from_hex_str_dict(&self) {
+        let part = quote!(
+            // Error for HEX dict.
+            pub(crate) const EHEX: u8 = u8::max_value();
+            pub(crate) static DICT_HEX: [u8; 256] = [
+                EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX,
+                EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX,
+                EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX,
+                EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+                0x08, 0x09, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e,
+                0x0f, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX,
+                EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, 0x0a,
+                0x0b, 0x0c, 0x0d, 0x0e, 0x0f, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX,
+                EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX,
+                EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX,
+                EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX,
+                EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX,
+                EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX,
+                EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX,
+                EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX,
+                EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX,
+                EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX,
+                EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX, EHEX,
+                EHEX, EHEX, EHEX, EHEX,
+            ];
+        );
+        self.util(part);
+    }
+
     fn defun_pub_conv_from_hex_str(&self) {
         let error_name = &self.ts.error_name;
+        let utils_name = &self.ts.utils_name;
         let unit_suffix = &self.ts.unit_suffix;
         let char_amount_max = utils::pure_uint_to_ts(self.info.bytes_size * 2);
         let unit_char_amount_max = utils::pure_uint_to_ts(self.info.unit_bytes_size * 2);
@@ -400,12 +464,10 @@ impl UintConstructor {
                     let mut k = 0;
                     for _ in 0..char_offset {
                         let chr = input_bytes.next().unwrap_or_else(|| unreachable!());
-                        let v = match chr {
-                            b'a'...b'f' => chr - b'a' + 10,
-                            b'A'...b'F' => chr - b'A' + 10,
-                            b'0'...b'9' => chr - b'0',
-                            _ => Err(FromStrError::InvalidCharacter { chr, idx })?,
-                        };
+                        let v = #utils_name::DICT_HEX[usize::from(chr)];
+                        if v == #utils_name::EHEX {
+                            Err(FromStrError::InvalidCharacter { chr, idx })?;
+                        }
                         k *= 16;
                         k += #unit_suffix::from(v);
                         idx += 1;
@@ -417,12 +479,10 @@ impl UintConstructor {
                     let mut k = 0;
                     let mut flag = #unit_char_amount_max - 1;
                     for chr in input_bytes {
-                        let v = match chr {
-                            b'a'...b'f' => chr - b'a' + 10,
-                            b'A'...b'F' => chr - b'A' + 10,
-                            b'0'...b'9' => chr - b'0',
-                            _ => Err(FromStrError::InvalidCharacter { chr, idx })?,
-                        };
+                        let v = #utils_name::DICT_HEX[usize::from(chr)];
+                        if v == #utils_name::EHEX {
+                            Err(FromStrError::InvalidCharacter { chr, idx })?;
+                        }
                         k *= 16;
                         k += #unit_suffix::from(v);
                         if flag == 0 {
@@ -443,9 +503,39 @@ impl UintConstructor {
         self.defun(part);
     }
 
+    fn defun_pub_conv_from_dec_str_dict(&self) {
+        let part = quote!(
+            // Error for DEC dict.
+            pub(crate) const EDEC: u8 = u8::max_value();
+            pub(crate) static DICT_DEC: [u8; 256] = [
+                EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC,
+                EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC,
+                EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC,
+                EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+                0x08, 0x09, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC,
+                EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC,
+                EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC,
+                EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC,
+                EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC,
+                EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC,
+                EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC,
+                EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC,
+                EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC,
+                EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC,
+                EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC,
+                EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC,
+                EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC,
+                EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC, EDEC,
+                EDEC, EDEC, EDEC, EDEC,
+            ];
+        );
+        self.util(part);
+    }
+
     fn defun_pub_conv_from_dec_str(&self) {
         let name = &self.ts.name;
         let error_name = &self.ts.error_name;
+        let utils_name = &self.ts.utils_name;
         let char_amount_max = utils::pure_uint_to_ts(if self.info.bits_size % 10 == 0 {
             self.info.bits_size / 10
         } else {
@@ -463,14 +553,15 @@ impl UintConstructor {
                 }
                 let mut ret = Self::zero();
                 for (idx, chr) in input.bytes().enumerate() {
-                    if chr < b'0' && chr > b'9' {
+                    let v = #utils_name::DICT_DEC[usize::from(chr)];
+                    if v == #utils_name::EDEC {
                         Err(FromStrError::InvalidCharacter { chr, idx })?;
                     }
                     let (ret_new, of) = ret._mul_unit(10);
                     if of {
                         Err(FromStrError::Overflow(len))?;
                     }
-                    let u = #name::from(chr - b'0');
+                    let u = #name::from(v);
                     let (ret_new, of) = ret_new._add(&u);
                     if of {
                         Err(FromStrError::Overflow(len))?;
