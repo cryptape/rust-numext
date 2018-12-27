@@ -81,4 +81,22 @@ proptest! {
         };
         assert_eq!(expected, result);
     }
+
+    #[test]
+    fn conv_le_slice(ref le in any::<props::U256LeBytes>()) {
+        let expected: nfuint::U256 = le.into();
+        let mut slice = [0u8; 32];
+        expected.into_little_endian(&mut slice).unwrap();
+        let result = nfuint::U256::from_little_endian(&slice[..]).unwrap();
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    fn conv_be_slice(ref le in any::<props::U256LeBytes>()) {
+        let expected: nfuint::U256 = le.into();
+        let mut slice = [0u8; 32];
+        expected.into_big_endian(&mut slice).unwrap();
+        let result = nfuint::U256::from_big_endian(&slice[..]).unwrap();
+        assert_eq!(result, expected);
+    }
 }
