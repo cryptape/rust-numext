@@ -1,4 +1,4 @@
-// Copyright 2018 Rust-NumExt Developers
+// Copyright 2018-2019 Cryptape Technologies LLC.
 //
 // Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
 // http://www.apache.org/licenses/LICENSE-2.0> or the MIT license

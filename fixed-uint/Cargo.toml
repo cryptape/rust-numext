@@ -1,14 +1,11 @@
 [package]
 name = "numext-fixed-uint"
 version = "0.1.2"
-authors = [
-    "Boyu Yang <yangby@cryptape.com>",
-    "zhangsoledad <787953403@qq.com>",
-]
+authors = ["Cryptape Technologies <contact@cryptape.com>"]
 edition = "2018"
 description = "Fixed-size uint types."
-homepage = "https://yangby-cryptape.github.io/rust-numext/"
-repository = "https://github.com/yangby-cryptape/rust-numext"
+homepage = "https://cryptape.github.io/rust-numext/"
+repository = "https://github.com/cryptape/rust-numext"
 keywords = ["fixed", "uint", "bignum", "bigint"]
 categories = ["algorithms", "data-structures"]
 license = "Apache-2.0 OR MIT"
@@ -28,4 +25,4 @@ support_heapsize = ["heapsize"]
 support_serde = ["serde"]
 
 [badges]
-travis-ci = { repository = "yangby-cryptape/rust-numext" }
+travis-ci = { repository = "cryptape/rust-numext" }

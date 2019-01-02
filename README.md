@@ -1,12 +1,12 @@
 # Rust-NumExt
 
 [![License]](#license)
-[![Travis CI]](https://travis-ci.com/yangby-cryptape/rust-numext)
+[![Travis CI]](https://travis-ci.com/cryptape/rust-numext)
 
 Extend the rust built-in numeric types.
 
 [License]: https://img.shields.io/badge/License-Apache--2.0%20OR%20MIT-blue.svg
-[Travis CI]: https://img.shields.io/travis/com/yangby-cryptape/rust-numext.svg
+[Travis CI]: https://img.shields.io/travis/com/cryptape/rust-numext.svg
 
 ## Crates
 
