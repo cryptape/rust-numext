@@ -10,7 +10,7 @@ autobenches = false
 nfhash = { package = "numext-fixed-hash", version = "~0.1.0", path = "../fixed-hash", features = ["support_all"] }
 etypes = { package = "ethereum-types", version = "~0.4" }
 proptest = "~0.8"
-rand = "~0.5"
+rand = "~0.6"
 
 [dev-dependencies]
 criterion = "~0.2"
