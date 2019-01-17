@@ -58,7 +58,6 @@ pub struct UintTokenStreams {
     pub unit_suffix: TokenStream,
     pub double_unit_suffix: TokenStream,
     pub inner_type: TokenStream,
-    pub bytes_type: TokenStream,
     pub error_name: TokenStream,
     pub utils_name: TokenStream,
 }
@@ -76,7 +75,6 @@ impl<'a> ::std::convert::From<&'a UintInformation> for UintTokenStreams {
         let double_unit_suffix = utils::uint_suffix_to_ts(info.unit_bits_size * 2);
 
         let inner_type = quote!([#unit_suffix; #unit_amount]);
-        let bytes_type = quote!([u8; #bytes_size]);
 
         let error_name = utils::ident_to_ts("FixedUintError");
         let utils_name = utils::ident_to_ts("utils");
@@ -91,7 +89,6 @@ impl<'a> ::std::convert::From<&'a UintInformation> for UintTokenStreams {
             unit_suffix,
             double_unit_suffix,
             inner_type,
-            bytes_type,
             error_name,
             utils_name,
         }

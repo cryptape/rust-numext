@@ -20,7 +20,7 @@ impl HashConstructor {
             impl ::std::hash::Hash for #name {
                 #[inline]
                 fn hash<H: ::std::hash::Hasher>(&self, state: &mut H) {
-                    ::std::hash::Hash::hash(&self.inner()[..], state)
+                    state.write(&self.inner()[..])
                 }
             }
         );
