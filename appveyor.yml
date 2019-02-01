@@ -30,7 +30,7 @@ test_script:
 #    - cargo bench --target=%target% --verbose      # Runs benchmarks in "src/lib.rs"
 
 artifacts:                          
-    - path: target\$(target)\release\*$(APPVEYOR_PROJECT_NAME)*.*     # Publishes all files from `cargo build/test/bench --release`
+    - path: target\$(target)\release\*numext*.*     # Publishes all files from `cargo build/test/bench --release`
       name: $(APPVEYOR_PROJECT_NAME)-$(platform)                      # Gives it a fancy name
       
 deploy:
