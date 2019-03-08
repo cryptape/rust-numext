@@ -20,6 +20,7 @@ impl UintConstructor {
         self.defun_priv_mul();
         self.defun_priv_full_mul();
         self.defun_priv_div_and_rem();
+        self.defun_priv_pow();
         self.defun_priv_bitwise();
         self.defun_priv_not();
         self.defun_priv_shift();
@@ -599,6 +600,78 @@ impl UintConstructor {
                     (r, false)
                 } else {
                     (Self::default(), true)
+                }
+            }
+        );
+        self.defun(part);
+    }
+
+    fn defun_priv_pow(&self) {
+        let unit_bits_size = &self.ts.unit_bits_size;
+        let loop_unit_amount_rev = &utils::pure_uint_list_to_ts((0..self.info.unit_amount).rev());
+        let part = quote!(
+            // Ref: https://en.wikipedia.org/wiki/Exponentiation_by_squaring
+            #[inline]
+            fn _pow(&self, exp: u32) -> (Self, bool) {
+                match exp {
+                    0 => (Self::one(), false),
+                    1 => (self.clone(), false),
+                    mut exp => {
+                        let mut val = self.clone();
+                        let mut ret = Self::one();
+                        let mut of = false;
+                        while exp > 1 {
+                            if exp & 1 == 1 {
+                                let (ret_tmp, of_tmp) = val._mul(&ret);
+                                ret = ret_tmp;
+                                of = of || of_tmp;
+                            }
+                            let (val_tmp, of_tmp) = val._mul(&val);
+                            val = val_tmp;
+                            of = of || of_tmp;
+                            exp >>= 1;
+                        }
+                        let (ret, of_tmp) = val._mul(&ret);
+                        (ret, of || of_tmp)
+                    }
+                }
+            }
+            #[inline]
+            fn _next_power_of_two(&self) -> Option<Self> {
+                let inner = self.inner();
+                let mut idx_fisrt_not_zero = 0;
+                let ubs = #unit_bits_size;
+                #({
+                    let idx = #loop_unit_amount_rev;
+                    let v = inner[idx];
+                    if v != 0 {
+                        if idx_fisrt_not_zero == 0 {
+                            idx_fisrt_not_zero = idx;
+                        } else {
+                            let mut ret = Self::zero();
+                            let v = inner[idx_fisrt_not_zero];
+                            let l0 = v.leading_zeros() as usize;
+                            let bit_idx = ubs * (idx_fisrt_not_zero + 1) - l0;
+                            return if ret.set_bit(bit_idx, true) {
+                                Some(ret)
+                            } else {
+                                None
+                            }
+                        }
+                    }
+                })*
+                if inner[idx_fisrt_not_zero].is_power_of_two() {
+                    Some(self.clone())
+                } else {
+                    let v = inner[idx_fisrt_not_zero];
+                    let mut ret = Self::zero();
+                    let l0 = v.leading_zeros() as usize;
+                    let bit_idx = ubs * (idx_fisrt_not_zero + 1) - l0;
+                    if ret.set_bit(bit_idx, true) {
+                        Some(ret)
+                    } else {
+                        None
+                    }
                 }
             }
         );

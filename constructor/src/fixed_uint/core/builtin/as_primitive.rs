@@ -24,6 +24,7 @@ impl UintConstructor {
         self.defun_as_prim_boundary();
         self.defun_as_prim_bits();
         self.defun_as_prim_bytes();
+        self.defun_as_prim_pow();
         self.defun_as_prim_checked();
         self.defun_as_prim_saturating();
         self.defun_as_prim_overflowing();
@@ -116,7 +117,7 @@ impl UintConstructor {
             pub fn rotate_right(&self, n: u32) -> Self {
                 self._rttr(n)
             }
-            /* TODO
+            /* TODO unimplemented method
             /// Reverses the bit pattern of the integer.
             #[inline]
             pub fn reverse_bits(self) -> Self {
@@ -213,6 +214,50 @@ impl UintConstructor {
         self.defun(part);
     }
 
+    fn defun_as_prim_pow(&self) {
+        let name = &self.ts.name;
+        let loop_unit_amount_rev = &utils::pure_uint_list_to_ts((0..self.info.unit_amount).rev());
+        let part = quote!(
+            /// Raises self to the power of `exp`, using exponentiation by squaring.
+            #[inline]
+            pub fn pow(&self, exp: u32) -> Self {
+                let (ret, of) = self._pow(exp);
+                if of {
+                    panic!("{}: attempt to pow with overflow", stringify!(#name));
+                }
+                ret
+            }
+            /// Returns `true` if and only if `self == 2^k` for some `k`.
+            #[inline]
+            pub fn is_power_of_two(&self) -> bool {
+                let inner = self.inner();
+                let mut idx_fisrt_not_zero = 0;
+                #({
+                    let idx = #loop_unit_amount_rev;
+                    let v = inner[idx];
+                    if v != 0 {
+                        if idx_fisrt_not_zero == 0 {
+                            idx_fisrt_not_zero = idx;
+                        } else {
+                            return false;
+                        }
+                    }
+                })*
+                inner[idx_fisrt_not_zero].is_power_of_two()
+            }
+            /// Returns the smallest power of two greater than or equal to `self`.
+            ///
+            /// When return value overflows (i.e., `self > (1 << (N-1))` for type `uN`), it panics
+            /// in debug mode and return value is wrapped to 0 in release mode (the only situation
+            /// in which method can return 0).
+            #[inline]
+            pub fn next_power_of_two(&self) -> Self {
+                self._next_power_of_two().unwrap_or_else(|| panic!("{}: attempt to get next power of two with overflow", stringify!(#name)))
+            }
+        );
+        self.defun(part);
+    }
+
     fn defun_as_prim_checked(&self) {
         let bits_size = &self.ts.bits_size;
         let part = quote!(
@@ -263,6 +308,24 @@ impl UintConstructor {
             #[inline]
             pub fn checked_rem(&self, rhs: &Self) -> Option<Self> {
                 let (ret, of) = self._rem(rhs);
+                if of {
+                    None
+                } else {
+                    Some(ret)
+                }
+            }
+            /// Returns the smallest power of two greater than or equal to `n`.
+            /// If the next power of two is greater than the type's maximum value, None is returned,
+            /// otherwise the power of two is wrapped in `Some`.
+            #[inline]
+            pub fn checked_next_power_of_two(&self) -> Option<Self> {
+                self._next_power_of_two()
+            }
+            /// Checked exponentiation.
+            /// Computes `self.pow(exp)`, returning `None` if overflow occurred.
+            #[inline]
+            pub fn checked_pow(&self, exp: u32) -> Option<Self> {
+                let (ret, of) = self._pow(exp);
                 if of {
                     None
                 } else {
@@ -338,6 +401,17 @@ impl UintConstructor {
                     ret
                 }
             }
+            /// Saturating integer exponentiation.
+            /// Computes `self.pow(exp)`, saturating at the numeric bounds instead of overflowing.
+            #[inline]
+            pub fn saturating_pow(&self, exp: u32) -> Self {
+                let (ret, of) = self._pow(exp);
+                if of {
+                    Self::max_value()
+                } else {
+                    ret
+                }
+            }
         );
         self.defun(part);
     }
@@ -399,6 +473,13 @@ impl UintConstructor {
             #[inline]
             pub fn overflowing_rem(&self, rhs: &Self) -> (Self, bool) {
                 (self % rhs, false)
+            }
+            /// Raises self to the power of `exp`, using exponentiation by squaring.
+            /// Returns a tuple of the exponentiation along with a bool indicating whether an
+            /// overflow happened.
+            #[inline]
+            pub fn overflowing_pow(&self, exp: u32) -> (Self, bool) {
+                self._pow(exp)
             }
             /// Shifts `self` left by `rhs` bits.
             ///
