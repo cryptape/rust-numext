@@ -23,10 +23,10 @@ impl UintConstructor {
     pub fn defun_as_prim(&self) {
         self.defun_as_prim_boundary();
         self.defun_as_prim_bits();
+        self.defun_as_prim_bytes();
         self.defun_as_prim_checked();
         self.defun_as_prim_saturating();
         self.defun_as_prim_overflowing();
-        self.defun_as_prim_bytes();
     }
 
     fn defun_as_prim_boundary(&self) {
@@ -99,6 +99,93 @@ impl UintConstructor {
                     }
                 })*
                 #bits_size
+            }
+        );
+        self.defun(part);
+    }
+
+    fn defun_as_prim_bytes(&self) {
+        let bytes_size = &self.ts.bytes_size;
+        let inner_type = &self.ts.inner_type;
+        let part = quote!(
+            /// Reverses the byte order of the integer.
+            #[inline]
+            pub fn swap_bytes(mut self) -> Self {
+                let inner = self.mut_inner();
+                unsafe {
+                    let slice = &mut *(inner as *mut #inner_type as *mut [u8; #bytes_size]);
+                    slice.reverse()
+                }
+                self
+            }
+            /// Return the memory representation of this integer as a byte array in big-endian
+            /// (network) byte order.
+            #[inline]
+            pub fn to_be_bytes(&self) -> [u8; #bytes_size] {
+                let mut output = [0u8; #bytes_size];
+                if cfg!(target_endian = "little") {
+                    self._into_be_slice_on_le_platform(&mut output[..]);
+                } else {
+                    self._into_be_slice_on_be_platform(&mut output[..]);
+                }
+                output
+            }
+            /// Return the memory representation of this integer as a byte array in little-endian
+            /// byte order.
+            #[inline]
+            pub fn to_le_bytes(&self) -> [u8; #bytes_size] {
+                let mut output = [0u8; #bytes_size];
+                if cfg!(target_endian = "little") {
+                    self._into_le_slice_on_le_platform(&mut output[..]);
+                } else {
+                    self._into_le_slice_on_be_platform(&mut output[..]);
+                }
+                output
+            }
+            /// Return the memory representation of this integer as a byte array in native byte order.
+            ///
+            /// As the target platform's native endianness is used, portable code should use
+            /// to_be_bytes or to_le_bytes, as appropriate, instead.
+            #[inline]
+            pub fn to_ne_bytes(&self) -> [u8; #bytes_size] {
+                let mut output = [0u8; #bytes_size];
+                if cfg!(target_endian = "little") {
+                    self._into_le_slice_on_le_platform(&mut output[..]);
+                } else {
+                    self._into_be_slice_on_be_platform(&mut output[..]);
+                }
+                output
+            }
+            /// Create an integer value from its representation as a byte array in big endian.
+            #[inline]
+            pub fn from_be_bytes(bytes: &[u8; #bytes_size]) -> Self {
+                if cfg!(target_endian = "little") {
+                    Self::_from_be_slice_on_le_platform(&bytes[..])
+                } else {
+                    Self::_from_be_slice_on_be_platform(&bytes[..])
+                }
+            }
+            /// Create an integer value from its representation as a byte array in little endian.
+            #[inline]
+            pub fn from_le_bytes(bytes: &[u8; #bytes_size]) -> Self {
+                if cfg!(target_endian = "little") {
+                    Self::_from_le_slice_on_le_platform(&bytes[..])
+                } else {
+                    Self::_from_le_slice_on_be_platform(&bytes[..])
+                }
+            }
+            /// Create an integer value from its memory representation as a byte array in native
+            /// endianness.
+            ///
+            /// As the target platform's native endianness is used, portable code likely wants to use
+            /// from_be_bytes or from_le_bytes, as appropriate instead.
+            #[inline]
+            pub fn from_ne_bytes(bytes: &[u8; #bytes_size]) -> Self {
+                if cfg!(target_endian = "little") {
+                    Self::_from_le_slice_on_le_platform(&bytes[..])
+                } else {
+                    Self::_from_be_slice_on_be_platform(&bytes[..])
+                }
             }
         );
         self.defun(part);
@@ -335,76 +422,6 @@ impl UintConstructor {
                         unreachable!();
                     }
                     (val, true)
-                }
-            }
-        );
-        self.defun(part);
-    }
-
-    fn defun_as_prim_bytes(&self) {
-        let bytes_size = &self.ts.bytes_size;
-        let part = quote!(
-            /// Return the memory representation of this integer as a byte array in big-endian
-            /// (network) byte order.
-            pub fn to_be_bytes(&self) -> [u8; #bytes_size] {
-                let mut output = [0u8; #bytes_size];
-                if cfg!(target_endian = "little") {
-                    self._into_be_slice_on_le_platform(&mut output[..]);
-                } else {
-                    self._into_be_slice_on_be_platform(&mut output[..]);
-                }
-                output
-            }
-            /// Return the memory representation of this integer as a byte array in little-endian
-            /// byte order.
-            pub fn to_le_bytes(&self) -> [u8; #bytes_size] {
-                let mut output = [0u8; #bytes_size];
-                if cfg!(target_endian = "little") {
-                    self._into_le_slice_on_le_platform(&mut output[..]);
-                } else {
-                    self._into_le_slice_on_be_platform(&mut output[..]);
-                }
-                output
-            }
-            /// Return the memory representation of this integer as a byte array in native byte order.
-            ///
-            /// As the target platform's native endianness is used, portable code should use
-            /// to_be_bytes or to_le_bytes, as appropriate, instead.
-            pub fn to_ne_bytes(&self) -> [u8; #bytes_size] {
-                let mut output = [0u8; #bytes_size];
-                if cfg!(target_endian = "little") {
-                    self._into_le_slice_on_le_platform(&mut output[..]);
-                } else {
-                    self._into_be_slice_on_be_platform(&mut output[..]);
-                }
-                output
-            }
-            /// Create an integer value from its representation as a byte array in big endian.
-            pub fn from_be_bytes(bytes: &[u8; #bytes_size]) -> Self {
-                if cfg!(target_endian = "little") {
-                    Self::_from_be_slice_on_le_platform(&bytes[..])
-                } else {
-                    Self::_from_be_slice_on_be_platform(&bytes[..])
-                }
-            }
-            /// Create an integer value from its representation as a byte array in little endian.
-            pub fn from_le_bytes(bytes: &[u8; #bytes_size]) -> Self {
-                if cfg!(target_endian = "little") {
-                    Self::_from_le_slice_on_le_platform(&bytes[..])
-                } else {
-                    Self::_from_le_slice_on_be_platform(&bytes[..])
-                }
-            }
-            /// Create an integer value from its memory representation as a byte array in native
-            /// endianness.
-            ///
-            /// As the target platform's native endianness is used, portable code likely wants to use
-            /// from_be_bytes or from_le_bytes, as appropriate instead.
-            pub fn from_ne_bytes(bytes: &[u8; #bytes_size]) -> Self {
-                if cfg!(target_endian = "little") {
-                    Self::_from_le_slice_on_le_platform(&bytes[..])
-                } else {
-                    Self::_from_be_slice_on_be_platform(&bytes[..])
                 }
             }
         );
