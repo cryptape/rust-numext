@@ -750,6 +750,76 @@ impl UintConstructor {
                     Self::zero()
                 }
             }
+            #[inline]
+            fn _rttl(&self, n: u32) -> Self {
+                let n = (n % #bits_size) as usize;
+                if n == 0 {
+                    self.clone()
+                } else {
+                    let mut ret: #inner_type = [0; #unit_amount];
+                    let src = self.inner();
+                    let bit_offset = (n % #unit_bits_size) as usize;
+                    let unit_offset = (n / #unit_bits_size) as usize;
+                    let break_offset = #unit_amount - unit_offset;
+                    if bit_offset == 0 {
+                        ret[unit_offset] = src[0];
+                        for i in (unit_offset + 1)..#unit_amount {
+                            ret[i] = src[i - unit_offset];
+                        }
+                        for i in 0..unit_offset {
+                            ret[i] = src[break_offset + i];
+                        }
+                    } else {
+                        let bit_cover = #unit_bits_size - bit_offset;
+                        ret[unit_offset] =
+                            (src[0] << bit_offset) | (src[#unit_amount - 1] >> bit_cover);
+                        for i in (unit_offset + 1)..#unit_amount {
+                            ret[i] = (src[i - unit_offset] << bit_offset)
+                                | (src[i - unit_offset - 1] >> bit_cover);
+                        }
+                        for i in 0..unit_offset {
+                            ret[i] = (src[break_offset + i] << bit_offset)
+                                | (src[break_offset + i - 1] >> bit_cover);
+                        }
+                    }
+                    Self::new(ret)
+                }
+            }
+            #[inline]
+            fn _rttr(&self, n: u32) -> Self {
+                let n = (n % #bits_size) as usize;
+                if n == 0 {
+                    self.clone()
+                } else {
+                    let mut ret: #inner_type = [0; #unit_amount];
+                    let src = self.inner();
+                    let bit_offset = (n % #unit_bits_size) as usize;
+                    let unit_offset = (n / #unit_bits_size) as usize;
+                    let break_offset = #unit_amount - unit_offset - 1;
+                    if bit_offset == 0 {
+                        for i in 0..break_offset {
+                            ret[i] = src[i + unit_offset];
+                        }
+                        ret[break_offset] = src[#unit_amount - 1];
+                        for i in 0..unit_offset {
+                            ret[break_offset + 1 + i] = src[i];
+                        }
+                    } else {
+                        let bit_cover = #unit_bits_size - bit_offset;
+                        for i in 0..break_offset {
+                            ret[i] = (src[i + unit_offset] >> bit_offset)
+                                | (src[i + unit_offset + 1] << bit_cover);
+                        }
+                        ret[break_offset] =
+                            src[#unit_amount - 1] >> bit_offset | (src[0] << bit_cover);
+                        for i in 0..unit_offset {
+                            ret[break_offset + 1 + i] =
+                                (src[i] >> bit_offset) | (src[i + 1] << bit_cover);
+                        }
+                    }
+                    Self::new(ret)
+                }
+            }
         );
         self.defun(part);
     }

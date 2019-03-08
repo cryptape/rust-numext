@@ -100,6 +100,28 @@ impl UintConstructor {
                 })*
                 #bits_size
             }
+            /// Shifts the bits to the left by a specified amount, n, wrapping the truncated bits to
+            /// the end of the resulting integer.
+            ///
+            /// Please note this isn't the same operation as `<<`!
+            #[inline]
+            pub fn rotate_left(&self, n: u32) -> Self {
+                self._rttl(n)
+            }
+            /// Shifts the bits to the right by a specified amount, n, wrapping the truncated bits to
+            /// the beginning of the resulting integer.
+            ///
+            /// Please note this isn't the same operation as `>>`!
+            #[inline]
+            pub fn rotate_right(&self, n: u32) -> Self {
+                self._rttr(n)
+            }
+            /* TODO
+            /// Reverses the bit pattern of the integer.
+            #[inline]
+            pub fn reverse_bits(self) -> Self {
+            }
+            */
         );
         self.defun(part);
     }

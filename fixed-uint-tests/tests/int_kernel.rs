@@ -9,24 +9,27 @@
 use nfuint::{prelude::UintConvert, U128, U256};
 use nfuint_tests::tools;
 
+const U128_ZERO: U128 = U128::zero();
+const U128_ONE: U128 = U128::one();
+
 #[test]
 fn kernel() {
     let x = tools::gen_nonzero::<u64>();
 
-    assert!(U128::zero() == U128::from(0u8));
-    assert!(U128::zero() != U128::from(1u8));
-    assert!(U128::zero() != U128::from(x));
-    assert!(U128::zero().is_zero());
+    assert!(U128_ZERO == U128::from(0u8));
+    assert!(U128_ZERO != U128::from(1u8));
+    assert!(U128_ZERO != U128::from(x));
+    assert!(U128_ZERO.is_zero());
 
-    assert!(U128::one() != U128::from(0u8));
-    assert!(U128::one() == U128::from(1u8));
-    assert!(U128::one() != U128::from(x));
-    assert!(!U128::one().is_zero());
+    assert!(U128_ONE != U128::from(0u8));
+    assert!(U128_ONE == U128::from(1u8));
+    assert!(U128_ONE != U128::from(x));
+    assert!(!U128_ONE.is_zero());
 
     assert!(!U128::from(x).is_zero());
 
-    assert!(!U128::zero().is_max());
-    assert!(!U128::one().is_max());
+    assert!(!U128_ZERO.is_max());
+    assert!(!U128_ONE.is_max());
     assert!(!U128::from(x).is_max());
     assert!(U128::max_value().is_max());
 }
