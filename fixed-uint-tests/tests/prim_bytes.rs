@@ -67,7 +67,6 @@ fn conv_bytes_for_specific_cases() {
         assert_eq!(x.clone().swap_bytes(), y);
     }
     {
-        let _ = 0u8;
         let bytes = {
             const ____: u8 = 0x00;
             [

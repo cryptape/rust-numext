@@ -117,49 +117,57 @@ impl HashConstructor {
 
     fn defun_pub_conv_from_hex_str_dict(&self) {
         let part = quote!(
-            pub(crate) const U8MX: u8 = u8::max_value();
-            pub(crate) static DICT_HEX_LO: [u8; 256] = [
-                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
-                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
-                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
-                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
-                0x08, 0x09, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e,
-                0x0f, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
-                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, 0x0a,
-                0x0b, 0x0c, 0x0d, 0x0e, 0x0f, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
-                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
-                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
-                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
-                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
-                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
-                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
-                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
-                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
-                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
-                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
-                U8MX, U8MX, U8MX, U8MX,
-            ];
-            pub(crate) static DICT_HEX_HI: [u8; 256] = [
-                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
-                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
-                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
-                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, 0x00, 0x10, 0x20, 0x30, 0x40, 0x50, 0x60, 0x70,
-                0x80, 0x90, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, 0xa0, 0xb0, 0xc0, 0xd0, 0xe0,
-                0xf0, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
-                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, 0xa0,
-                0xb0, 0xc0, 0xd0, 0xe0, 0xf0, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
-                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
-                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
-                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
-                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
-                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
-                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
-                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
-                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
-                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
-                U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX, U8MX,
-                U8MX, U8MX, U8MX, U8MX,
-            ];
+            pub(crate) const DICT_HEX_ERROR: u8 = u8::max_value();
+            pub(crate) static DICT_HEX_LO: [u8; 256] = {
+                const ____: u8 = DICT_HEX_ERROR;
+                [
+                    ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____,
+                    ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____,
+                    ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____,
+                    ____, ____, ____, ____, ____, ____, ____, ____, ____, 0x00, 0x01, 0x02, 0x03,
+                    0x04, 0x05, 0x06, 0x07, 0x08, 0x09, ____, ____, ____, ____, ____, ____, ____,
+                    0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, ____, ____, ____, ____, ____, ____, ____,
+                    ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____,
+                    ____, ____, ____, ____, ____, ____, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, ____,
+                    ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____,
+                    ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____,
+                    ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____,
+                    ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____,
+                    ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____,
+                    ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____,
+                    ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____,
+                    ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____,
+                    ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____,
+                    ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____,
+                    ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____,
+                    ____, ____, ____, ____, ____, ____, ____, ____, ____,
+                ]
+            };
+            pub(crate) static DICT_HEX_HI: [u8; 256] = {
+                const ____: u8 = DICT_HEX_ERROR;
+                [
+                    ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____,
+                    ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____,
+                    ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____,
+                    ____, ____, ____, ____, ____, ____, ____, ____, ____, 0x00, 0x10, 0x20, 0x30,
+                    0x40, 0x50, 0x60, 0x70, 0x80, 0x90, ____, ____, ____, ____, ____, ____, ____,
+                    0xa0, 0xb0, 0xc0, 0xd0, 0xe0, 0xf0, ____, ____, ____, ____, ____, ____, ____,
+                    ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____,
+                    ____, ____, ____, ____, ____, ____, 0xa0, 0xb0, 0xc0, 0xd0, 0xe0, 0xf0, ____,
+                    ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____,
+                    ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____,
+                    ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____,
+                    ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____,
+                    ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____,
+                    ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____,
+                    ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____,
+                    ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____,
+                    ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____,
+                    ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____,
+                    ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____,
+                    ____, ____, ____, ____, ____, ____, ____, ____, ____,
+                ]
+            };
         );
         self.util(part);
     }
@@ -181,7 +189,7 @@ impl HashConstructor {
                     let hi = {
                         let chr = input_bytes.next().unwrap_or_else(|| unreachable!());
                         let hi = #loop_utils_name_copy1::DICT_HEX_HI[usize::from(chr)];
-                        if hi == #loop_utils_name_copy2::U8MX {
+                        if hi == #loop_utils_name_copy2::DICT_HEX_ERROR {
                             Err(FromStrError::InvalidCharacter { chr, idx: idx*2 })?;
                         };
                         hi
@@ -189,7 +197,7 @@ impl HashConstructor {
                     let lo = {
                         let chr = input_bytes.next().unwrap_or_else(|| unreachable!());
                         let lo = #loop_utils_name_copy3::DICT_HEX_LO[usize::from(chr)];
-                        if lo == #loop_utils_name_copy4::U8MX  {
+                        if lo == #loop_utils_name_copy4::DICT_HEX_ERROR {
                             Err(FromStrError::InvalidCharacter { chr, idx: idx*2+1 })?;
                         };
                         lo
@@ -204,7 +212,7 @@ impl HashConstructor {
                 } else {
                     #utils_name::DICT_HEX_LO[usize::from(chr)]
                 };
-                if val == #utils_name::U8MX {
+                if val == #utils_name::DICT_HEX_ERROR {
                     Err(FromStrError::InvalidCharacter { chr, idx })?;
                 }
                 inner[idx / 2] |= val;
@@ -252,7 +260,7 @@ impl HashConstructor {
                         } else {
                             #utils_name::DICT_HEX_LO[usize::from(chr)]
                         };
-                        if val == #utils_name::U8MX {
+                        if val == #utils_name::DICT_HEX_ERROR {
                             Err(FromStrError::InvalidCharacter { chr, idx })?;
                         }
                         idx += 1;
