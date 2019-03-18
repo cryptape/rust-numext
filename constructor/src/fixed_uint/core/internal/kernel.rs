@@ -126,7 +126,7 @@ impl UintConstructor {
             pub const fn zero() -> Self {
                 Self::new([0; #unit_amount])
             }
-            /// Create a new fixed uint and value is zero.
+            /// Create a new fixed uint and value is one.
             #[inline]
             pub const fn one() -> Self {
                 Self::new( #one )

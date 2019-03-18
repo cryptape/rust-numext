@@ -146,7 +146,7 @@ impl UintConstructor {
         let name = &self.ts.name;
         let inner_type = &self.ts.inner_type;
         let part = quote!(
-            /// Little-endian fixed integer type.
+            /// Fixed non-negative integer type.
             #[derive(Clone)]
             pub struct #name(pub #inner_type);
         );

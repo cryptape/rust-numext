@@ -6,17 +6,15 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use nfuint::U128;
-use nfuint_tests::tools;
+#[macro_use]
+extern crate proptest;
+
+use nfuint::{U128, U256};
+use nfuint_tests::{props, tools};
+use proptest::prelude::any;
 
 #[test]
-fn boundary() {
-    assert!(U128::min_value() == U128::from(0u128));
-    assert!(U128::max_value() == U128::from(!0u128));
-}
-
-#[test]
-fn bits() {
+fn bits_basic() {
     let hi = tools::gen_nonzero::<u64>();
     let lo = tools::gen_nonzero::<u64>();
 
@@ -38,4 +36,32 @@ fn bits() {
     let x = U128::from(0u128);
     assert!(x.leading_zeros() == 128);
     assert!(x.trailing_zeros() == 128);
+}
+
+proptest! {
+    #[test]
+    fn rotate_bits_1(v in any::<u128>(), n in any::<u32>()) {
+        assert_eq!(U128::from(v).rotate_left(n), U128::from(v.rotate_left(n)));
+        assert_eq!(U128::from(v).rotate_right(n), U128::from(v.rotate_right(n)));
+    }
+
+    #[test]
+    fn rotate_bits_2(ref le in any::<props::U256LeBytes>(), n in any::<u32>()) {
+        let v: U256 = le.into();
+
+        assert_eq!(v, v.rotate_left(n).rotate_right(n));
+        assert_eq!(v, v.rotate_right(n).rotate_left(n));
+
+        if n == 0 {
+            assert_eq!(v, v.rotate_left(n));
+            assert_eq!(v, v.rotate_right(n));
+        } else {
+            let c = U256::count_bits() as u32;
+            let m = c - (n % c);
+            assert_eq!(v, v.rotate_left(n).rotate_left(m));
+            assert_eq!(v, v.rotate_right(n).rotate_right(m));
+            assert_eq!(v, v.rotate_left(m).rotate_left(n));
+            assert_eq!(v, v.rotate_right(m).rotate_right(n));
+        }
+    }
 }

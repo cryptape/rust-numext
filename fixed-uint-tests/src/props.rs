@@ -162,6 +162,10 @@ impl U256LeBytes {
         ret
     }
 
+    pub fn reverse(&mut self) {
+        self.inner.reverse();
+    }
+
     fn highest_nonzero_bytes(&self) -> Option<usize> {
         let mut ret: Option<usize> = None;
         for i in 0..32 {

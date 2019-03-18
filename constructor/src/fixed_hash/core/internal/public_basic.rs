@@ -31,6 +31,8 @@ impl HashConstructor {
                 #bits_size
             }
             /// Return a specific bit, or return None when overlows.
+            ///
+            /// Order from low to high.
             #[inline]
             pub fn bit(&self, index: usize) -> Option<bool> {
                 if index >= #bits_size {
@@ -44,6 +46,8 @@ impl HashConstructor {
             }
             /// Set a specific bit.
             /// Return false when overflows.
+            ///
+            /// Order from low to high.
             #[inline]
             pub fn set_bit(&mut self, index: usize, value: bool) -> bool {
                 if index >= #bits_size {
@@ -61,6 +65,8 @@ impl HashConstructor {
                 }
             }
             /// Return the highest bit which is one.
+            ///
+            /// Order from low to high.
             #[inline]
             pub fn highest_one(&self) -> Option<usize> {
                 let inner = self.inner();
@@ -76,6 +82,8 @@ impl HashConstructor {
                 None
             }
             /// Return the lowest bit which is one.
+            ///
+            /// Order from low to high.
             #[inline]
             pub fn lowest_one(&self) -> Option<usize> {
                 let inner = self.inner();
