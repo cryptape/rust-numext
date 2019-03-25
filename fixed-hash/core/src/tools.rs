@@ -8,9 +8,9 @@
 
 macro_rules! convert_between {
     ($uint:ident, $hash:ident, $bytes_size:expr) => {
-        impl<'a> From<&'a nfuint::$uint> for $hash {
+        impl<'a> From<&'a numext_fixed_uint::$uint> for $hash {
             #[inline]
-            fn from(u: &nfuint::$uint) -> Self {
+            fn from(u: &numext_fixed_uint::$uint) -> Self {
                 let mut ret = [0u8; $bytes_size];
                 u.into_big_endian(&mut ret).unwrap_or_else(|e| {
                     panic!(
@@ -23,16 +23,16 @@ macro_rules! convert_between {
                 ret.into()
             }
         }
-        impl From<nfuint::$uint> for $hash {
+        impl From<numext_fixed_uint::$uint> for $hash {
             #[inline]
-            fn from(u: nfuint::$uint) -> Self {
+            fn from(u: numext_fixed_uint::$uint) -> Self {
                 (&u).into()
             }
         }
-        impl<'a> From<&'a $hash> for nfuint::$uint {
+        impl<'a> From<&'a $hash> for numext_fixed_uint::$uint {
             #[inline]
             fn from(h: &$hash) -> Self {
-                nfuint::$uint::from_big_endian(h.as_bytes()).unwrap_or_else(|e| {
+                numext_fixed_uint::$uint::from_big_endian(h.as_bytes()).unwrap_or_else(|e| {
                     panic!(
                         "failed to convert from {} to {}: {}",
                         stringify!($hash),
@@ -42,7 +42,7 @@ macro_rules! convert_between {
                 })
             }
         }
-        impl From<$hash> for nfuint::$uint {
+        impl From<$hash> for numext_fixed_uint::$uint {
             #[inline]
             fn from(h: $hash) -> Self {
                 (&h).into()
