@@ -282,7 +282,10 @@ impl UintConstructor {
             }
         );
         self.attach_common(part);
-        let part = quote!(#[fail(display = "failed to parse from string {}", _0)]
+        let part = quote!(#[fail(
+            display = "failed to parse from string since {}",
+            _0
+        )]
         FromStr(
             #[fail(cause)]
             FromStrError

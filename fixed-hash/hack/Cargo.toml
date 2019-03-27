@@ -1,0 +1,21 @@
+[package]
+name = "numext-fixed-hash-hack"
+version = "0.1.2"
+authors = ["Cryptape Technologies <contact@cryptape.com>"]
+edition = "2018"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+numext-fixed-hash-core = { path = "../core" }
+proc-macro-hack = "~0.5"
+syn = { version = "~0.15", features = ["extra-traits"] }
+quote = "~0.6"
+proc-macro2 = "~0.4"
+
+[features]
+default = []
+support_rand = ["numext-fixed-hash-core/support_rand"]
+support_heapsize = ["numext-fixed-hash-core/support_heapsize"]
+support_serde = ["numext-fixed-hash-core/support_serde"]

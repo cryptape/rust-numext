@@ -11,18 +11,16 @@ categories = ["algorithms", "data-structures"]
 license = "Apache-2.0 OR MIT"
 
 [dependencies]
-numext-constructor = { version = "~0.1.2", path = "../constructor" }
-failure = "~0.1"
-rand = { version = "~0.5", optional = true }
-heapsize = { version = "~0.4", optional = true }
-serde = { version = "~1.0", optional = true }
+numext-fixed-uint-core = { path = "core" }
+numext-fixed-uint-hack = { path = "hack" }
+proc-macro-hack = "~0.5"
 
 [features]
 default = []
 support_all = ["support_rand", "support_heapsize", "support_serde"]
-support_rand = ["rand"]
-support_heapsize = ["heapsize"]
-support_serde = ["serde"]
+support_rand = ["numext-fixed-uint-core/support_rand", "numext-fixed-uint-hack/support_rand"]
+support_heapsize = ["numext-fixed-uint-core/support_heapsize", "numext-fixed-uint-hack/support_heapsize"]
+support_serde = ["numext-fixed-uint-core/support_serde", "numext-fixed-uint-hack/support_serde"]
 
 [badges]
 travis-ci = { repository = "cryptape/rust-numext" }
