@@ -7,7 +7,7 @@
 // except according to those terms.
 
 #[test]
-fn div_throw_add_overflow() {
+fn div_throw_add_overflow_1() {
     let one = nfuint::U256::one();
     for i in 0..255 {
         let x = nfuint::U256::one() << i;
@@ -18,6 +18,24 @@ fn div_throw_add_overflow() {
     let y = ((nfuint::U256::one() << 255) / &x) << 1;
     let z = ((nfuint::U256::one() << 255) / &y) << 1;
     assert_eq!(x, z);
+}
+
+#[test]
+fn div_throw_add_overflow_2() {
+    let x = nfuint::U4096::from_hex_str(
+        "aab1deb8c8a4ba3d000000000000000000000000000000000000000000000001",
+    )
+    .unwrap();
+    let y = nfuint::U4096::from_hex_str(
+        "10000000000000000000000000000000000000000000000000000000000000000",
+    )
+    .unwrap();
+    let expected = nfuint::U4096::from_hex_str(
+        "5563bd719149747a000000000000000000000000000000000000000000000001",
+    )
+    .unwrap();
+    let result = &x * &x % y;
+    assert_eq!(result, expected);
 }
 
 #[test]
@@ -33,5 +51,5 @@ fn div_too_slow() {
     )
     .unwrap();
     let result = &x * &x % y;
-    assert_eq!(expected, result);
+    assert_eq!(result, expected);
 }

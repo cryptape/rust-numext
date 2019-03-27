@@ -569,6 +569,7 @@ impl UintConstructor {
                     }
                     // below: ret_idx > 0
                     // estimate highest byte of quotient
+                    // could not overflow
                     let divisor = rhs_highest + 1;
                     let dividend = if lhs_highest >= divisor {
                         lhs_highest
@@ -589,9 +590,20 @@ impl UintConstructor {
                         *ret_tmp = tmp;
                         of
                     };
-                    if of {
-                        // `ret[ret_idx + 1] + 1` could not overflow
-                        ret[ret_idx + 1] += 1;
+                    {
+                        let mut ret_idx_tmp = ret_idx + 1;
+                        let mut ret_of = of;
+                        loop {
+                            if ret_of {
+                                let ret_tmp = &mut ret[ret_idx_tmp];
+                                let (tmp, of) = ret_tmp.overflowing_add(1);
+                                *ret_tmp = tmp;
+                                ret_of = of;
+                                ret_idx_tmp += 1;
+                            } else {
+                                break;
+                            }
+                        }
                     }
                     let minuend = {
                         // could not overflow
