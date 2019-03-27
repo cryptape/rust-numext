@@ -6,37 +6,21 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use failure::Fail;
+use proc_macro_hack::proc_macro_hack;
 
-numext_constructor::construct_fixed_uints!(
-    U128 {
-        size = 128,
-    },
-    U160 {
-        size = 160,
-    },
-    U224 {
-        size = 224,
-    },
-    U256 {
-        size = 256,
-    },
-    U384 {
-        size = 384,
-    },
-    U512 {
-        size = 512,
-    },
-    U520 {
-        size = 520,
-    },
-    U1024 {
-        size = 1024,
-    },
-    U2048 {
-        size = 2048,
-    },
-    U4096 {
-        size = 4096,
-    },
-);
+pub use numext_fixed_uint_core::*;
+
+macro_rules! reexport {
+    ([$($name:ident,)+]) => {
+        $(reexport!($name);)+
+    };
+    ([$($name:ident),+]) => {
+        $(reexport!($name);)+
+    };
+    ($name:ident) =>    {
+        #[proc_macro_hack]
+        pub use numext_fixed_uint_hack::$name;
+    };
+}
+
+reexport!([u128, u160, u224, u256, u384, u512, u520, u1024, u2048, u4096]);
