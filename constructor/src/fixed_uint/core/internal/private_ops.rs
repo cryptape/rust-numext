@@ -471,6 +471,53 @@ impl UintConstructor {
         let double_unit_suffix = &self.ts.double_unit_suffix;
         let inner_type = &self.ts.inner_type;
         let part = quote!(
+            // # A brief explanation of division
+            //
+            // WARNING: This method is a mess, but it is fast and it works, so don't **fuck** with it.
+            //
+            // ## Problem
+            //
+            // If $x$ and $y$ is two big unsigned integer, how to compute the result of $x / y$?
+            //
+            // ## Hypothesis
+            //
+            // $$
+            //      p = 2^{64} \\
+            //      \\
+            //      x = \sum_{i=0}^{n} a_{i}*p^{i} \\
+            //      (\forall i \in [0, n),  0 \le a_{i} \lt p; 0 \lt a_{n} \lt p) \\
+            //      \\
+            //      y = \sum_{i=0}^{m} b_{i}*p^{i} \\
+            //      (\forall i \in [0, m),  0 \le b_{i} \lt p; 0 \lt b_{m} \lt p) \\
+            // $$
+            //
+            // ## Solution
+            //
+            // Let $z = \sum_{i=0}^{n-m} c_{i}*p^{i}$ and $r = b_{m}$.
+            //
+            // Until $n \le 2$ or $n \lt m$, do
+            //
+            //      If $a_{n} > r$, set $t = a_{n}, k = n$;
+            //      else set $t = a_{n} * p + a_{n-1}, k = n-1$.
+            //
+            //      Let $s = \left \lfloor \frac{t-1}{r} \right \rfloor$.
+            //      Let $c_{k} = c_{k} + s$.
+            //      Let $x = x - y * s * p^{k}$
+            //
+            // Let $l = 0$, until $x \lt y$, do
+            //
+            //      $x = x - y$
+            //      $l = l + 1$
+            //
+            // Let $z = z + l$
+            // $z$ is the result.
+            //
+            // ## Conclusion
+            //
+            // In fact, I use a very simple and common algorithm -- [Long division].
+            // The only difference is I use base-$2^{64}$ to instead of base-10.
+            //
+            // [Long division]: https://en.wikipedia.org/wiki/Long_division
             #[inline]
             fn _div_with_rem(&self, other: &Self) -> Option<(Self, Self)> {
                 if self < other {
@@ -500,8 +547,16 @@ impl UintConstructor {
                 // lhs_idx >= ret_idx since rhs_idx >= 0
                 let rhs = other.inner();
                 let rhs_highest = rhs[rhs_idx] as #double_unit_suffix;
+                let mut borrow = false;
 
                 loop {
+                    if borrow {
+                        borrow = false;
+                        if copy.inner()[lhs_idx + 1] != 0 {
+                            lhs_idx += 1;
+                            ret_idx += 1;
+                        }
+                    }
                     let lhs_highest = copy.inner()[lhs_idx] as #double_unit_suffix;
                     // if lhs highest byte is ZERO, the skip it
                     if lhs_highest == 0 {
@@ -514,6 +569,7 @@ impl UintConstructor {
                     }
                     // below: ret_idx > 0
                     // estimate highest byte of quotient
+                    // could not overflow
                     let divisor = rhs_highest + 1;
                     let dividend = if lhs_highest >= divisor {
                         lhs_highest
@@ -521,6 +577,7 @@ impl UintConstructor {
                         if ret_idx == 0 {
                             break;
                         }
+                        borrow = true;
                         lhs_idx -= 1;
                         ret_idx -= 1;
                         (lhs_highest << #unit_bits_size)
@@ -533,11 +590,23 @@ impl UintConstructor {
                         *ret_tmp = tmp;
                         of
                     };
-                    if of {
-                        // `ret[ret_idx+1]+1` could not overflow
-                        ret[ret_idx + 1] += 1;
+                    {
+                        let mut ret_idx_tmp = ret_idx + 1;
+                        let mut ret_of = of;
+                        loop {
+                            if ret_of {
+                                let ret_tmp = &mut ret[ret_idx_tmp];
+                                let (tmp, of) = ret_tmp.overflowing_add(1);
+                                *ret_tmp = tmp;
+                                ret_of = of;
+                                ret_idx_tmp += 1;
+                            } else {
+                                break;
+                            }
+                        }
                     }
                     let minuend = {
+                        // could not overflow
                         let (mut minuend_tmp, _) = other._mul_unit(quotient);
                         // left shift
                         let mut idx = #unit_amount - 1;
@@ -553,11 +622,13 @@ impl UintConstructor {
                         }
                         minuend_tmp
                     };
+                    // could not overflow
                     let (copy_new, _) = copy._sub(&minuend);
                     copy = copy_new;
                 }
                 let mut more: #unit_suffix = 0;
                 while copy >= *other {
+                    // could not overflow
                     let (copy_new, _) = copy._sub(other);
                     copy = copy_new;
                     more += 1;

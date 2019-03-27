@@ -7,7 +7,7 @@
 // except according to those terms.
 
 #[test]
-fn div_throw_add_overflow() {
+fn div_throw_add_overflow_1() {
     let one = nfuint::U256::one();
     for i in 0..255 {
         let x = nfuint::U256::one() << i;
@@ -18,4 +18,38 @@ fn div_throw_add_overflow() {
     let y = ((nfuint::U256::one() << 255) / &x) << 1;
     let z = ((nfuint::U256::one() << 255) / &y) << 1;
     assert_eq!(x, z);
+}
+
+#[test]
+fn div_throw_add_overflow_2() {
+    let x = nfuint::U4096::from_hex_str(
+        "aab1deb8c8a4ba3d000000000000000000000000000000000000000000000001",
+    )
+    .unwrap();
+    let y = nfuint::U4096::from_hex_str(
+        "10000000000000000000000000000000000000000000000000000000000000000",
+    )
+    .unwrap();
+    let expected = nfuint::U4096::from_hex_str(
+        "5563bd719149747a000000000000000000000000000000000000000000000001",
+    )
+    .unwrap();
+    let result = &x * &x % y;
+    assert_eq!(result, expected);
+}
+
+#[test]
+fn div_too_slow() {
+    let x =
+        nfuint::U4096::from_hex_str("272184cdaf3736f0fa54c1d8529a9294bcc2ac0b180838228ab").unwrap();
+    let y = nfuint::U4096::from_hex_str(
+        "8000000000000000000000000000000000000000000000000000000000000000",
+    )
+    .unwrap();
+    let expected = nfuint::U4096::from_hex_str(
+        "6b851a863a5e38d58e175cb90a7b4dd5b7bcab518f09f17ade7398cc5621e239",
+    )
+    .unwrap();
+    let result = &x * &x % y;
+    assert_eq!(result, expected);
 }
