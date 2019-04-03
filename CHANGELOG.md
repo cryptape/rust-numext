@@ -1,5 +1,14 @@
 # ChangeLog
 
+## [Unreleased]
+
+## [v0.1.4] (2019-04-03)
+[Full ChangeLog for v0.1.4]
+
+### Major Updates
+
+- Export errors in the main crates.
+
 ## [v0.1.3] (2019-04-02)
 [Full ChangeLog for v0.1.3]
 
@@ -12,6 +21,11 @@
 
 - Hangs when performing the division and remainder operations ([#34]).
 - Overflows when performing the division and remainder operations ([#36]).
+
+### Known Issues
+
+- Errors are not re-exported in the main crates.
+  But they still can be imported from the internal crates.
 
 ## [v0.1.2] (2019-12-18)
 [Full ChangeLog for v0.1.2]
@@ -35,11 +49,13 @@
 - Release the first version of [Rust-NumExt] -- Libraries to extend the rust built-in numeric types.
 
 [Rust-NumExt]: https://github.com/cryptape/rust-numext
-[Unreleased]: https://github.com/cryptape/rust-numext/compare/v0.1.3...HEAD
+[Unreleased]: https://github.com/cryptape/rust-numext/compare/v0.1.4...HEAD
+[v0.1.4]: https://github.com/cryptape/rust-numext/tree/v0.1.4
 [v0.1.3]: https://github.com/cryptape/rust-numext/tree/v0.1.3
 [v0.1.2]: https://github.com/cryptape/rust-numext/tree/v0.1.2
 [v0.1.1]: https://github.com/cryptape/rust-numext/tree/v0.1.1
 [v0.1.0]: https://github.com/cryptape/rust-numext/tree/v0.1.0
+[Full ChangeLog for v0.1.4]: https://github.com/cryptape/rust-numext/compare/v0.1.3...v0.1.4
 [Full ChangeLog for v0.1.3]: https://github.com/cryptape/rust-numext/compare/v0.1.2...v0.1.3
 [Full ChangeLog for v0.1.2]: https://github.com/cryptape/rust-numext/compare/v0.1.1...v0.1.2
 [Full ChangeLog for v0.1.1]: https://github.com/cryptape/rust-numext/compare/v0.1.0...v0.1.1

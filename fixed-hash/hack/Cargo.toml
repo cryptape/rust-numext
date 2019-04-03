@@ -1,6 +1,6 @@
 [package]
 name = "numext-fixed-hash-hack"
-version = "0.1.3"
+version = "0.1.4"
 authors = ["Cryptape Technologies <contact@cryptape.com>"]
 edition = "2018"
 description = "A internal crate used by numext-fixed-hash."
@@ -14,7 +14,7 @@ license = "Apache-2.0 OR MIT"
 proc-macro = true
 
 [dependencies]
-numext-fixed-hash-core = { version = "=0.1.3", path = "../core" }
+numext-fixed-hash-core = { version = "=0.1.4", path = "../core" }
 proc-macro-hack = "~0.5"
 syn = { version = "~0.15", features = ["extra-traits"] }
 quote = "~0.6"

@@ -1,6 +1,6 @@
 [package]
 name = "numext-fixed-uint"
-version = "0.1.3"
+version = "0.1.4"
 authors = ["Cryptape Technologies <contact@cryptape.com>"]
 edition = "2018"
 description = "Fixed-size uint types."
@@ -11,8 +11,8 @@ categories = ["algorithms", "data-structures"]
 license = "Apache-2.0 OR MIT"
 
 [dependencies]
-numext-fixed-uint-core = { version = "=0.1.3", path = "core" }
-numext-fixed-uint-hack = { version = "=0.1.3", path = "hack" }
+numext-fixed-uint-core = { version = "=0.1.4", path = "core" }
+numext-fixed-uint-hack = { version = "=0.1.4", path = "hack" }
 proc-macro-hack = "~0.5"
 
 [features]
