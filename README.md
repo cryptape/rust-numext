@@ -14,19 +14,15 @@ Extend the rust built-in numeric types.
 
 | Name                   | Crate                                                               | Documentation                                            | Description                 |
 | ---------------------- | ------------------------------------------------------------------- | -------------------------------------------------------- | --------------------------- |
-| [`numext-constructor`] | [![Constructor Badge]](https://crates.io/crates/numext-constructor) | [![Constructor Doc]](https://docs.rs/numext-constructor) | Constructors (proc-macro).  |
 | [`numext-fixed-uint`]  | [![Uint Badge]](https://crates.io/crates/numext-fixed-uint)         | [![Uint Doc]](https://docs.rs/numext-fixed-uint)         | Fixed-size uint structures. |
 | [`numext-fixed-hash`]  | [![Hash Badge]](https://crates.io/crates/numext-fixed-hash)         | [![Hash Doc]](https://docs.rs/numext-fixed-hash)         | Fixed-size hash structures. |
 
-[`numext-constructor`]: constructor
 [`numext-fixed-uint`]: fixed-uint
 [`numext-fixed-hash`]: fixed-hash
 
-[Constructor Badge]: https://img.shields.io/crates/v/numext-constructor.svg
 [Uint Badge]: https://img.shields.io/crates/v/numext-fixed-uint.svg
 [Hash Badge]: https://img.shields.io/crates/v/numext-fixed-hash.svg
 
-[Constructor Doc]: https://docs.rs/numext-constructor/badge.svg
 [Uint Doc]: https://docs.rs/numext-fixed-uint/badge.svg
 [Hash Doc]: https://docs.rs/numext-fixed-hash/badge.svg
 
@@ -73,7 +69,7 @@ sub/etypes              time:   [6.1585 ns 6.1958 ns 6.2436 ns]
 mul/nfuint              time:   [18.872 ns 18.970 ns 19.085 ns]
 mul/etypes              time:   [16.560 ns 16.669 ns 16.799 ns]
 
-div/nfuint              time:   [28.812 ns 29.008 ns 29.227 ns] 
+div/nfuint              time:   [28.812 ns 29.008 ns 29.227 ns]
 div/etypes              time:   [59.537 ns 59.746 ns 59.998 ns]
 
 rem/nfuint              time:   [31.835 ns 32.123 ns 32.449 ns]

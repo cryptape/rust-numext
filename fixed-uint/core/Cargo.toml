@@ -3,6 +3,13 @@ name = "numext-fixed-uint-core"
 version = "0.1.3"
 authors = ["Cryptape Technologies <contact@cryptape.com>"]
 edition = "2018"
+description = "A internal crate used by numext-fixed-uint."
+homepage = "https://cryptape.github.io/rust-numext/"
+repository = "https://github.com/cryptape/rust-numext"
+keywords = ["fixed", "uint", "bignum", "bigint"]
+categories = ["algorithms", "data-structures"]
+license = "Apache-2.0 OR MIT"
+
 
 [dependencies]
 numext-constructor = { version = "=0.1.3", path = "../../constructor" }

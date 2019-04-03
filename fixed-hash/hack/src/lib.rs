@@ -6,6 +6,14 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+//! This is a internal crate used by [numext-fixed-hash].
+//!
+//! **Notice:
+//! You should NOT use this crate directly.
+//! Please use [numext-fixed-hash] instead of this crate.**
+//!
+//! [numext-fixed-hash]: https://docs.rs/numext-fixed-hash
+
 extern crate proc_macro;
 
 use numext_fixed_hash_core as nfhash;
