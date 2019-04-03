@@ -6,6 +6,14 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+//! This is a internal crate used by [numext-fixed-uint].
+//!
+//! **Notice:
+//! You should NOT use this crate directly.
+//! Please use [numext-fixed-uint] instead of this crate.**
+//!
+//! [numext-fixed-uint]: https://docs.rs/numext-fixed-uint
+
 use failure::Fail;
 
 numext_constructor::construct_fixed_uints!(
