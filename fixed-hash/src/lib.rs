@@ -38,6 +38,7 @@
 use proc_macro_hack::proc_macro_hack;
 
 pub use numext_fixed_hash_core::prelude;
+pub use numext_fixed_hash_core::{FixedHashError, FromSliceError, FromStrError, IntoSliceError};
 
 macro_rules! reexport {
     ([$(($name:ident, $macro_name:ident),)+]) => {
