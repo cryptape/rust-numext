@@ -43,6 +43,7 @@
 use proc_macro_hack::proc_macro_hack;
 
 pub use numext_fixed_uint_core::prelude;
+pub use numext_fixed_uint_core::{FixedUintError, FromSliceError, FromStrError, IntoSliceError};
 
 macro_rules! reexport {
     ([$(($name:ident, $macro_name:ident),)+]) => {
