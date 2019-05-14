@@ -14,14 +14,32 @@ license = "Apache-2.0 OR MIT"
 proc-macro = true
 
 [dependencies]
-numext-fixed-hash-core = { version = "=0.1.4", path = "../core" }
+nfhash-core = { package = "numext-fixed-hash-core", version = "=0.1.4", path = "../core" }
 proc-macro-hack = "~0.5"
 syn = { version = "~0.15", features = ["extra-traits"] }
 quote = "~0.6"
 proc-macro2 = "~0.4"
 
 [features]
-default = []
-support_rand = ["numext-fixed-hash-core/support_rand"]
-support_heapsize = ["numext-fixed-hash-core/support_heapsize"]
-support_serde = ["numext-fixed-hash-core/support_serde"]
+default = ["bits_all"]
+bits_all = [
+    "bits_128", "bits_160", "bits_224", "bits_256", "bits_384", "bits_512",
+    "bits_520", "bits_1024",  "bits_2048", "bits_4096",
+]
+support_all = ["support_rand", "support_heapsize", "support_serde"]
+bits_128 =  ["nfhash-core/bits_128" ]
+bits_160 =  ["nfhash-core/bits_160" ]
+bits_224 =  ["nfhash-core/bits_224" ]
+bits_256 =  ["nfhash-core/bits_256" ]
+bits_384 =  ["nfhash-core/bits_384" ]
+bits_512 =  ["nfhash-core/bits_512" ]
+bits_520 =  ["nfhash-core/bits_520" ]
+bits_1024 = ["nfhash-core/bits_1024"]
+bits_2048 = ["nfhash-core/bits_2048"]
+bits_4096 = ["nfhash-core/bits_4096"]
+support_rand     = ["nfhash-core/support_rand"    ]
+support_heapsize = ["nfhash-core/support_heapsize"]
+support_serde    = ["nfhash-core/support_serde"   ]
+
+[badges]
+travis-ci = { repository = "cryptape/rust-numext" }

@@ -22,7 +22,9 @@ impl UintConstructor {
 
     pub fn convert_into(&self, uc: &Self) -> TokenStream {
         let this_name = &self.ts.name;
+        let this_feature = &self.ts.feature;
         let that_name = &uc.ts.name;
+        let that_feature = &uc.ts.feature;
         let stmts = if self.info.bits_size == uc.info.bits_size {
             if self.info.unit_bits_size == uc.info.unit_bits_size {
                 // same inner
@@ -76,6 +78,7 @@ impl UintConstructor {
             )
         };
         quote!(
+            #[cfg(all(feature = #this_feature, feature = #that_feature))]
             impl prelude::UintConvert<#that_name> for #this_name {
                 #[inline]
                 fn convert_into(&self) -> (#that_name, bool) {
@@ -96,17 +99,17 @@ impl UintConstructor {
             }
             /// Get a reference of the inner data of the fixed uint.
             #[inline]
-            fn inner<'a>(&'a self) -> &'a #inner_type {
+            pub(crate) fn inner<'a>(&'a self) -> &'a #inner_type {
                 &self.0
             }
             /// Get a mutable reference of the inner data of the fixed uint.
             #[inline]
-            fn mut_inner<'a>(&'a mut self) -> &'a mut #inner_type {
+            pub(crate) fn mut_inner<'a>(&'a mut self) -> &'a mut #inner_type {
                 &mut self.0
             }
             /// Get the inner data of the fixed uint.
             #[inline]
-            fn into_inner(self) -> #inner_type {
+            pub(crate) fn into_inner(self) -> #inner_type {
                 self.0
             }
         );

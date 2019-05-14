@@ -19,7 +19,7 @@ use failure::Fail;
 #[macro_use]
 mod tools;
 
-numext_constructor::construct_fixed_hashes!(
+constructor::construct_fixed_hashes!(
     H128 {
         size = 128,
     },
@@ -52,12 +52,23 @@ numext_constructor::construct_fixed_hashes!(
     },
 );
 
+#[cfg(feature = "bits_128")]
 convert_between!(U128, H128, 16);
+#[cfg(feature = "bits_160")]
 convert_between!(U160, H160, 20);
+#[cfg(feature = "bits_224")]
 convert_between!(U224, H224, 28);
+#[cfg(feature = "bits_256")]
 convert_between!(U256, H256, 32);
+#[cfg(feature = "bits_384")]
 convert_between!(U384, H384, 48);
+#[cfg(feature = "bits_512")]
 convert_between!(U512, H512, 64);
+#[cfg(feature = "bits_520")]
+convert_between!(U520, H520, 65);
+#[cfg(feature = "bits_1024")]
 convert_between!(U1024, H1024, 128);
+#[cfg(feature = "bits_2048")]
 convert_between!(U2048, H2048, 256);
+#[cfg(feature = "bits_4096")]
 convert_between!(U4096, H4096, 512);

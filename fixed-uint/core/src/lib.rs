@@ -16,7 +16,7 @@
 
 use failure::Fail;
 
-numext_constructor::construct_fixed_uints!(
+constructor::construct_fixed_uints!(
     U128 {
         size = 128,
     },

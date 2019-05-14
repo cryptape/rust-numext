@@ -12,14 +12,32 @@ license = "Apache-2.0 OR MIT"
 
 
 [dependencies]
-numext-constructor = { version = "=0.1.4", path = "../../constructor" }
+constructor = { package = "numext-constructor", version = "=0.1.4", path = "../../constructor" }
 failure = "~0.1"
 rand = { version = "~0.5", optional = true }
 heapsize = { version = "~0.4", optional = true }
 serde = { version = "~1.0", optional = true }
 
 [features]
-default = []
-support_rand = ["rand"]
+default = ["bits_all"]
+bits_all = [
+    "bits_128", "bits_160", "bits_224", "bits_256", "bits_384", "bits_512",
+    "bits_520", "bits_1024",  "bits_2048", "bits_4096",
+]
+support_all = ["support_rand", "support_heapsize", "support_serde"]
+bits_128 =  []
+bits_160 =  []
+bits_224 =  []
+bits_256 =  []
+bits_384 =  []
+bits_512 =  []
+bits_520 =  []
+bits_1024 = []
+bits_2048 = []
+bits_4096 = []
+support_rand     = ["rand"    ]
 support_heapsize = ["heapsize"]
-support_serde = ["serde"]
+support_serde    = ["serde"   ]
+
+[badges]
+travis-ci = { repository = "cryptape/rust-numext" }
