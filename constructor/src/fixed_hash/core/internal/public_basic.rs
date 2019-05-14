@@ -184,7 +184,7 @@ impl HashConstructor {
             }
             /// Get the mutable inner bytes of a fixed hash.
             #[inline]
-            pub fn as_fixed_bytes_mut(&mut self) -> &#inner_type {
+            pub fn as_fixed_bytes_mut(&mut self) -> &mut #inner_type {
                 self.mut_inner()
             }
             /// Get the inner bytes array of a fixed hash.
