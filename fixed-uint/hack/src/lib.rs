@@ -34,11 +34,18 @@ macro_rules! impl_hack {
             let input = parse_macro_input!(input as syn::LitStr);
             let expanded = {
                 let input = input.value().replace("_", "");
-                let (value_result, input_type) = match &input[..2] {
-                    "0b" => (nfuint::$type::from_bin_str(&input[2..]), "binary"),
-                    "0o" => (nfuint::$type::from_oct_str(&input[2..]), "octal"),
-                    "0x" => (nfuint::$type::from_hex_str(&input[2..]), "hexadecimal"),
-                    _ => (nfuint::$type::from_dec_str(&input), "decimal"),
+                if input.is_empty() {
+                    panic!("Input is empty.");
+                }
+                let (value_result, input_type) = if input.len() < 3 {
+                    (nfuint::$type::from_dec_str(&input), "decimal")
+                } else {
+                    match &input[..2] {
+                        "0b" => (nfuint::$type::from_bin_str(&input[2..]), "binary"),
+                        "0o" => (nfuint::$type::from_oct_str(&input[2..]), "octal"),
+                        "0x" => (nfuint::$type::from_hex_str(&input[2..]), "hexadecimal"),
+                        _ => (nfuint::$type::from_dec_str(&input), "decimal"),
+                    }
                 };
                 let value = value_result.unwrap_or_else(|err| {
                     panic!("Failed to parse the input {} string: {}", input_type, err);

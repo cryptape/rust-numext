@@ -8,10 +8,12 @@
 
 use nfuint::{u128, u256, u4096, U128, U256, U4096};
 
+const U128_ZERO: U128 = u128!("0");
 const U128_100: U128 = u128!("100");
 
 #[test]
 fn constructor() {
+    assert_eq!(U128_ZERO, U128::zero());
     {
         let x1 = u128!("0b110_0100");
         let x2 = u128!("0o144");

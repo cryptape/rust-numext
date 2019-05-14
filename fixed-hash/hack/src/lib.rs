@@ -34,13 +34,17 @@ macro_rules! impl_hack {
             let input = parse_macro_input!(input as syn::LitStr);
             let expanded = {
                 let input = input.value().replace("_", "");
-                if &input[..2] != "0x" {
+                if input.len() < 3 || &input[..2] != "0x" {
                     panic!("Input has to be a hexadecimal string with 0x-prefix.");
                 };
                 let input_str = &input[2..];
                 let value = match &input_str[..1] {
                     "0" => {
-                        nfhash::$type::from_hex_str(input_str)
+                        if input_str.len() > 1 {
+                            nfhash::$type::from_hex_str(input_str)
+                        } else {
+                            nfhash::$type::from_trimmed_hex_str(input_str)
+                        }
                     },
                     _ => {
                         nfhash::$type::from_trimmed_hex_str(input_str)
