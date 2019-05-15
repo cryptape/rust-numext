@@ -181,7 +181,7 @@ impl UintConstructor {
             } else {
                 let utils = TokenStream::from_iter(utils);
                 quote!(
-                    pub mod #utils_name {
+                    pub(crate) mod #utils_name {
                         #utils
                     }
                 )
