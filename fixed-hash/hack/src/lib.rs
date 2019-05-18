@@ -16,18 +16,11 @@
 
 extern crate proc_macro;
 
-use numext_fixed_hash_core as nfhash;
 use proc_macro_hack::proc_macro_hack;
 use quote::quote;
 use syn::parse_macro_input;
 
 macro_rules! impl_hack {
-    ($(($name:ident, $type:ident),)+) => {
-        $(impl_hack!($name, $type);)+
-    };
-    ($(($name:ident, $type:ident)),+) => {
-        $(impl_hack!($name, $type);)+
-    };
     ($name:ident, $type:ident) =>    {
         #[proc_macro_hack]
         pub fn $name(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
@@ -41,13 +34,13 @@ macro_rules! impl_hack {
                 let value = match &input_str[..1] {
                     "0" => {
                         if input_str.len() > 1 {
-                            nfhash::$type::from_hex_str(input_str)
+                            nfhash_core::$type::from_hex_str(input_str)
                         } else {
-                            nfhash::$type::from_trimmed_hex_str(input_str)
+                            nfhash_core::$type::from_trimmed_hex_str(input_str)
                         }
                     },
                     _ => {
-                        nfhash::$type::from_trimmed_hex_str(input_str)
+                        nfhash_core::$type::from_trimmed_hex_str(input_str)
                     },
                 }
                 .unwrap_or_else(|err| {
@@ -64,15 +57,23 @@ macro_rules! impl_hack {
     };
 }
 
-impl_hack!(
-    (h128, H128),
-    (h160, H160),
-    (h224, H224),
-    (h256, H256),
-    (h384, H384),
-    (h512, H512),
-    (h520, H520),
-    (h1024, H1024),
-    (h2048, H2048),
-    (h4096, H4096),
-);
+#[cfg(feature = "bits_128")]
+impl_hack!(h128, H128);
+#[cfg(feature = "bits_160")]
+impl_hack!(h160, H160);
+#[cfg(feature = "bits_224")]
+impl_hack!(h224, H224);
+#[cfg(feature = "bits_256")]
+impl_hack!(h256, H256);
+#[cfg(feature = "bits_384")]
+impl_hack!(h384, H384);
+#[cfg(feature = "bits_512")]
+impl_hack!(h512, H512);
+#[cfg(feature = "bits_520")]
+impl_hack!(h520, H520);
+#[cfg(feature = "bits_1024")]
+impl_hack!(h1024, H1024);
+#[cfg(feature = "bits_2048")]
+impl_hack!(h2048, H2048);
+#[cfg(feature = "bits_4096")]
+impl_hack!(h4096, H4096);

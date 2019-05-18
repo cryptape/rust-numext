@@ -37,33 +37,35 @@
 
 use proc_macro_hack::proc_macro_hack;
 
-pub use numext_fixed_hash_core::prelude;
-pub use numext_fixed_hash_core::{FixedHashError, FromSliceError, FromStrError, IntoSliceError};
+pub use nfhash_core::prelude;
+pub use nfhash_core::{FixedHashError, FromSliceError, FromStrError, IntoSliceError};
 
 macro_rules! reexport {
-    ([$(($name:ident, $macro_name:ident),)+]) => {
-        $(reexport!($name, $macro_name);)+
-    };
-    ([$(($name:ident, $macro_name:ident)),+]) => {
-        $(reexport!($name, $macro_name);)+
-    };
-    ($name:ident, $macro_name:ident) =>    {
-        pub use numext_fixed_hash_core::$name;
+    ($name:ident, $macro_name:ident) => {
+        pub use nfhash_core::$name;
         /// A macro used to construct a fixed hash in compile time.
         #[proc_macro_hack]
-        pub use numext_fixed_hash_hack::$macro_name;
+        pub use nfhash_hack::$macro_name;
     };
 }
 
-reexport!([
-    (H128, h128),
-    (H160, h160),
-    (H224, h224),
-    (H256, h256),
-    (H384, h384),
-    (H512, h512),
-    (H520, h520),
-    (H1024, h1024),
-    (H2048, h2048),
-    (H4096, h4096),
-]);
+#[cfg(feature = "bits_128")]
+reexport!(H128, h128);
+#[cfg(feature = "bits_160")]
+reexport!(H160, h160);
+#[cfg(feature = "bits_224")]
+reexport!(H224, h224);
+#[cfg(feature = "bits_256")]
+reexport!(H256, h256);
+#[cfg(feature = "bits_384")]
+reexport!(H384, h384);
+#[cfg(feature = "bits_512")]
+reexport!(H512, h512);
+#[cfg(feature = "bits_520")]
+reexport!(H520, h520);
+#[cfg(feature = "bits_1024")]
+reexport!(H1024, h1024);
+#[cfg(feature = "bits_2048")]
+reexport!(H2048, h2048);
+#[cfg(feature = "bits_4096")]
+reexport!(H4096, h4096);

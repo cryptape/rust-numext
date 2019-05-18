@@ -48,6 +48,8 @@ pub struct HashTokenStreams {
     pub inner_type: TokenStream,
     pub error_name: TokenStream,
     pub utils_name: TokenStream,
+    pub feature: syn::LitStr,
+    pub mod_name: syn::Ident,
 }
 
 impl<'a> ::std::convert::From<&'a HashInformation> for HashTokenStreams {
@@ -61,6 +63,14 @@ impl<'a> ::std::convert::From<&'a HashInformation> for HashTokenStreams {
         let error_name = utils::ident_to_ts("FixedHashError");
         let utils_name = utils::ident_to_ts("utils");
 
+        let feature_string = format!("bits_{}", info.bits_size);
+        let feature = syn::LitStr::new(&feature_string, proc_macro2::Span::call_site());
+
+        let mod_name = syn::Ident::new(
+            &format!("_mod_{}", info.name),
+            proc_macro2::Span::call_site(),
+        );
+
         Self {
             name,
             bits_size,
@@ -68,6 +78,8 @@ impl<'a> ::std::convert::From<&'a HashInformation> for HashTokenStreams {
             inner_type,
             error_name,
             utils_name,
+            feature,
+            mod_name,
         }
     }
 }
@@ -121,9 +133,11 @@ impl HashConstructor {
 
     fn defstruct(&self) {
         let name = &self.ts.name;
+        let feature = &self.ts.feature;
         let inner_type = &self.ts.inner_type;
         let part = quote!(
             /// Fixed hash type.
+            #[cfg(feature = #feature)]
             #[derive(Clone)]
             pub struct #name(pub #inner_type);
         );
@@ -190,17 +204,23 @@ impl HashConstructor {
         self.defutils();
         self.deftraits();
         let name = &self.ts.name;
+        let feature = &self.ts.feature;
+        let mod_name = &self.ts.mod_name;
         let hash_common = TokenStream::from_iter(self.hash_common.take());
         let defuns = TokenStream::from_iter(self.defuns.take());
         let implts = TokenStream::from_iter(self.implts.take());
         let one_hash = quote!(
             #hash_common
 
-            impl #name {
-                #defuns
+            #[cfg(feature = #feature)]
+            #[doc(hide)]
+            mod #mod_name {
+                use crate::*;
+                impl #name {
+                    #defuns
+                }
+                #implts
             }
-
-            #implts
         );
         let public = if ucs.is_empty() {
             // define common part for all fixed hashes

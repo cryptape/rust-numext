@@ -16,7 +16,6 @@
 
 extern crate proc_macro;
 
-use numext_fixed_uint_core as nfuint;
 use proc_macro_hack::proc_macro_hack;
 use quote::quote;
 use syn::parse_macro_input;
@@ -38,13 +37,13 @@ macro_rules! impl_hack {
                     panic!("Input is empty.");
                 }
                 let (value_result, input_type) = if input.len() < 3 {
-                    (nfuint::$type::from_dec_str(&input), "decimal")
+                    (nfuint_core::$type::from_dec_str(&input), "decimal")
                 } else {
                     match &input[..2] {
-                        "0b" => (nfuint::$type::from_bin_str(&input[2..]), "binary"),
-                        "0o" => (nfuint::$type::from_oct_str(&input[2..]), "octal"),
-                        "0x" => (nfuint::$type::from_hex_str(&input[2..]), "hexadecimal"),
-                        _ => (nfuint::$type::from_dec_str(&input), "decimal"),
+                        "0b" => (nfuint_core::$type::from_bin_str(&input[2..]), "binary"),
+                        "0o" => (nfuint_core::$type::from_oct_str(&input[2..]), "octal"),
+                        "0x" => (nfuint_core::$type::from_hex_str(&input[2..]), "hexadecimal"),
+                        _ => (nfuint_core::$type::from_dec_str(&input), "decimal"),
                     }
                 };
                 let value = value_result.unwrap_or_else(|err| {
