@@ -13,8 +13,10 @@ macro_rules! check_rand {
             let x = nfhash::$uint::thread_random();
             let y = nfhash::$uint::thread_random();
             // If this test is failed, please check if there is a bug or you are too luckly.
-            assert!(!x.is_zero());
-            assert!(!y.is_zero());
+            assert!(!x.is_empty());
+            assert!(!x.is_full());
+            assert!(!y.is_empty());
+            assert!(!y.is_full());
             assert!(x != y);
         }
     };

@@ -22,7 +22,7 @@ fn errors() {
     }
     {
         let mut input = [0u8; 17];
-        let hash = H128::zero();
+        let hash = H128::empty();
         let err = hash.into_slice(&mut input);
         if let Err(FixedHashError::IntoSlice(IntoSliceError::InvalidLength(_))) = err {
         } else {

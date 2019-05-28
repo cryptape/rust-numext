@@ -9,12 +9,14 @@
 use nfhash::{h128, h4096, H128, H4096};
 use std::str::FromStr;
 
-const H128_ZERO: H128 = h128!("0x0");
+const H128_EMPTY: H128 = h128!("0x0");
+const H128_FULL: H128 = h128!("0xffff_ffff_ffff_ffff_ffff_ffff_ffff_ffff");
 const H64MAX: H4096 = h4096!("0x_ffff_ffff_ffff_ffff");
 
 #[test]
 fn constructor() {
-    assert_eq!(H128_ZERO, H128::zero());
+    assert_eq!(H128_EMPTY, H128::empty());
+    assert_eq!(H128_FULL, H128::full());
     {
         let x1 = h128!("0x123456789abcdef");
         let x2 = h128!("0x00000000000000000123456789abcdef");
