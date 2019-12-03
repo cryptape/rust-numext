@@ -123,7 +123,7 @@ impl UintConstructor {
             #[inline]
             pub fn from_little_endian(input: &[u8]) -> Result<Self, #error_name> {
                 if input.len() > #bytes_size {
-                    Err(FromSliceError::InvalidLength(input.len()))?
+                    Err(FromSliceError::InvalidLength(input.len()).into())
                 } else if cfg!(target_endian = "little") {
                     Ok(Self::_from_le_slice_on_le_platform(input))
                 } else {
@@ -134,7 +134,7 @@ impl UintConstructor {
             #[inline]
             pub fn from_big_endian(input: &[u8]) -> Result<Self, #error_name> {
                 if input.len() > #bytes_size {
-                    Err(FromSliceError::InvalidLength(input.len()))?
+                    Err(FromSliceError::InvalidLength(input.len()).into())
                 } else if cfg!(target_endian = "little") {
                     Ok(Self::_from_be_slice_on_le_platform(input))
                 } else {
@@ -235,7 +235,7 @@ impl UintConstructor {
             #[inline]
             pub fn into_little_endian(&self, output: &mut [u8]) -> Result<(), #error_name> {
                 if output.len() != #bytes_size {
-                    Err(IntoSliceError::InvalidLength(output.len()))?
+                    Err(IntoSliceError::InvalidLength(output.len()).into())
                 } else if cfg!(target_endian = "little") {
                     self._into_le_slice_on_le_platform(output);
                     Ok(())
@@ -248,7 +248,7 @@ impl UintConstructor {
             #[inline]
             pub fn into_big_endian(&self, output: &mut [u8]) -> Result<(), #error_name> {
                 if output.len() != #bytes_size {
-                    Err(IntoSliceError::InvalidLength(output.len()))?
+                    Err(IntoSliceError::InvalidLength(output.len()).into())
                 } else if cfg!(target_endian = "little") {
                     self._into_be_slice_on_le_platform(output);
                     Ok(())
@@ -282,14 +282,11 @@ impl UintConstructor {
             }
         );
         self.attach_common(part);
-        let part = quote!(#[fail(
-            display = "failed to parse from string since {}",
-            _0
-        )]
-        FromStr(
-            #[fail(cause)]
-            FromStrError
-        ),);
+        #[rustfmt::skip]
+        let part = quote!(
+            #[fail(display = "failed to parse from string since {}", _0)]
+            FromStr(#[fail(cause)] FromStrError),
+        );
         self.error(part);
     }
 
@@ -306,9 +303,9 @@ impl UintConstructor {
             pub fn from_bin_str(input: &str) -> Result<Self, #error_name> {
                 let len = input.len();
                 if len == 0 || len > #bits_size {
-                    Err(FromStrError::InvalidLength(len))?;
+                    return Err(FromStrError::InvalidLength(len).into());
                 } else if len != 1 && input.as_bytes()[0] == b'0' {
-                    Err(FromStrError::InvalidCharacter { chr: b'0', idx: 0 })?;
+                    return Err(FromStrError::InvalidCharacter { chr: b'0', idx: 0 }.into());
                 }
                 let mut src = input.bytes().enumerate();
                 let mut ret: #inner_type = [0; #unit_amount];
@@ -320,7 +317,7 @@ impl UintConstructor {
                     match chr {
                         b'0' => {},
                         b'1' => ret[unit_cnt] |= 1,
-                        _ => Err(FromStrError::InvalidCharacter { chr, idx })?,
+                        _ => return Err(FromStrError::InvalidCharacter { chr, idx }.into()),
                     }
                 }
                 for i in (0..unit_cnt).rev() {
@@ -331,7 +328,7 @@ impl UintConstructor {
                         match chr {
                             b'0' => {},
                             b'1' => ret[i] |= 1,
-                            _ => Err(FromStrError::InvalidCharacter { chr, idx })?,
+                            _ => return Err(FromStrError::InvalidCharacter { chr, idx }.into()),
                         }
                     })*
                 }
@@ -388,24 +385,24 @@ impl UintConstructor {
             pub fn from_oct_str(input: &str) -> Result<Self, #error_name> {
                 let len = input.len();
                 if len == 0 || len > #char_amount_max {
-                    Err(FromStrError::InvalidLength(len))?;
+                    return Err(FromStrError::InvalidLength(len).into());
                 } else if len != 1 && input.as_bytes()[0] == b'0' {
-                    Err(FromStrError::InvalidCharacter { chr: b'0', idx: 0 })?;
+                    return Err(FromStrError::InvalidCharacter { chr: b'0', idx: 0 }.into());
                 }
                 let mut ret = Self::zero();
                 for (idx, chr) in input.bytes().enumerate() {
                     let v = #utils_name::DICT_OCT[usize::from(chr)];
                     if v == #utils_name::DICT_OCT_ERROR {
-                        Err(FromStrError::InvalidCharacter { chr, idx })?;
+                        return Err(FromStrError::InvalidCharacter { chr, idx }.into());
                     }
                     let (ret_new, of) = ret._mul_unit(8);
                     if of {
-                        Err(FromStrError::Overflow(len))?;
+                        return Err(FromStrError::Overflow(len).into());
                     }
                     let u = #name::from(v);
                     let (ret_new, of) = ret_new._add(&u);
                     if of {
-                        Err(FromStrError::Overflow(len))?;
+                        return Err(FromStrError::Overflow(len).into());
                     }
                     ret = ret_new;
                 }
@@ -459,9 +456,9 @@ impl UintConstructor {
             pub fn from_hex_str(input: &str) -> Result<Self, #error_name> {
                 let len = input.len();
                 if len == 0 || len > #char_amount_max {
-                    Err(FromStrError::InvalidLength(len))?;
+                    return Err(FromStrError::InvalidLength(len).into());
                 } else if len != 1 && input.as_bytes()[0] == b'0' {
-                    Err(FromStrError::InvalidCharacter { chr: b'0', idx: 0 })?;
+                    return Err(FromStrError::InvalidCharacter { chr: b'0', idx: 0 }.into());
                 }
                 let mut ret = Self::zero();
                 let mut input_bytes = input.bytes();
@@ -475,7 +472,7 @@ impl UintConstructor {
                         let chr = input_bytes.next().unwrap_or_else(|| unreachable!());
                         let v = #utils_name::DICT_HEX[usize::from(chr)];
                         if v == #utils_name::DICT_HEX_ERROR {
-                            Err(FromStrError::InvalidCharacter { chr, idx })?;
+                            return Err(FromStrError::InvalidCharacter { chr, idx }.into());
                         }
                         k *= 16;
                         k += #unit_suffix::from(v);
@@ -490,7 +487,7 @@ impl UintConstructor {
                     for chr in input_bytes {
                         let v = #utils_name::DICT_HEX[usize::from(chr)];
                         if v == #utils_name::DICT_HEX_ERROR {
-                            Err(FromStrError::InvalidCharacter { chr, idx })?;
+                            return Err(FromStrError::InvalidCharacter { chr, idx }.into());
                         }
                         k *= 16;
                         k += #unit_suffix::from(v);
@@ -559,24 +556,24 @@ impl UintConstructor {
             pub fn from_dec_str(input: &str) -> Result<Self, #error_name> {
                 let len = input.len();
                 if len == 0 || len > #char_amount_max {
-                    Err(FromStrError::InvalidLength(len))?;
+                    return Err(FromStrError::InvalidLength(len).into());
                 } else if len != 1 && input.as_bytes()[0] == b'0' {
-                    Err(FromStrError::InvalidCharacter { chr: b'0', idx: 0 })?;
+                    return Err(FromStrError::InvalidCharacter { chr: b'0', idx: 0 }.into());
                 }
                 let mut ret = Self::zero();
                 for (idx, chr) in input.bytes().enumerate() {
                     let v = #utils_name::DICT_DEC[usize::from(chr)];
                     if v == #utils_name::DICT_DEC_ERROR {
-                        Err(FromStrError::InvalidCharacter { chr, idx })?;
+                        return Err(FromStrError::InvalidCharacter { chr, idx }.into());
                     }
                     let (ret_new, of) = ret._mul_unit(10);
                     if of {
-                        Err(FromStrError::Overflow(len))?;
+                        return Err(FromStrError::Overflow(len).into());
                     }
                     let u = #name::from(v);
                     let (ret_new, of) = ret_new._add(&u);
                     if of {
-                        Err(FromStrError::Overflow(len))?;
+                        return Err(FromStrError::Overflow(len).into());
                     }
                     ret = ret_new;
                 }

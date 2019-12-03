@@ -201,7 +201,8 @@ impl UintConstructor {
             fn _add(&self, other: &Self) -> (Self, bool) {
                 let lhs = self.inner();
                 let rhs = other.inner();
-                let mut ret: #inner_type = unsafe { ::std::mem::uninitialized() };
+                let mut ret: #inner_type =
+                    unsafe { ::std::mem::MaybeUninit::uninit().assume_init() };
                 let ret_ptr = &mut ret as *mut #inner_type as *mut #unit_suffix;
                 let mut of = false;
                 #loop_part;
@@ -242,7 +243,8 @@ impl UintConstructor {
             fn _sub(&self, other: &Self) -> (Self, bool) {
                 let lhs = self.inner();
                 let rhs = other.inner();
-                let mut ret: #inner_type = unsafe { ::std::mem::uninitialized() };
+                let mut ret: #inner_type =
+                    unsafe { ::std::mem::MaybeUninit::uninit().assume_init() };
                 let ret_ptr = &mut ret as *mut #inner_type as *mut #unit_suffix;
                 let mut of = false;
                 #loop_part;
@@ -755,7 +757,7 @@ impl UintConstructor {
         let part = quote!(
             #[inline]
             fn _bitand(&self, rhs: &Self) -> Self {
-                let mut ret: #inner_type = unsafe { ::std::mem::uninitialized() };
+                let mut ret: #inner_type = unsafe { ::std::mem::MaybeUninit::uninit().assume_init() };
                 let inner = self.inner();
                 let rhs = rhs.inner();
                 #({
@@ -766,7 +768,7 @@ impl UintConstructor {
             }
             #[inline]
             fn _bitor(&self, rhs: &Self) -> Self {
-                let mut ret: #inner_type = unsafe { ::std::mem::uninitialized() };
+                let mut ret: #inner_type = unsafe { ::std::mem::MaybeUninit::uninit().assume_init() };
                 let inner = self.inner();
                 let rhs = rhs.inner();
                 #({
@@ -777,7 +779,7 @@ impl UintConstructor {
             }
             #[inline]
             fn _bitxor(&self, rhs: &Self) -> Self {
-                let mut ret: #inner_type = unsafe { ::std::mem::uninitialized() };
+                let mut ret: #inner_type = unsafe { ::std::mem::MaybeUninit::uninit().assume_init() };
                 let inner = self.inner();
                 let rhs = rhs.inner();
                 #({
@@ -796,7 +798,7 @@ impl UintConstructor {
         let part = quote!(
             #[inline]
             fn _not(&self) -> Self {
-                let mut ret: #inner_type = unsafe { ::std::mem::uninitialized() };
+                let mut ret: #inner_type = unsafe { ::std::mem::MaybeUninit::uninit().assume_init() };
                 let inner = self.inner();
                 #({
                     let idx = #loop_unit_amount;
