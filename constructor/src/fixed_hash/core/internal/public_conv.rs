@@ -57,7 +57,7 @@ impl HashConstructor {
             #[inline]
             pub fn from_slice(input: &[u8]) -> Result<Self, #error_name> {
                 if input.len() != #bytes_size {
-                    Err(FromSliceError::InvalidLength(input.len()))?
+                    Err(FromSliceError::InvalidLength(input.len()).into())
                 } else {
                     let mut ret = Self::empty();
                     ret.mut_inner()[..].copy_from_slice(input);
@@ -77,7 +77,7 @@ impl HashConstructor {
             #[inline]
             pub fn into_slice(&self, output: &mut [u8]) -> Result<(), #error_name> {
                 if output.len() != #bytes_size {
-                    Err(IntoSliceError::InvalidLength(output.len()))?
+                    Err(IntoSliceError::InvalidLength(output.len()).into())
                 } else {
                     let inner = self.inner();
                     output.copy_from_slice(&inner[..]);
@@ -107,14 +107,11 @@ impl HashConstructor {
             }
         );
         self.attach_common(part);
-        let part = quote!(#[fail(
-            display = "failed to parse from string since {}",
-            _0
-        )]
-        FromStr(
-            #[fail(cause)]
-            FromStrError
-        ),);
+        #[rustfmt::skip]
+        let part = quote!(
+            #[fail(display = "failed to parse from string since {}", _0)]
+            FromStr(#[fail(cause)] FromStrError),
+        );
         self.error(part);
     }
 
@@ -193,7 +190,7 @@ impl HashConstructor {
                         let chr = input_bytes.next().unwrap_or_else(|| unreachable!());
                         let hi = #loop_utils_name_copy1::DICT_HEX_HI[usize::from(chr)];
                         if hi == #loop_utils_name_copy2::DICT_HEX_ERROR {
-                            Err(FromStrError::InvalidCharacter { chr, idx: idx*2 })?;
+                            return Err(FromStrError::InvalidCharacter { chr, idx: idx*2 }.into());
                         };
                         hi
                     };
@@ -201,7 +198,7 @@ impl HashConstructor {
                         let chr = input_bytes.next().unwrap_or_else(|| unreachable!());
                         let lo = #loop_utils_name_copy3::DICT_HEX_LO[usize::from(chr)];
                         if lo == #loop_utils_name_copy4::DICT_HEX_ERROR {
-                            Err(FromStrError::InvalidCharacter { chr, idx: idx*2+1 })?;
+                            return Err(FromStrError::InvalidCharacter { chr, idx: idx*2+1 }.into());
                         };
                         lo
                     };
@@ -216,7 +213,7 @@ impl HashConstructor {
                     #utils_name::DICT_HEX_LO[usize::from(chr)]
                 };
                 if val == #utils_name::DICT_HEX_ERROR {
-                    Err(FromStrError::InvalidCharacter { chr, idx })?;
+                    return Err(FromStrError::InvalidCharacter { chr, idx }.into());
                 }
                 inner[idx / 2] |= val;
             })
@@ -227,7 +224,7 @@ impl HashConstructor {
             pub fn from_hex_str(input: &str) -> Result<Self, #error_name> {
                 let len = input.len();
                 if len != #char_amount_max {
-                    Err(FromStrError::InvalidLength(len))?;
+                    return Err(FromStrError::InvalidLength(len).into());
                 }
                 let mut ret = Self::empty();
                 {
@@ -242,12 +239,12 @@ impl HashConstructor {
             pub fn from_trimmed_hex_str(input: &str) -> Result<Self, #error_name> {
                 let len = input.len();
                 if len == 0 || len > #char_amount_max {
-                    Err(FromStrError::InvalidLength(len))?;
+                    return Err(FromStrError::InvalidLength(len).into());
                 } else if input.as_bytes()[0] == b'0' {
                     if len == 1 {
                         return Ok(Self::empty());
                     } else {
-                        Err(FromStrError::InvalidCharacter { chr: b'0', idx: 0 })?;
+                        return Err(FromStrError::InvalidCharacter { chr: b'0', idx: 0 }.into());
                     }
                 }
                 let mut ret = Self::empty();
@@ -264,7 +261,7 @@ impl HashConstructor {
                             #utils_name::DICT_HEX_LO[usize::from(chr)]
                         };
                         if val == #utils_name::DICT_HEX_ERROR {
-                            Err(FromStrError::InvalidCharacter { chr, idx })?;
+                            return Err(FromStrError::InvalidCharacter { chr, idx }.into());
                         }
                         idx += 1;
                         inner[unit_idx] |= val;
