@@ -15,25 +15,25 @@ fn serde(c: &mut Criterion) {
     let x_json = serde_json::to_string(&x).unwrap();
     let y_json = serde_json::to_string(&y).unwrap();
 
-    c.bench_function("bench_ser_numext_u256", move |b| {
+    c.bench_function("serde/ser/nfuint/u256", move |b| {
         b.iter(|| {
             let _ = serde_json::to_string(&x);
         })
     });
 
-    c.bench_function("bench_ser_ethereum_types_u256", move |b| {
+    c.bench_function("serde/ser/etypes/u256", move |b| {
         b.iter(|| {
             let _ = serde_json::to_string(&y);
         })
     });
 
-    c.bench_function("bench_de_numext_u256", move |b| {
+    c.bench_function("serde/de/nfuint/u256", move |b| {
         b.iter(|| {
             let _: nfuint::U256 = serde_json::from_str(&x_json).unwrap();
         })
     });
 
-    c.bench_function("bench_de_ethereum_types_u256", move |b| {
+    c.bench_function("serde/de/etypes/u256", move |b| {
         b.iter(|| {
             let _: etypes::U256 = serde_json::from_str(&y_json).unwrap();
         })

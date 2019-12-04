@@ -8,7 +8,7 @@ autobenches = false
 
 [dependencies]
 nfuint = { package = "numext-fixed-uint", version = "~0.1.4", path = "../fixed-uint", features = ["support_all"] }
-etypes = { package = "ethereum-types", version = "~0.4" }
+etypes = { package = "ethereum-types", version = "~0.8" }
 num-bigint = "~0.2"
 num-integer = "~0.1"
 proptest = "~0.9"

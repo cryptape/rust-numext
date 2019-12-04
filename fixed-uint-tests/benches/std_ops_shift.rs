@@ -18,10 +18,10 @@ macro_rules! std_ops_shift {
 }
 
 macro_rules! bench_std_ops_shift {
-    ($opr:tt, $name:ident, $bits:expr) => {
-        fn $name(c: &mut Criterion) {
+    ($opr:tt, $tag:literal, $func:ident, $bits:expr) => {
+        fn $func(c: &mut Criterion) {
             c.bench(
-                stringify!($name),
+                format!("{}/{}", $tag, $bits).as_str(),
                 ParameterizedBenchmark::new(
                     "nfuint",
                     |b, v| std_ops_shift!($opr, b, v, nfuint::U256, $bits),
@@ -35,15 +35,15 @@ macro_rules! bench_std_ops_shift {
     };
 }
 
-bench_std_ops_shift!(<<, ushl0, 0u8);
-bench_std_ops_shift!(<<, ushl7, 7u16);
-bench_std_ops_shift!(<<, ishl65, 65i32);
-bench_std_ops_shift!(<<, ushl511, 511u64);
+bench_std_ops_shift!(<<, "shift/left", ushl0, 0u8);
+bench_std_ops_shift!(<<, "shift/left", ushl7, 7u16);
+bench_std_ops_shift!(<<, "shift/left", ishl65, 65i32);
+bench_std_ops_shift!(<<, "shift/left", ushl511, 511u64);
 
-bench_std_ops_shift!(>>, ushr0, 0u8);
-bench_std_ops_shift!(>>, ushr7, 7u16);
-bench_std_ops_shift!(>>, ishr65, 65i32);
-bench_std_ops_shift!(>>, ushr511, 511u64);
+bench_std_ops_shift!(>>, "shift/right", ushr0, 0u8);
+bench_std_ops_shift!(>>, "shift/right", ushr7, 7u16);
+bench_std_ops_shift!(>>, "shift/right", ishr65, 65i32);
+bench_std_ops_shift!(>>, "shift/right", ushr511, 511u64);
 
 criterion_group!(shift, ushl0, ushl7, ishl65, ushl511, ushr0, ushr7, ishr65, ushr511);
 criterion_main!(shift);
