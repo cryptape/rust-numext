@@ -59,7 +59,7 @@ impl HashConstructor {
                 if input.len() != #bytes_size {
                     Err(FromSliceError::InvalidLength(input.len()))?
                 } else {
-                    let mut ret = Self::zero();
+                    let mut ret = Self::empty();
                     ret.mut_inner()[..].copy_from_slice(input);
                     Ok(ret)
                 }
@@ -229,7 +229,7 @@ impl HashConstructor {
                 if len != #char_amount_max {
                     Err(FromStrError::InvalidLength(len))?;
                 }
-                let mut ret = Self::zero();
+                let mut ret = Self::empty();
                 {
                     let inner = ret.mut_inner();
                     #part_core
@@ -245,12 +245,12 @@ impl HashConstructor {
                     Err(FromStrError::InvalidLength(len))?;
                 } else if input.as_bytes()[0] == b'0' {
                     if len == 1 {
-                        return Ok(Self::zero());
+                        return Ok(Self::empty());
                     } else {
                         Err(FromStrError::InvalidCharacter { chr: b'0', idx: 0 })?;
                     }
                 }
-                let mut ret = Self::zero();
+                let mut ret = Self::empty();
                 let mut input_bytes = input.bytes();
                 let mut idx = 0;
                 let mut unit_idx = (#char_amount_max - len) / 2;

@@ -34,14 +34,14 @@ impl HashConstructor {
         } else if self.info.bits_size < uc.info.bits_size {
             let this_bytes_size = &self.ts.unit_amount;
             quote!(
-                let mut ret = #that_name::zero();
+                let mut ret = #that_name::empty();
                 ret.mut_inner()[..#this_bytes_size].copy_from_slice(&self.inner()[..]);
                 (ret, false)
             )
         } else {
             let that_bytes_size = &uc.ts.unit_amount;
             quote!(
-                let mut ret = #that_name::zero();
+                let mut ret = #that_name::empty();
                 ret.mut_inner()
                     .copy_from_slice(&self.inner()[..#that_bytes_size]);
                 (ret, true)
@@ -96,11 +96,19 @@ impl HashConstructor {
                 Self::new([byte; #unit_amount])
             }
             /// Create a new fixed hash and all bits of it are zeros.
+            #[deprecated(
+                since = "0.1.5",
+                note = "Please use the empty function instead"
+            )]
             #[inline]
             pub const fn zero() -> Self {
                 Self::new([0; #unit_amount])
             }
             /// Test if all bits of a fixed hash are zero.
+            #[deprecated(
+                since = "0.1.5",
+                note = "Please use the is_empty function instead"
+            )]
             #[inline]
             pub fn is_zero(&self) -> bool {
                 let inner = self.inner();
@@ -112,8 +120,44 @@ impl HashConstructor {
                 true
             }
             /// Test if all bits of a fixed hash are one.
+            #[deprecated(
+                since = "0.1.5",
+                note = "Please use the is_full function instead"
+            )]
             #[inline]
             pub fn is_max(&self) -> bool {
+                let inner = self.inner();
+                #({
+                    if inner[#loop_unit_amount] != !0 {
+                        return false;
+                    }
+                })*
+                true
+            }
+            /// Create a new fixed hash and all bits of it are zero.
+            #[inline]
+            pub const fn empty() -> Self {
+                Self::new([0; #unit_amount])
+            }
+            /// Test if all bits of a fixed hash are zero.
+            #[inline]
+            pub fn is_empty(&self) -> bool {
+                let inner = self.inner();
+                #({
+                    if inner[#loop_unit_amount] != 0 {
+                        return false;
+                    }
+                })*
+                true
+            }
+            /// Create a new fixed hash and all bits of it are one.
+            #[inline]
+            pub const fn full() -> Self {
+                Self::new([!0; #unit_amount])
+            }
+            /// Test if all bits of a fixed hash are one.
+            #[inline]
+            pub fn is_full(&self) -> bool {
                 let inner = self.inner();
                 #({
                     if inner[#loop_unit_amount] != !0 {

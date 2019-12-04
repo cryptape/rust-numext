@@ -122,16 +122,6 @@ impl HashConstructor {
                     Some(self._ushr(rhs))
                 }
             }
-            /// Checked negation. Computes `-self`, returning `None` unless `self == 0`.
-            /// Note that negating any positive integer will overflow.
-            #[inline]
-            pub fn checked_neg(&self) -> Option<Self> {
-                if self.is_zero() {
-                    Some(Self::zero())
-                } else {
-                    None
-                }
-            }
         );
         self.defun(part);
     }

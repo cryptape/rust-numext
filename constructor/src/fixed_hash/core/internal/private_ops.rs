@@ -175,7 +175,7 @@ impl HashConstructor {
                     }
                     Self::new(ret)
                 } else {
-                    Self::zero()
+                    Self::empty()
                 }
             }
             #[inline]
@@ -206,7 +206,7 @@ impl HashConstructor {
                     }
                     Self::new(ret)
                 } else {
-                    Self::zero()
+                    Self::empty()
                 }
             }
         );

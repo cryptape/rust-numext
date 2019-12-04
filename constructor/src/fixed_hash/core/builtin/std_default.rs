@@ -20,7 +20,7 @@ impl HashConstructor {
             impl ::std::default::Default for #name {
                 #[inline]
                 fn default() -> Self {
-                    Self::zero()
+                    Self::empty()
                 }
             }
         );
