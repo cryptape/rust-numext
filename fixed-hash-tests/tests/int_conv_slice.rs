@@ -7,7 +7,7 @@
 // except according to those terms.
 
 use nfhash_tests::props;
-use proptest::{prelude::any, proptest, proptest_helper};
+use proptest::{prelude::any, proptest};
 
 proptest! {
     #[test]

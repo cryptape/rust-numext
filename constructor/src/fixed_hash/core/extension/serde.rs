@@ -32,7 +32,7 @@ impl HashConstructor {
                     let mut dst = [0u8; #bytes_size * 2 + 2];
                     dst[0] = b'0';
                     dst[1] = b'x';
-                    faster_hex::hex_to(bytes, &mut dst[2..])
+                    faster_hex::hex_encode(bytes, &mut dst[2..])
                         .map_err(|e| serde::ser::Error::custom(&format!("{}", e)))?;
                     serializer.serialize_str(unsafe { ::std::str::from_utf8_unchecked(&dst) })
                 }

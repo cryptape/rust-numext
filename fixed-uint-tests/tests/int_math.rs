@@ -10,7 +10,7 @@ use nfuint::U256;
 use nfuint_tests::props;
 use num_bigint::BigUint;
 use num_integer::Integer;
-use proptest::{prelude::any_with, proptest, proptest_helper};
+use proptest::{prelude::any_with, proptest};
 
 proptest! {
     #[test]

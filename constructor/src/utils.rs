@@ -12,7 +12,7 @@ use syn;
 
 macro_rules! parse_attr_with_check {
     (Int, $key:ident, $input:ident, $output:ident) => {
-        $output.$key = $input.value();
+        $output.$key = $input.base10_digits().parse().unwrap();
     };
     (Bool, $key:ident, $input:ident, $output:ident) => {
         $output.$key = $input.value;
@@ -44,7 +44,7 @@ macro_rules! parse_attr_with_check {
 
 /// Get a nonnegative integer literal without type.
 pub fn pure_uint_to_ts(val: u64) -> TokenStream {
-    syn::LitInt::new(val, syn::IntSuffix::None, Span::call_site()).into_token_stream()
+    syn::LitInt::new(&val.to_string(), Span::call_site()).into_token_stream()
 }
 
 /// Get a built-in nonnegative integer type.
