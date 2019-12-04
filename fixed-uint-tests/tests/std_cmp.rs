@@ -9,7 +9,7 @@
 use nfuint_tests::props;
 use proptest::{
     prelude::{any, any_with},
-    proptest, proptest_helper,
+    proptest,
 };
 
 proptest! {
