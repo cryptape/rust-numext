@@ -64,7 +64,7 @@ fn conv_bytes_for_specific_cases() {
         let x = nfuint::U256::from_hex_str(x_str).unwrap();
         let y = nfuint::U256::from_hex_str(y_str).unwrap();
         assert_eq!(x, y.clone().swap_bytes());
-        assert_eq!(x.clone().swap_bytes(), y);
+        assert_eq!(x.swap_bytes(), y);
     }
     {
         let bytes = {

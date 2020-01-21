@@ -10,6 +10,7 @@
 
 use crate::fixed_hash::HashConstructor;
 use crate::utils;
+use core::cmp;
 use proc_macro2::TokenStream;
 use quote::quote;
 
@@ -25,27 +26,29 @@ impl HashConstructor {
         let this_feature = &self.ts.feature;
         let that_name = &uc.ts.name;
         let that_feature = &uc.ts.feature;
-        let stmts = if self.info.bits_size == uc.info.bits_size {
-            quote!(
+        let stmts = match self.info.bits_size.cmp(&uc.info.bits_size) {
+            cmp::Ordering::Equal => quote!(
                 let inner = self.inner();
                 let val = #that_name::new(inner.clone());
                 (val, false)
-            )
-        } else if self.info.bits_size < uc.info.bits_size {
-            let this_bytes_size = &self.ts.unit_amount;
-            quote!(
-                let mut ret = #that_name::empty();
-                ret.mut_inner()[..#this_bytes_size].copy_from_slice(&self.inner()[..]);
-                (ret, false)
-            )
-        } else {
-            let that_bytes_size = &uc.ts.unit_amount;
-            quote!(
-                let mut ret = #that_name::empty();
-                ret.mut_inner()
-                    .copy_from_slice(&self.inner()[..#that_bytes_size]);
-                (ret, true)
-            )
+            ),
+            cmp::Ordering::Less => {
+                let this_bytes_size = &self.ts.unit_amount;
+                quote!(
+                    let mut ret = #that_name::empty();
+                    ret.mut_inner()[..#this_bytes_size].copy_from_slice(&self.inner()[..]);
+                    (ret, false)
+                )
+            }
+            cmp::Ordering::Greater => {
+                let that_bytes_size = &uc.ts.unit_amount;
+                quote!(
+                    let mut ret = #that_name::empty();
+                    ret.mut_inner()
+                        .copy_from_slice(&self.inner()[..#that_bytes_size]);
+                    (ret, true)
+                )
+            }
         };
         quote!(
             #[cfg(all(feature = #this_feature, feature = #that_feature))]

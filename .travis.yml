@@ -7,22 +7,13 @@ rust:
   - stable
   - beta
   - nightly
-matrix:
-  exclude:
-    - os: osx
-      rust: beta
-    - os: osx
-      rust: nightly
-    - os: windows
-      rust: beta
-    - os: windows
-      rust: nightly
-  allow_failures:
-    - rust: nightly
-  fast_finish: true
+env:
+  global:
+    - RUSTFLAGS='-F warnings'
+    - RUST_BACKTRACE=full
 script:
-  - RUSTFLAGS='-F warnings' cargo build --verbose --all
-  - RUSTFLAGS='-F warnings' cargo test --verbose --all
+  - cargo build --verbose --all
+  - cargo test --verbose --all
 stages:
   - Check
   - Test
@@ -38,4 +29,16 @@ jobs:
       name: Clippy
       script:
         - rustup component add clippy
-        - RUSTFLAGS='-F warnings' cargo clippy --all --all-targets --all-features
+        - cargo clippy --all --all-targets --all-features
+  exclude:
+    - os: osx
+      rust: beta
+    - os: osx
+      rust: nightly
+    - os: windows
+      rust: beta
+    - os: windows
+      rust: nightly
+  allow_failures:
+    - rust: nightly
+  fast_finish: true
