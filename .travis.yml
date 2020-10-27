@@ -25,6 +25,10 @@ jobs:
       name: Clippy
       install: cargo clippy --version || rustup component add clippy
       script: cargo clippy -- --deny warnings
+    - stage: Check
+      name: Deny
+      install: cargo deny --version || travis_retry cargo install cargo-deny --locked
+      script: cargo deny check --hide-inclusion-graph --show-stats
     - stage: Test
       name: Minimum
       rust: 1.45.0
