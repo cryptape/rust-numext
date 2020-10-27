@@ -153,7 +153,7 @@ impl HashConstructor {
             } else {
                 let errors = TokenStream::from_iter(errors);
                 quote!(
-                    #[derive(Debug, Fail)]
+                    #[derive(Debug, Error)]
                     pub enum #error_name {
                         #errors
                     }

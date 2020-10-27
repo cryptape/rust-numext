@@ -22,28 +22,21 @@ impl HashConstructor {
     }
 
     fn attach_error_for_conv_slice(&self, conv_type: &str, type_explain: &str) {
-        let error_name = &self.ts.error_name;
         let error_item = utils::ident_to_ts(format!("{}Slice", conv_type).as_ref());
         let inner_error_name = utils::ident_to_ts(format!("{}SliceError", conv_type).as_ref());
-        let error_explain = format!("failed to convert {} slice since {{}}", type_explain);
+        let error_explain = format!("failed to convert {} slice since {{0}}", type_explain);
         let part = quote!(
             /// Error for parse from slice.
-            #[derive(Debug, Fail)]
+            #[derive(Debug, Error)]
             pub enum #inner_error_name {
-                #[fail(display = "invalid length: {}", _0)]
+                #[error("invalid length: {0}")]
                 InvalidLength(usize),
-            }
-
-            impl From<#inner_error_name> for #error_name {
-                fn from(err: #inner_error_name) -> #error_name {
-                    #error_name::#error_item(err)
-                }
             }
         );
         self.attach_common(part);
         let part = quote!(
-            #[fail(display = #error_explain, _0)]
-            #error_item(#[fail(cause)] #inner_error_name),
+            #[error(#error_explain)]
+            #error_item(#[from] #inner_error_name),
         );
         self.error(part);
     }
@@ -89,28 +82,21 @@ impl HashConstructor {
     }
 
     fn attach_error_for_conv_from_str(&self) {
-        let error_name = &self.ts.error_name;
         let part = quote!(
             /// Error for parse from string.
-            #[derive(Debug, Fail)]
+            #[derive(Debug, Error)]
             pub enum FromStrError {
-                #[fail(display = "invalid character code `{}` at {}", chr, idx)]
+                #[error("invalid character code `{chr}` at {idx}")]
                 InvalidCharacter { chr: u8, idx: usize },
-                #[fail(display = "invalid length: {}", _0)]
+                #[error("invalid length: {0}")]
                 InvalidLength(usize),
-            }
-
-            impl From<FromStrError> for #error_name {
-                fn from(err: FromStrError) -> #error_name {
-                    #error_name::FromStr(err)
-                }
             }
         );
         self.attach_common(part);
         #[rustfmt::skip]
         let part = quote!(
-            #[fail(display = "failed to parse from string since {}", _0)]
-            FromStr(#[fail(cause)] FromStrError),
+            #[error("failed to parse from string since {0}")]
+            FromStr(#[from] FromStrError),
         );
         self.error(part);
     }
