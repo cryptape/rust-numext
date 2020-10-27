@@ -2,6 +2,31 @@
 
 ## [Unreleased]
 
+## [v0.1.5] (2020-10-30)
+[Full ChangeLog for v0.1.5]
+
+### Major Updates
+
+- Use features to let all structs be optional.
+- Should NOT consider hashes as numbers.
+  - Add methods to replace numerical methods for hashes.
+    - `zero() -> empty()`
+    - `is_zero() -> is_empty()`
+    - `is_max() -> is_full()`
+  - **BREAKING CHANGE** Remove `checked_neg(..)` for hashes.
+- Upgrade dependencies.
+  - `quote v0.6 -> v1.0`
+  - `syn v0.15 -> v1.0`
+  - `proc-macro2 v0.4 -> v1.0`
+  - Remove dependencies "proc-macro-hack" for crates in the workspace.
+    - Update the minimum supported version of rust toolchain to `1.45.0` for the feature: [Stabilizing function-like procedural macros in expressions, patterns, and statements](https://blog.rust-lang.org/2020/07/16/Rust-1.45.0.html#stabilizing-function-like-procedural-macros-in-expressions-patterns-and-statements).
+  - Use `thiserror` instead of `failure` since `failure` is officially deprecated.
+
+### Fixed Bugs
+
+- Constructors can not handle short inputs correctly ([#42]).
+- `as_fixed_bytes_mut(&mut self)` return an immutable reference ([#42]).
+
 ## [v0.1.4] (2019-04-03)
 [Full ChangeLog for v0.1.4]
 
@@ -49,17 +74,20 @@
 - Release the first version of [Rust-NumExt] -- Libraries to extend the rust built-in numeric types.
 
 [Rust-NumExt]: https://github.com/cryptape/rust-numext
-[Unreleased]: https://github.com/cryptape/rust-numext/compare/v0.1.4...HEAD
+[Unreleased]: https://github.com/cryptape/rust-numext/compare/v0.1.5...HEAD
+[v0.1.5]: https://github.com/cryptape/rust-numext/tree/v0.1.5
 [v0.1.4]: https://github.com/cryptape/rust-numext/tree/v0.1.4
 [v0.1.3]: https://github.com/cryptape/rust-numext/tree/v0.1.3
 [v0.1.2]: https://github.com/cryptape/rust-numext/tree/v0.1.2
 [v0.1.1]: https://github.com/cryptape/rust-numext/tree/v0.1.1
 [v0.1.0]: https://github.com/cryptape/rust-numext/tree/v0.1.0
+[Full ChangeLog for v0.1.5]: https://github.com/cryptape/rust-numext/compare/v0.1.4...v0.1.5
 [Full ChangeLog for v0.1.4]: https://github.com/cryptape/rust-numext/compare/v0.1.3...v0.1.4
 [Full ChangeLog for v0.1.3]: https://github.com/cryptape/rust-numext/compare/v0.1.2...v0.1.3
 [Full ChangeLog for v0.1.2]: https://github.com/cryptape/rust-numext/compare/v0.1.1...v0.1.2
 [Full ChangeLog for v0.1.1]: https://github.com/cryptape/rust-numext/compare/v0.1.0...v0.1.1
 [Full ChangeLog for v0.1.0]: https://github.com/cryptape/rust-numext/compare/900bf95d2df3e92b4a352a8e01ced355805ea0b6...v0.1.0
+[#42]: https://github.com/cryptape/rust-numext/pull/42
 [#33]: https://github.com/cryptape/rust-numext/pull/33
 [#22]: https://github.com/cryptape/rust-numext/pull/22
 [#13]: https://github.com/cryptape/rust-numext/pull/13
