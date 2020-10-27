@@ -8,9 +8,6 @@
 
 //! Support proptest.
 
-use etypes;
-use nfhash;
-
 use proptest::arbitrary::Arbitrary;
 use proptest::prelude::RngCore;
 use proptest::strategy::{NewTree, Strategy, ValueTree};

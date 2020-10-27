@@ -8,10 +8,6 @@
 
 //! Support proptest.
 
-use etypes;
-use nfuint;
-use num_bigint;
-
 use core::cmp;
 
 use proptest::arbitrary::Arbitrary;

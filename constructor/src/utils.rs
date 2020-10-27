@@ -8,7 +8,6 @@
 
 use proc_macro2::{Span, TokenStream};
 use quote::ToTokens;
-use syn;
 
 macro_rules! parse_attr_with_check {
     (Int, $key:ident, $input:ident, $output:ident) => {
