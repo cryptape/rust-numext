@@ -10,6 +10,7 @@
 
 use crate::fixed_uint::UintConstructor;
 use crate::utils;
+use core::cmp;
 use proc_macro2::TokenStream;
 use quote::quote;
 
@@ -25,57 +26,61 @@ impl UintConstructor {
         let this_feature = &self.ts.feature;
         let that_name = &uc.ts.name;
         let that_feature = &uc.ts.feature;
-        let stmts = if self.info.bits_size == uc.info.bits_size {
-            if self.info.unit_bits_size == uc.info.unit_bits_size {
-                // same inner
+        let stmts = match self.info.bits_size.cmp(&uc.info.bits_size) {
+            cmp::Ordering::Equal => {
+                if self.info.unit_bits_size == uc.info.unit_bits_size {
+                    // same inner
+                    quote!(
+                        let inner = self.inner();
+                        let val = #that_name::new(inner.clone());
+                        (val, false)
+                    )
+                } else if uc.info.unit_bits_size == 8 {
+                    // into u8 array
+                    let that_unit_amount = &uc.ts.unit_amount;
+                    quote!(
+                        let mut inner = [0u8; #that_unit_amount];
+                        self.into_little_endian(&mut inner[..]).unwrap();
+                        let val = #that_name::new(inner);
+                        (val, false)
+                    )
+                } else if self.info.unit_bits_size == 8 {
+                    // from u8 array
+                    quote!(
+                        let inner = self.inner();
+                        let val = #that_name::from_little_endian(&inner[..]).unwrap();
+                        (val, false)
+                    )
+                } else {
+                    // same size, diff inner, no u8 array
+                    let that_bytes_size = &uc.ts.bytes_size;
+                    quote!(
+                        let mut tmp = [0u8; #that_bytes_size];
+                        self.into_little_endian(&mut tmp[..]).unwrap();
+                        let val = #that_name::from_little_endian(&tmp[..]).unwrap();
+                        (val, false)
+                    )
+                }
+            }
+            cmp::Ordering::Less => {
+                let this_bytes_size = &self.ts.bytes_size;
                 quote!(
-                    let inner = self.inner();
-                    let val = #that_name::new(inner.clone());
-                    (val, false)
-                )
-            } else if uc.info.unit_bits_size == 8 {
-                // into u8 array
-                let that_unit_amount = &uc.ts.unit_amount;
-                quote!(
-                    let mut inner = [0u8; #that_unit_amount];
-                    self.into_little_endian(&mut inner[..]).unwrap();
-                    let val = #that_name::new(inner);
-                    (val, false)
-                )
-            } else if self.info.unit_bits_size == 8 {
-                // from u8 array
-                quote!(
-                    let inner = self.inner();
-                    let val = #that_name::from_little_endian(&inner[..]).unwrap();
-                    (val, false)
-                )
-            } else {
-                // same size, diff inner, no u8 array
-                let that_bytes_size = &uc.ts.bytes_size;
-                quote!(
-                    let mut tmp = [0u8; #that_bytes_size];
+                    let mut tmp = [0u8; #this_bytes_size];
                     self.into_little_endian(&mut tmp[..]).unwrap();
                     let val = #that_name::from_little_endian(&tmp[..]).unwrap();
                     (val, false)
                 )
             }
-        } else if self.info.bits_size < uc.info.bits_size {
-            let this_bytes_size = &self.ts.bytes_size;
-            quote!(
-                let mut tmp = [0u8; #this_bytes_size];
-                self.into_little_endian(&mut tmp[..]).unwrap();
-                let val = #that_name::from_little_endian(&tmp[..]).unwrap();
-                (val, false)
-            )
-        } else {
-            let this_bytes_size = &self.ts.bytes_size;
-            let that_bytes_size = &uc.ts.bytes_size;
-            quote!(
-                let mut tmp = [0u8; #this_bytes_size];
-                self.into_little_endian(&mut tmp[..]).unwrap();
-                let val = #that_name::from_little_endian(&tmp[..#that_bytes_size]).unwrap();
-                (val, true)
-            )
+            cmp::Ordering::Greater => {
+                let this_bytes_size = &self.ts.bytes_size;
+                let that_bytes_size = &uc.ts.bytes_size;
+                quote!(
+                    let mut tmp = [0u8; #this_bytes_size];
+                    self.into_little_endian(&mut tmp[..]).unwrap();
+                    let val = #that_name::from_little_endian(&tmp[..#that_bytes_size]).unwrap();
+                    (val, true)
+                )
+            }
         };
         quote!(
             #[cfg(all(feature = #this_feature, feature = #that_feature))]

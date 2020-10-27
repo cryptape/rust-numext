@@ -12,6 +12,8 @@ use etypes;
 use nfuint;
 use num_bigint;
 
+use core::cmp;
+
 use proptest::arbitrary::Arbitrary;
 use proptest::prelude::RngCore;
 use proptest::strategy::{NewTree, Strategy, ValueTree};
@@ -195,11 +197,15 @@ impl U256LeBytes {
         let mut bigger = Self::nonzero(rng);
         'outer: loop {
             for i in (0..32).rev() {
-                if smaller.inner[i] > bigger.inner[i] {
-                    ::std::mem::swap(&mut smaller.inner[i], &mut bigger.inner[i]);
-                    break 'outer;
-                } else if smaller.inner[i] < bigger.inner[i] {
-                    break 'outer;
+                match smaller.inner[i].cmp(&bigger.inner[i]) {
+                    cmp::Ordering::Greater => {
+                        ::std::mem::swap(&mut smaller.inner[i], &mut bigger.inner[i]);
+                        break 'outer;
+                    }
+                    cmp::Ordering::Less => {
+                        break 'outer;
+                    }
+                    cmp::Ordering::Equal => {}
                 }
             }
         }
