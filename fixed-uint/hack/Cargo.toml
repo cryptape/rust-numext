@@ -15,7 +15,6 @@ proc-macro = true
 
 [dependencies]
 nfuint-core = { package = "numext-fixed-uint-core", version = "=0.1.4", path = "../core" }
-proc-macro-hack = "~0.5"
 syn = { version = "~1.0", features = ["extra-traits"] }
 quote = "~1.0"
 proc-macro2 = "~1.0"

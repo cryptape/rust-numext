@@ -26,6 +26,12 @@ Extend the rust built-in numeric types.
 [Uint Doc]: https://docs.rs/numext-fixed-uint/badge.svg
 [Hash Doc]: https://docs.rs/numext-fixed-hash/badge.svg
 
+## Requirements
+
+- `rustc 1.45.0+`.
+
+  Require [Stabilizing function-like procedural macros in expressions, patterns, and statements](https://blog.rust-lang.org/2020/07/16/Rust-1.45.0.html#stabilizing-function-like-procedural-macros-in-expressions-patterns-and-statements).
+
 ## Benchmark
 
 ### Howto

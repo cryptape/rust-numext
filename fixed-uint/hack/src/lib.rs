@@ -16,19 +16,18 @@
 
 extern crate proc_macro;
 
-use proc_macro_hack::proc_macro_hack;
 use quote::quote;
 use syn::parse_macro_input;
 
-macro_rules! impl_hack {
+macro_rules! impl_func {
     ($(($name:ident, $type:ident),)+) => {
-        $(impl_hack!($name, $type);)+
+        $(impl_func!($name, $type);)+
     };
     ($(($name:ident, $type:ident)),+) => {
-        $(impl_hack!($name, $type);)+
+        $(impl_func!($name, $type);)+
     };
     ($name:ident, $type:ident) =>    {
-        #[proc_macro_hack]
+        #[proc_macro]
         pub fn $name(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
             let input = parse_macro_input!(input as syn::LitStr);
             let expanded = {
@@ -60,7 +59,7 @@ macro_rules! impl_hack {
     };
 }
 
-impl_hack!(
+impl_func!(
     (u128, U128),
     (u160, U160),
     (u224, U224),

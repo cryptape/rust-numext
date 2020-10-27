@@ -16,13 +16,12 @@
 
 extern crate proc_macro;
 
-use proc_macro_hack::proc_macro_hack;
 use quote::quote;
 use syn::parse_macro_input;
 
-macro_rules! impl_hack {
+macro_rules! impl_func {
     ($name:ident, $type:ident) =>    {
-        #[proc_macro_hack]
+        #[proc_macro]
         pub fn $name(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
             let input = parse_macro_input!(input as syn::LitStr);
             let expanded = {
@@ -58,22 +57,22 @@ macro_rules! impl_hack {
 }
 
 #[cfg(feature = "bits_128")]
-impl_hack!(h128, H128);
+impl_func!(h128, H128);
 #[cfg(feature = "bits_160")]
-impl_hack!(h160, H160);
+impl_func!(h160, H160);
 #[cfg(feature = "bits_224")]
-impl_hack!(h224, H224);
+impl_func!(h224, H224);
 #[cfg(feature = "bits_256")]
-impl_hack!(h256, H256);
+impl_func!(h256, H256);
 #[cfg(feature = "bits_384")]
-impl_hack!(h384, H384);
+impl_func!(h384, H384);
 #[cfg(feature = "bits_512")]
-impl_hack!(h512, H512);
+impl_func!(h512, H512);
 #[cfg(feature = "bits_520")]
-impl_hack!(h520, H520);
+impl_func!(h520, H520);
 #[cfg(feature = "bits_1024")]
-impl_hack!(h1024, H1024);
+impl_func!(h1024, H1024);
 #[cfg(feature = "bits_2048")]
-impl_hack!(h2048, H2048);
+impl_func!(h2048, H2048);
 #[cfg(feature = "bits_4096")]
-impl_hack!(h4096, H4096);
+impl_func!(h4096, H4096);

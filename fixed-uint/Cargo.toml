@@ -13,7 +13,6 @@ license = "Apache-2.0 OR MIT"
 [dependencies]
 nfuint-core = { package ="numext-fixed-uint-core", version = "=0.1.4", path = "core" }
 nfuint-hack = { package ="numext-fixed-uint-hack", version = "=0.1.4", path = "hack" }
-proc-macro-hack = "~0.5"
 
 [features]
 default = ["bits_all"]

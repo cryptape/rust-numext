@@ -35,8 +35,6 @@
 //! }
 //! ```
 
-use proc_macro_hack::proc_macro_hack;
-
 pub use nfhash_core::prelude;
 pub use nfhash_core::{FixedHashError, FromSliceError, FromStrError, IntoSliceError};
 
@@ -44,7 +42,6 @@ macro_rules! reexport {
     ($name:ident, $macro_name:ident) => {
         pub use nfhash_core::$name;
         /// A macro used to construct a fixed hash in compile time.
-        #[proc_macro_hack]
         pub use nfhash_hack::$macro_name;
     };
 }
