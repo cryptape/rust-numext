@@ -527,11 +527,7 @@ impl UintConstructor {
                     return Some((Self::zero(), self.clone()));
                 }
                 // below: self >= other
-                let rhs_idx = if let Some(idx) = other._highest_nonzero_unit() {
-                    idx
-                } else {
-                    return None;
-                };
+                let rhs_idx = other._highest_nonzero_unit()?;
                 // below: self >= other > zero
                 let mut lhs_idx = if let Some(idx) = self._highest_nonzero_unit() {
                     idx

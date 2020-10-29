@@ -8,8 +8,6 @@
 
 //! Convert the parsed tokens into structs after some checks.
 
-use syn;
-
 use crate::definition;
 
 pub struct UintDefinition {

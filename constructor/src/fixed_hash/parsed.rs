@@ -9,7 +9,6 @@
 //! Convert the parsed tokens into structs after some checks.
 
 use crate::definition;
-use syn;
 
 pub struct HashDefinition {
     pub name: String,
