@@ -33,6 +33,10 @@ jobs:
       name: Minimum
       rust: 1.45.0
     - stage: Test
+      name: Wasm32
+      install: rustup target add wasm32-unknown-unknown
+      script: cd tests/numext-build && cargo build --target=wasm32-unknown-unknown
+    - stage: Test
       os: osx
     - stage: Test
       os: windows

@@ -14,6 +14,8 @@
 //!
 //! [numext-fixed-hash]: https://docs.rs/numext-fixed-hash
 
+extern crate constructor;
+
 use thiserror::Error;
 
 #[macro_use]

@@ -14,6 +14,8 @@
 //!
 //! [numext-fixed-uint]: https://docs.rs/numext-fixed-uint
 
+extern crate nfuint_core;
+
 extern crate proc_macro;
 
 use quote::quote;
