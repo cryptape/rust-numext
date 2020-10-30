@@ -1,6 +1,6 @@
 [package]
 name = "nfuint-tests"
-version = "0.1.5"
+version = "0.1.6"
 authors = ["Cryptape Technologies <contact@cryptape.com>"]
 edition = "2018"
 license = "Apache-2.0 OR MIT"
@@ -8,7 +8,7 @@ publish = false
 autobenches = false
 
 [dependencies]
-nfuint = { package = "numext-fixed-uint", version = "~0.1.5", path = "../fixed-uint", features = ["support_all"] }
+nfuint = { package = "numext-fixed-uint", version = "~0.1.6", path = "../fixed-uint", features = ["support_all"] }
 etypes = { package = "ethereum-types", version = "~0.8" }
 num-bigint = "~0.2"
 num-integer = "~0.1"

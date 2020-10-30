@@ -1,6 +1,6 @@
 [package]
 name = "nfhash-tests"
-version = "0.1.5"
+version = "0.1.6"
 authors = ["Cryptape Technologies <contact@cryptape.com>"]
 edition = "2018"
 license = "Apache-2.0 OR MIT"
@@ -8,7 +8,7 @@ publish = false
 autobenches = false
 
 [dependencies]
-nfhash = { package = "numext-fixed-hash", version = "~0.1.5", path = "../fixed-hash", features = ["support_all"] }
+nfhash = { package = "numext-fixed-hash", version = "~0.1.6", path = "../fixed-hash", features = ["support_all"] }
 etypes = { package = "ethereum-types", version = "~0.8" }
 proptest = "~0.9"
 rand = "~0.7"
