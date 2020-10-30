@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [v0.1.6] (2020-10-30)
+[Full ChangeLog for v0.1.6]
+
+### Fixed Bugs
+
+- Avoid trigger [a rustc bug](https://github.com/rust-lang/rust/issues/75533) which causes errors when build with target `wasm32-unknown-unknown` ([#54]).
+
 ## [v0.1.5] (2020-10-30)
 [Full ChangeLog for v0.1.5]
 
@@ -74,19 +81,22 @@
 - Release the first version of [Rust-NumExt] -- Libraries to extend the rust built-in numeric types.
 
 [Rust-NumExt]: https://github.com/cryptape/rust-numext
-[Unreleased]: https://github.com/cryptape/rust-numext/compare/v0.1.5...HEAD
+[Unreleased]: https://github.com/cryptape/rust-numext/compare/v0.1.6...HEAD
+[v0.1.6]: https://github.com/cryptape/rust-numext/tree/v0.1.6
 [v0.1.5]: https://github.com/cryptape/rust-numext/tree/v0.1.5
 [v0.1.4]: https://github.com/cryptape/rust-numext/tree/v0.1.4
 [v0.1.3]: https://github.com/cryptape/rust-numext/tree/v0.1.3
 [v0.1.2]: https://github.com/cryptape/rust-numext/tree/v0.1.2
 [v0.1.1]: https://github.com/cryptape/rust-numext/tree/v0.1.1
 [v0.1.0]: https://github.com/cryptape/rust-numext/tree/v0.1.0
+[Full ChangeLog for v0.1.6]: https://github.com/cryptape/rust-numext/compare/v0.1.5...v0.1.6
 [Full ChangeLog for v0.1.5]: https://github.com/cryptape/rust-numext/compare/v0.1.4...v0.1.5
 [Full ChangeLog for v0.1.4]: https://github.com/cryptape/rust-numext/compare/v0.1.3...v0.1.4
 [Full ChangeLog for v0.1.3]: https://github.com/cryptape/rust-numext/compare/v0.1.2...v0.1.3
 [Full ChangeLog for v0.1.2]: https://github.com/cryptape/rust-numext/compare/v0.1.1...v0.1.2
 [Full ChangeLog for v0.1.1]: https://github.com/cryptape/rust-numext/compare/v0.1.0...v0.1.1
 [Full ChangeLog for v0.1.0]: https://github.com/cryptape/rust-numext/compare/900bf95d2df3e92b4a352a8e01ced355805ea0b6...v0.1.0
+[#54]: https://github.com/cryptape/rust-numext/pull/54
 [#42]: https://github.com/cryptape/rust-numext/pull/42
 [#33]: https://github.com/cryptape/rust-numext/pull/33
 [#22]: https://github.com/cryptape/rust-numext/pull/22
