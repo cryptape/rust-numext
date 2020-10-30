@@ -14,6 +14,8 @@
 //!
 //! [numext-fixed-uint]: https://docs.rs/numext-fixed-uint
 
+extern crate constructor;
+
 use thiserror::Error;
 
 constructor::construct_fixed_uints!(

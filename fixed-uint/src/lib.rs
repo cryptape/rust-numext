@@ -40,6 +40,9 @@
 //! }
 //! ```
 
+extern crate nfuint_core;
+extern crate nfuint_hack;
+
 pub use nfuint_core::prelude;
 pub use nfuint_core::{FixedUintError, FromSliceError, FromStrError, IntoSliceError};
 

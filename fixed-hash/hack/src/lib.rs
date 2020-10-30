@@ -14,6 +14,8 @@
 //!
 //! [numext-fixed-hash]: https://docs.rs/numext-fixed-hash
 
+extern crate nfhash_core;
+
 extern crate proc_macro;
 
 use quote::quote;

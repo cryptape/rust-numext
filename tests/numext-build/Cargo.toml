@@ -1,0 +1,14 @@
+[package]
+name = "numext-build"
+version = "0.1.5"
+authors = ["Cryptape Technologies <contact@cryptape.com>"]
+edition = "2018"
+license = "Apache-2.0 OR MIT"
+publish = false
+
+[dependencies]
+nfuint = { package = "numext-fixed-uint", version = "~0.1.5", path = "../../fixed-uint", features = ["support_all"] }
+nfhash = { package = "numext-fixed-hash", version = "~0.1.5", path = "../../fixed-hash", features = ["support_all"] }
+
+[workspace]
+members = ["."]

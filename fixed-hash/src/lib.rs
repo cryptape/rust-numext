@@ -35,6 +35,9 @@
 //! }
 //! ```
 
+extern crate nfhash_core;
+extern crate nfhash_hack;
+
 pub use nfhash_core::prelude;
 pub use nfhash_core::{FixedHashError, FromSliceError, FromStrError, IntoSliceError};
 
